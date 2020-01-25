@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
 import styles from './Styles.css';
 
+import OptionEditor from '../OptionEditor/OptionEditor';
+
 class inputEditor extends Component {
 
 	constructor(props){
@@ -13,7 +15,7 @@ class inputEditor extends Component {
 			type:	data.type,
 			weight: data.weight,
 			optionsData: data.options,
-			optionsViews: [],
+			optionViews: [],
 			maxValue: data.maxValue,
 			minValue: data.minValue
 		}
@@ -23,9 +25,37 @@ class inputEditor extends Component {
 		this.setState({ [fieldName]: e.target.value});
 	}
 
+	componentDidMount () {
+
+		let optionsData = this.state.optionsData;
+		let optionViews = [];
+
+		optionsData.forEach( (e) => {
+			optionViews.push(<OptionEditor data={e} delete={ this.deleteOption } />);			
+		});
+
+		this.setState({ optionViews: optionViews });
+
+	}
+
+	addOption = () => {
+
+		let optionViews = this.state.optionViews;
+
+		//optionViews.push(<OptionEditor data={ } delete={ this.deleteOption } />);
+
+		this.setState({ optionViews: optionViews });
+
+	}
+
+	deleteOption = ( id ) => {
+		
+	}
+
+
 	render(){
 
-		const optionViews = this.state.optionViews || (<div>Vacío</div>); 
+		const optionViews = this.state.optionViews || (<div>Sin opciones</div>); 
 		
 		return(
 			<div className={ styles.InputEditorContainer }>

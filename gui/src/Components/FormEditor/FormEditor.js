@@ -40,7 +40,7 @@ class formEditor extends Component {
 
 		let subformViews = this.state.subformViews;
 
-		//subformViews.push(<SubformEditor data={ } delete={deleteSubform} />);
+		//subformViews.push(<SubformEditor data={ } delete={ this.deleteSubform } />);
 
 		this.setState({ subformViews: subformViews });
 

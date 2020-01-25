@@ -40,7 +40,7 @@ class subformEditor extends Component {
 
 		let inputViews = this.state.inputViews;
 
-		//inputViews.push(<InputEditor data={ } delete={deleteInput} />);
+		//inputViews.push(<InputEditor data={ } delete={ this.deleteInput } />);
 
 		this.setState({ inputViews: inputViews });
 
