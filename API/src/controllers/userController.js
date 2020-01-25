@@ -4,6 +4,7 @@ const User = require('../models/user');
 const jwt = require('jsonwebtoken');
 
 module.exports = {
+
 	list: (req,res,next) => {
 
 		User.find()
@@ -84,17 +85,133 @@ module.exports = {
 	
 	find: (req,res,next) => {
 
+		const id = req.userData.userId;
+
+		User.findById(id)
+			.select('email name type')
+			.populate('type','name')
+			.exec()
+			.then(doc => {
+				if (doc) {
+					res.status(200).json({
+						user: doc,
+					});
+				}else{
+					res.status(404).json({message:'No valid entry found for provided ID'});
+				}
+			})
+			.catch(err => {
+				console.log(err);
+				res.status(500).json({error: err});
+			});
+
 	},
 	update: (req,res,next) => {
 
+		const id = req.body.userId;
+		const obj = req.body;
+		
+		delete obj.userId;
+		delete obj.password;
+		
+		User.update( { _id: id }, { $set: obj } )
+			.exec()
+			.then(result => {
+				res.status(200).json({
+					message: 'User updated'
+				});
+			})
+			.catch(err => {
+				console.log(err);
+				res.status(500).json({
+					error:err
+				});
+			});
+
 	},
 	delete: (req,res,next) => {
-	
+
+		const id = req.query.userId;
+			
+		User.findById(id)
+			.select('_id')
+			.exec()
+			.then(doc =>{
+				if (!doc) {
+					return res.status(404).json({
+						message: "User not found"
+					});
+				}else{
+					User.remove({_id: id})
+						.exec()
+						.then(result => {
+							res.status(200).json({
+								message: 'User deleted',
+							});
+						})
+						.catch(err => {
+							console.log(err);
+							res.status(500).json({
+								error: err
+							});
+						});			
+				}
+			})
+			.catch(err => {
+				console.log(err);
+				res.status(500).json({
+					error: err
+				});
+			});
+
 	},
 	login: (req,res,next) => {
-	
-	},
-	headers: (req,res,next) => {
+
+		User.find( { email: req.body.email } )
+			.exec()
+			.then(user => {
+				if (user.length < 1) {
+					return res.status(401).json({
+						message: 'Auth failed'
+					});
+				}
+				bcrypt.compare(req.body.password, user[0].password, (err, result) => {
+					if (err) {
+						return res.status(401).json({
+							message: 'Auth failed'
+						});
+					}
+					if (result) {
+						const token = jwt.sign(
+						{
+							email: user[0].email,
+							userId: user[0]._id,
+							//type: user[0].type
+						},
+						//process.env.JWT_KEY,
+						'secret',
+						{
+							expiresIn: "1h"
+						}
+						);
+						return res.status(200).json({
+							message: 'Auth succesful',
+							token: token,
+							headers: req.headers
+						});
+					}
+					res.status(401).json({
+						message: 'Auth failed'
+					});
+				});
+			})
+			.catch(err => {
+				console.log(err);
+				res.status(500).json({
+					error: err
+				});
+			});
 	
 	}
-}
+
+};
