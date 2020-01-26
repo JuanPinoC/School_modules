@@ -40,7 +40,7 @@ class formEditor extends Component {
 
 		let subformViews = this.state.subformViews;
 
-		//subformViews.push(<SubformEditor data={ } delete={ this.deleteSubform } />);
+		subformViews.push(<SubformEditor data={ null } delete={ this.deleteSubform } />);
 
 		this.setState({ subformViews: subformViews });
 
@@ -57,24 +57,32 @@ class formEditor extends Component {
 		return (
 			<div className={ styles.FormEditorContainer }>
 				<div className={ styles.FormEditorHeaders}>
-					<label>Nombre: </label>
-					<input className={ styles.FormEditorName } type='text' value={ this.state.name } 
-							onChange={ (e) => {this.onChangeHandler('name', e)} } />
-					
-					<label>Peso: </label>
-					<input className={ styles.FormEditorWeight } type='number' value={ this.state.weight }
-							onChange={ (e) => {this.onChangeHandler('weight', e)} } />
-					
-					<label>Tipo: </label>
-					<select className={ styles.FormEditorSelect } 
-							onChange={ (e) => {this.onChangeHandler('type', e)} }>
-						<option value='Soft Abilities'>Habilidades blandas</option>
-						<option value='Hard Abilities'>Observación en clase</option>
-						<option value='Interview'>Entrevista</option>
-					</select>
+					<div className={ styles.FormEditorItem}>
+						<label>Nombre: </label>
+						<input className={ styles.FormEditorName } type='text' value={ this.state.name } 
+								onChange={ (e) => {this.onChangeHandler('name', e)} } />
+					</div>
+					<div className={ styles.FormEditorItem}>
+						<label>Peso: </label>
+						<input className={ styles.FormEditorWeight } type='number' value={ this.state.weight }
+								onChange={ (e) => {this.onChangeHandler('weight', e)} } />
+					</div>
+					<div className={ styles.FormEditorItem}>
+						<label>Tipo: </label>
+						<select className={ styles.FormEditorSelect } 
+								onChange={ (e) => {this.onChangeHandler('type', e)} }>
+							<option value='Soft Abilities'>Habilidades blandas</option>
+							<option value='Hard Abilities'>Observación en clase</option>
+							<option value='Interview'>Entrevista</option>
+						</select>
+					</div>
 				</div>
 				<div className={ styles.SubformsList }>
 					{ subformViews }
+				</div>
+				<div className={ styles.AddSubformButton } onClick={ this.addSubform }>
+					<h1 className={ styles.HorizontalAlign}>+</h1>
+					<h3 className={ styles.HorizontalAlign}>Agregar Sección</h3>
 				</div>
 			</div>
 		);

@@ -1,0 +1,21 @@
+.OptionEditorContainer {
+	background-color: var(--grey);
+	border: solid white 0.2em;
+	border-radius: 0.6em;
+	margin: 0.3em;
+	color: white;
+}
+
+.OptionEditorItem {
+	width: 15em;
+	display: inline-block;
+	margin: 0.5em;
+}
+
+.OptionEditorItem input {
+	margin-right: 3em;
+	border-style: none;
+	border-radius: 0.2em;
+	height: 1.6em;
+	padding: 0.2em 0.8em 0.2em 0.8em;
+}

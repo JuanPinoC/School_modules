@@ -1,0 +1,72 @@
+
+.SubformEditorContainer {
+	background-color: white;
+	border: solid var(--dark-red) 0.3em;
+	border-radius: 0.6em;
+	margin-bottom: 0.3em;
+}
+
+.SubformEditorHeaders {
+	background-color: var(--red);
+	font-weight: bold;
+	color: white;
+	padding: 1em;
+	border-radius: 0.3em 0.3em 0em 0em; 
+	border-bottom: solid var(--dark-red) 0.3em ;
+}
+
+.SubformEditorItem {
+	width: 15em;
+	display: inline-block;
+	margin: 0.5em;
+}
+
+.SubformEditorHeaders input {
+	margin-right: 3em;
+	border-style: none;
+	border-radius: 0.2em;
+	height: 1.6em;
+	padding: 0.2em 0.8em 0.2em 0.8em;
+}
+
+.SubformEditorHeaders select {
+	border-radius: 0.2em;
+	padding: 0.2em 0.8em 0.2em 0.8em;
+}
+
+.InputsList {
+	padding: 1em;
+}
+
+.AddInputButton {
+	user-select: none;
+	margin: 1em;
+	border: solid var(--dark-green) 0.3em;
+	border-radius: 0.6em;
+	color: var(--dark-green);
+	text-align: center;
+	width: 50%;
+	transition-duration: 0.3s;
+}
+
+.HorizontalAlign {
+	display: inline-block;
+}
+
+.AddSubformButton h1 {
+	margin: 0em;
+}
+
+.AddSubformButton label {
+	font-weight: bold;
+}
+
+.AddInputButton:hover {
+	margin: 1em;
+	border: solid white 0.3em;
+	border-radius: 0.6em;
+	color: white;
+	text-align: center;
+	width: 50%;
+	background-color: var(--green);
+}

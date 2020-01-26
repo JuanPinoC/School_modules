@@ -1,0 +1,82 @@
+:root {
+	--dark-blue: #000f48;
+	--blue: #042d6e;
+	--dark-red: #790b12;
+	--red: #b3232c;
+	--dark-green: #008000;
+	--green: #228B22;
+	--grey: #D3D3D3;
+}
+
+.FormEditorContainer {
+	margin: 2em;
+	background-color: white;
+	border: solid var(--dark-blue) 0.3em;
+	border-radius: 0.6em;
+	
+}
+
+.FormEditorHeaders {
+	background-color:var(--blue);
+	color: white;
+	font-weight: bold;
+	padding: 1em;
+	border-radius: 0.3em 0.3em 0em 0em; 
+	border-bottom: solid var(--dark-blue) 0.3em ;
+}
+
+.FormEditorItem {
+	width: 20em;
+	display: inline-block;
+	margin: 0.5em;
+}
+
+.FormEditorHeaders input {
+	margin-right: 3em;
+	border-style: none;
+	border-radius: 0.2em;
+	height: 1.6em;
+	padding: 0.2em 0.8em 0.2em 0.8em;
+}
+
+.FormEditorHeaders select {
+	border-radius: 0.2em;
+	padding: 0.2em 0.8em 0.2em 0.8em;
+}
+
+.SubformsList {
+	padding: 1em;
+}
+
+.AddSubformButton {
+	user-select: none;
+	margin: 1em;
+	border: solid var(--red) 0.3em;
+	border-radius: 0.6em;
+	color: var(--red);
+	text-align: center;
+	width: 50%;
+	transition-duration: 0.3s;
+}
+
+.HorizontalAlign {
+	display: inline-block;
+}
+
+.AddSubformButton h1 {
+	margin: 0em;
+}
+
+.AddSubformButton label {
+	font-weight: bold;
+}
+
+.AddSubformButton:hover {
+	margin: 1em;
+	border: solid white 0.3em;
+	border-radius: 0.6em;
+	color: white;
+	text-align: center;
+	width: 50%;
+	background-color: var(--red);
+}

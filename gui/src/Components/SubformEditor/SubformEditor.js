@@ -10,11 +10,18 @@ class subformEditor extends Component {
 
 	const data = props.data;
 
-		this.state = {
+		this.state = ( data != null )?
+		{
 			name: data.name,
 			weight: data.weight,
 			type: data.type,
 			inputsData: data.inputs,
+			inputViews: []
+		}:{
+			name: '',
+			weight: 0,
+			type: 'sum',
+			inputsData: [],
 			inputViews: []
 		}
 	}
@@ -40,7 +47,7 @@ class subformEditor extends Component {
 
 		let inputViews = this.state.inputViews;
 
-		//inputViews.push(<InputEditor data={ } delete={ this.deleteInput } />);
+		inputViews.push(<InputEditor data={ null } delete={ this.deleteInput } />);
 
 		this.setState({ inputViews: inputViews });
 
@@ -57,24 +64,32 @@ class subformEditor extends Component {
 		return (
 			<div className={ styles.SubformEditorContainer }>
 				<div className={ styles.SubformEditorHeaders}>
-					<label>Nombre de la sección: </label>
-					<input className={ styles.SubformEditorName } type='text' value={ this.state.name } 
-							onChange={ (e) => {this.onChangeHandler('name', e)} } />
-					
-					<label>Peso: </label>
-					<input className={ styles.SubformEditorWeight } type='number' value={ this.state.weight }
-							onChange={ (e) => {this.onChangeHandler('weight', e)} } />
-					
-					<label>Acción: </label>
-					<select className={ styles.SubformEditorSelect } 
-							onChange={ (e) => {this.onChangeHandler('type', e)} }>
-						<option value='sum'>Sumar</option>
-						<option value='avg'>Promediar</option>
-						<option value='text'>Ninguna</option>
-					</select>
+					<div className={ styles.SubformEditorItem}>
+						<label>Nombre de la sección: </label>
+						<input className={ styles.SubformEditorName } type='text' value={ this.state.name } 
+								onChange={ (e) => {this.onChangeHandler('name', e)} } />
+					</div>
+					<div className={ styles.SubformEditorItem}>
+						<label>Peso: </label>
+						<input className={ styles.SubformEditorWeight } type='number' value={ this.state.weight }
+								onChange={ (e) => {this.onChangeHandler('weight', e)} } />
+					</div>
+					<div className={ styles.SubformEditorItem}>
+						<label>Acción: </label>
+						<select className={ styles.SubformEditorSelect } 
+								onChange={ (e) => {this.onChangeHandler('type', e)} }>
+							<option value='sum'>Sumar</option>
+							<option value='avg'>Promediar</option>
+							<option value='text'>Ninguna</option>
+						</select>
+					</div>
 				</div>
-				<div className={ styles.InputList }>
+				<div className={ styles.InputsList }>
 					{ inputViews }
+				</div>
+				<div className={ styles.AddInputButton } onClick={ this.addInput }>
+					<h1 className={ styles.HorizontalAlign}>+</h1>
+					<h3 className={ styles.HorizontalAlign}>Agregar Sección</h3>
 				</div>
 			</div>
 		);

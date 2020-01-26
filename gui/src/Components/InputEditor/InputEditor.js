@@ -10,7 +10,8 @@ class inputEditor extends Component {
 
 		const data = props.data;
 
-		this.state = {
+		this.state = (data != null )?
+		{
 			label:	data.label,
 			type:	data.type,
 			weight: data.weight,
@@ -18,6 +19,14 @@ class inputEditor extends Component {
 			optionViews: [],
 			maxValue: data.maxValue,
 			minValue: data.minValue
+		}:{
+			label:	'',
+			type:	'Number',
+			weight: 0,
+			optionsData: [],
+			optionViews: [],
+			maxValue: null,
+			minValue: null
 		}
 	}
 
@@ -42,7 +51,7 @@ class inputEditor extends Component {
 
 		let optionViews = this.state.optionViews;
 
-		//optionViews.push(<OptionEditor data={ } delete={ this.deleteOption } />);
+		optionViews.push(<OptionEditor data={ null } delete={ this.deleteOption } />);
 
 		this.setState({ optionViews: optionViews });
 
@@ -60,35 +69,45 @@ class inputEditor extends Component {
 		return(
 			<div className={ styles.InputEditorContainer }>
 				<div className={ styles.InputEditorHeaders}>
-					
-					<label>Enunciado: </label>
-					<input className={ styles.InputEditorLabel } type='text' value={ this.state.label } 
-							onChange={ (e) => {this.onChangeHandler('label', e)} } />
-
-					<label>Tipo: </label>
-					<select className={ styles.InputEditorSelect } 
-							onChange={ (e) => {this.onChangeHandler('type', e)} }>
-						<option value='Number'>Númerica</option>
-						<option value='Text'>Textual</option>
-						<option value='Number Options'>Opción Múltiple Númerica</option>
-						<option value='Text Options'>Opción Múltiple Textual</option>
-					</select>
-
-					<label>Peso: </label>
-					<input className={ styles.InputEditorWeight } type='number' value={ this.state.weight }
-							onChange={ (e) => {this.onChangeHandler('weight', e)} } />
-
-					<label>Max: </label>
-					<input className={ styles.InputEditorLimit } type='number' value={ this.state.maxValue }
-							onChange={ (e) => {this.onChangeHandler('maxValue', e)} } />
-
-					<label>Min: </label>
-					<input className={ styles.InputEditorLimit } type='number' value={ this.state.minValue }
-							onChange={ (e) => {this.onChangeHandler('minValue', e)} } />
-
+	
+					<div className={ styles.InputEditorItem}>				
+						<label>Enunciado: </label>
+						<input className={ styles.InputEditorLabel } type='text' value={ this.state.label } 
+								onChange={ (e) => {this.onChangeHandler('label', e)} } />
+					</div>
+					<div className={ styles.InputEditorItem}>
+						<label>Tipo: </label>
+						<select className={ styles.InputEditorSelect } 
+								onChange={ (e) => {this.onChangeHandler('type', e)} }>
+							<option value='Number'>Númerica</option>
+							<option value='Text'>Textual</option>
+							<option value='Number Options'>Opción Múltiple Númerica</option>
+							<option value='Text Options'>Opción Múltiple Textual</option>
+						</select>
+					</div>
+					<div className={ styles.InputEditorItem}>
+						<label>Peso: </label>
+						<input className={ styles.InputEditorWeight } type='number' value={ this.state.weight }
+								onChange={ (e) => {this.onChangeHandler('weight', e)} } />
+					</div>
+					<div className={ styles.InputEditorItem}>
+						<label>Max: </label>
+						<input className={ styles.InputEditorLimit } type='number' value={ this.state.maxValue }
+								onChange={ (e) => {this.onChangeHandler('maxValue', e)} } />
+					</div>
+					<div className={ styles.InputEditorItem}>
+						<label>Min: </label>
+						<input className={ styles.InputEditorLimit } type='number' value={ this.state.minValue }
+								onChange={ (e) => {this.onChangeHandler('minValue', e)} } />
+					</div>
 				</div>
 				<div className={ styles.OptionList }>
+					{ (optionViews.length > 0 )? 'Opciones:':'' }
 					{ optionViews }
+				</div>
+				<div className={ styles.AddOptionButton } onClick={ this.addOption }>
+					<h1 className={ styles.HorizontalAlign}>+</h1>
+					<h3 className={ styles.HorizontalAlign}>Agregar Opción</h3>
 				</div>
 			</div>
 		);

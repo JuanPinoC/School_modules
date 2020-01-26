@@ -1,0 +1,64 @@
+
+.InputEditorContainer {
+	background-color: var(--grey);
+	border: solid var(--grey) 0.3em;
+	border-radius: 0.6em;
+	margin-bottom: 0.3em;
+	font-weight: bold;
+}
+
+.InputEditorHeaders {
+	padding: 1em;
+}
+
+.InputEditorItem {
+	width: 15em;
+	display: inline-block;
+	margin: 0.5em;
+}
+
+.InputEditorHeaders input {
+	margin-right: 3em;
+	border-style: none;
+	border-radius: 0.2em;
+	height: 1.6em;
+	padding: 0.2em 0.8em 0.2em 0.8em;
+}
+
+.InputEditorHeaders select {
+	border-radius: 0.2em;
+	padding: 0.2em 0.8em 0.2em 0.8em;
+}
+
+.AddOptionButton {
+	user-select: none;
+	margin: 1em;
+	border: solid var(--dark-green) 0.3em;
+	border-radius: 0.6em;
+	color: var(--dark-green);
+	text-align: center;
+	width: 50%;
+	transition-duration: 0.3s;
+}
+
+.HorizontalAlign {
+	display: inline-block;
+}
+
+.AddOptionButton h1 {
+	margin: 0em;
+}
+
+.AddOptionButton label {
+	font-weight: bold;
+}
+
+.AddOptionButton:hover {
+	margin: 1em;
+	border: solid var(--grey) 0.3em;
+	background-color: var(--green);
+	border-radius: 0.6em;
+	color: white;
+	text-align: center;
+	width: 50%;
+}
