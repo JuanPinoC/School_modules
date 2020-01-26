@@ -24,6 +24,8 @@ class subformEditor extends Component {
 			inputsData: [],
 			inputViews: []
 		}
+
+		this.deleteInput = this.deleteInput.bind(this);
 	}
 
 	onChangeHandler = (fieldName, e) => {
@@ -36,7 +38,8 @@ class subformEditor extends Component {
 		let inputViews = [];
 
 		inputsData.forEach( (e) => {
-			inputViews.push(<InputEditor data={e} delete={ this.deleteInput } />);			
+			const key = 'i' + Math.round(Math.random() * 1000);
+			inputViews.push(<InputEditor key={ key } data={e} delete={ () => { this.deleteInput( key ); } } />);			
 		});
 
 		this.setState({ inputViews: inputViews });
@@ -47,14 +50,23 @@ class subformEditor extends Component {
 
 		let inputViews = this.state.inputViews;
 
-		inputViews.push(<InputEditor data={ null } delete={ this.deleteInput } />);
+		const key = 'i' + Math.round(Math.random() * 1000);
+
+		inputViews.push(<InputEditor key={ key } data={ null } delete={ () => { this.deleteInput( key ); } } />);
 
 		this.setState({ inputViews: inputViews });
 
 	}
 
-	deleteInput = ( id ) => {
+	deleteInput = ( key ) => {
 		
+		let inputViews = this.state.inputViews;
+
+		const index = inputViews.findIndex( (e) => e.key === key );
+
+		inputViews.splice(index, 1);
+
+		this.setState({ inputViews: inputViews });
 	}
 
 	render () {
@@ -63,6 +75,7 @@ class subformEditor extends Component {
 
 		return (
 			<div className={ styles.SubformEditorContainer }>
+				<div className={ styles.removeItemButton } onClick={ this.props.delete }>X</div>
 				<div className={ styles.SubformEditorHeaders}>
 					<div className={ styles.SubformEditorItem}>
 						<label>Nombre de la sección: </label>
@@ -89,8 +102,9 @@ class subformEditor extends Component {
 				</div>
 				<div className={ styles.AddInputButton } onClick={ this.addInput }>
 					<h1 className={ styles.HorizontalAlign}>+</h1>
-					<h3 className={ styles.HorizontalAlign}>Agregar Sección</h3>
+					<h3 className={ styles.HorizontalAlign}>Agregar Pregunta</h3>
 				</div>
+				
 			</div>
 		);
 	}

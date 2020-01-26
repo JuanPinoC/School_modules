@@ -19,3 +19,57 @@
 	height: 1.6em;
 	padding: 0.2em 0.8em 0.2em 0.8em;
 }
+
+.ActionButtons {
+	position: relative;
+	float: right;
+}
+
+.removeItemButton,
+.MoveUpButton,
+.MoveDownButton {
+	display: inline-block;
+}
+
+.removeItemButton {
+	background-color: var(--dark-red);
+	border-radius: 0.6em;
+	font-weight: bolder;
+	user-select: none;
+	padding: 0.6em;
+	margin: 0.2em;
+	text-align: center;
+	transition-duration: 0.3s;
+}
+
+.removeItemButton:hover {
+	background-color: var(--red);
+	border-radius: 1em;
+}
+
+.MoveUpButton,
+.MoveDownButton {
+	user-select: none;
+	color: white;
+	background-color: var(--dark-yellow);
+	font-weight: bolder;
+	border-radius: 0.4em;
+	margin: 0.3em 0.2em 0.3em 0.2em;
+	transition-duration: 0.3s;
+}
+
+.MoveUpButton {
+	font-size: 1.5em;
+	padding: 0.1em 0.3em 0.3em 0.3em;
+}
+
+.MoveDownButton {
+	font-size: 1.3em;
+	padding: 0.3em 0.4em 0.4em 0.4em;
+}
+
+.MoveUpButton:hover,
+.MoveDownButton:hover {
+	background-color: var(--yellow);
+	border-radius: 1em;
+}

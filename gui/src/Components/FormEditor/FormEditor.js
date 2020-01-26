@@ -17,6 +17,8 @@ class formEditor extends Component {
 			subformsData: data.subforms,
 			subformViews: []
 		}
+
+		this.deleteSubform = this.deleteSubform.bind(this);
 	}
 
 	onChangeHandler = (fieldName, e) => {
@@ -29,7 +31,8 @@ class formEditor extends Component {
 		let subformViews = [];
 
 		subformsData.forEach( (e) => {
-			subformViews.push(<SubformEditor data={e} delete={ this.deleteSubform } />);			
+			const key = 'i' + Math.round(Math.random() * 1000);
+			subformViews.push(<SubformEditor key={ key } data={e} delete={ () => { this.deleteSubform( key ); } } />);			
 		});
 
 		this.setState({ subformViews: subformViews });
@@ -40,14 +43,22 @@ class formEditor extends Component {
 
 		let subformViews = this.state.subformViews;
 
-		subformViews.push(<SubformEditor data={ null } delete={ this.deleteSubform } />);
+		const key = 'i' + Math.round(Math.random() * 1000);
+
+		subformViews.push(<SubformEditor key={ key } data={ null } delete={ () => { this.deleteSubform( key ); } } />);
 
 		this.setState({ subformViews: subformViews });
 
 	}
 
-	deleteSubform = ( id ) => {
+	deleteSubform = ( key ) => {
+		let subformViews = this.state.subformViews;
 
+		const index = subformViews.findIndex( (e) => e.key === key );
+
+		subformViews.splice(index, 1);
+
+		this.setState({ subformViews: subformViews });
 	}
 
 	render () {

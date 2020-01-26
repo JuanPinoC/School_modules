@@ -28,6 +28,9 @@ class inputEditor extends Component {
 			maxValue: null,
 			minValue: null
 		}
+
+		this.moveOption = this.moveOption.bind(this);
+		this.deleteOption = this.deleteOption.bind(this);
 	}
 
 	onChangeHandler = (fieldName, e) => {
@@ -39,8 +42,9 @@ class inputEditor extends Component {
 		let optionsData = this.state.optionsData;
 		let optionViews = [];
 
-		optionsData.forEach( (e) => {
-			optionViews.push(<OptionEditor data={e} delete={ this.deleteOption } />);			
+		optionsData.forEach( (e, i) => {
+			const key = 'i' + Math.round(Math.random() * 1000);
+			optionViews.push(<OptionEditor key={ key } data={e} move={ (action) => { this.moveOption(action, key) } } delete={ () => { this.deleteOption( key ); } } />);			
 		});
 
 		this.setState({ optionViews: optionViews });
@@ -51,14 +55,51 @@ class inputEditor extends Component {
 
 		let optionViews = this.state.optionViews;
 
-		optionViews.push(<OptionEditor data={ null } delete={ this.deleteOption } />);
+		const key = 'i' + Math.round(Math.random() * 1000);
+
+		optionViews.push(<OptionEditor key={ key } data={ null } move={ (action) => { this.moveOption(action, key) } } delete={ () => { this.deleteOption( key ); } } />);
 
 		this.setState({ optionViews: optionViews });
 
 	}
 
-	deleteOption = ( id ) => {
-		
+	moveOption = ( action, key ) => {
+
+		let optionViews = this.state.optionViews;
+
+		const index = optionViews.findIndex( (e) => e.key === key );
+
+		console.log(action);
+
+		if(action === 'up' && index !== 0){
+			const x = optionViews[ index - 1];
+			const y = optionViews[ index ];
+
+			optionViews[ index - 1 ] = y;
+			optionViews[ index ] = x ;
+		}
+		else if( action === 'down' && index !== optionViews.length - 1 ){
+			const x = optionViews[ index + 1];
+			const y = optionViews[ index ];
+
+			optionViews[ index + 1 ] = y;
+			optionViews[ index ] = x ;
+		}
+
+		this.setState({ optionViews: optionViews });
+
+	}
+
+	deleteOption = ( key ) => {
+
+		let optionViews = this.state.optionViews;
+
+		const index = optionViews.findIndex( (e) => e.key === key );
+
+		optionViews.splice(index, 1);
+
+		this.setState({ optionViews: optionViews });
+
 	}
 
 
@@ -68,6 +109,7 @@ class inputEditor extends Component {
 		
 		return(
 			<div className={ styles.InputEditorContainer }>
+				<div className={ styles.removeItemButton } onClick={ this.props.delete }>X</div>
 				<div className={ styles.InputEditorHeaders}>
 	
 					<div className={ styles.InputEditorItem}>				
@@ -103,7 +145,9 @@ class inputEditor extends Component {
 				</div>
 				<div className={ styles.OptionList }>
 					{ (optionViews.length > 0 )? 'Opciones:':'' }
-					{ optionViews }
+					<div>
+						{ optionViews }
+					</div>
 				</div>
 				<div className={ styles.AddOptionButton } onClick={ this.addOption }>
 					<h1 className={ styles.HorizontalAlign}>+</h1>

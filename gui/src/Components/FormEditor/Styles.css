@@ -6,6 +6,8 @@
 	--dark-green: #008000;
 	--green: #228B22;
 	--grey: #D3D3D3;
+	--dark-yellow: #E5BC3B;
+	--yellow: #FFCC11;
 }
 
 .FormEditorContainer {
@@ -51,9 +53,9 @@
 .AddSubformButton {
 	user-select: none;
 	margin: 1em;
-	border: solid var(--red) 0.3em;
+	border: solid var(--green) 0.3em;
 	border-radius: 0.6em;
-	color: var(--red);
+	color: var(--green);
 	text-align: center;
 	width: 50%;
 	transition-duration: 0.3s;
@@ -78,5 +80,5 @@
 	color: white;
 	text-align: center;
 	width: 50%;
-	background-color: var(--red);
+	background-color: var(--green);
 }

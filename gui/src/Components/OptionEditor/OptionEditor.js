@@ -26,16 +26,21 @@ class optionEditor extends Component {
 
 		return(
 			<div className={ styles.OptionEditorContainer }>
-				<div className={ styles.OptionEditorItem}>				
+				<div className={ styles.OptionEditorItem }>				
 					<label>Nombre: </label>
 					<input className={ styles.OptionEditorLabel } type='text' value={ this.state.label }
 							onChange={ (e) => {this.onChangeHandler('label', e)} } />
 				</div>
-				<div className={ styles.OptionEditorItem}>
+				<div className={ styles.OptionEditorItem }>
 					<label>Valor: </label>
 					<input className={ styles.OptionEditorValue } type={(this.state.value >= 0)? 'number':'text' } value={ this.state.value }
 							onChange={ (e) => {this.onChangeHandler('value', e)} } />
-				</div>			
+				</div>
+				<div className={ styles.ActionButtons }>
+					<div className={ styles.MoveUpButton } onClick={ () => {this.props.move('up')} }>^</div>
+					<div className={ styles.MoveDownButton } onClick={ () => {this.props.move('down')} }>v</div>
+					<div className={ styles.removeItemButton } onClick={ this.props.delete }>X</div>
+				</div>
 			</div>
 		);
 
