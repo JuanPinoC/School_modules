@@ -10,14 +10,10 @@ class optionEditor extends Component {
 
 		const data = props.data;
 
-		this.state = ( data != null )?
-		{
-			label:	data.label,
-			value: data.value
-		}:{
-			label:	'',
-			value: 0
-		}
+		this.state = {
+			label: ( data != null )? data.label : '',
+			value: ( data != null )? data.value : 0
+		};
 	}
 
 	onChangeHandler = (fieldName, e) => {

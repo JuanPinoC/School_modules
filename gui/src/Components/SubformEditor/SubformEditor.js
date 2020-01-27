@@ -7,24 +7,61 @@ import ActionButtons from '../ActionButtons/ActionButtons';
 class subformEditor extends Component {
 
 	constructor (props) {
-	super(props);
+		super(props);
 
-	const data = props.data;
+		const data = props.data;
 
-		this.state = ( data != null )?
-		{
-			name: data.name,
-			weight: data.weight,
-			type: data.type,
-			inputsData: data.inputs,
-			inputViews: []
-		}:{
-			name: '',
-			weight: 0,
-			type: 'sum',
-			inputsData: [],
-			inputViews: []
-		}
+		const inputTypes = [
+			{
+				value: 'Number',
+				label: 'Númerica',
+				config: {
+						showWeight: true,
+						showOptions: false,
+						showMaxValue: true,
+						showMinValue: true
+				}
+			},
+			{
+				value: 'Text',
+				label: 'Textual',
+				config: {
+						showWeight: false,
+						showOptions: false,
+						showMaxValue: true,
+						showMinValue: true
+				}
+			},
+			{
+				value: 'Number Options',
+				label: 'Opción Múltiple Númerica',
+				config: {
+						showWeight: true,
+						showOptions: true,
+						showMaxValue: false,
+						showMinValue: false
+				}
+			},
+			{
+				value: 'Text Options',
+				label: 'Opción Múltiple Textual',
+				config: {
+						showWeight: false,
+						showOptions: true,
+						showMaxValue: false,
+						showMinValue: false
+				}
+			}
+		];
+
+		this.state = {
+			name: ( data != null )? data.name : '',
+			weight: ( data != null )? data.weight : 0,
+			type: ( data != null )? data.type : 'sum',
+			inputsData: ( data != null )? data.inputs : [],
+			inputViews: [],
+			inputTypes: inputTypes
+		};
 
 		this.moveInput = this.moveInput.bind(this);
 		this.deleteInput = this.deleteInput.bind(this);
@@ -50,7 +87,8 @@ class subformEditor extends Component {
 
 		this.setState( (state, props) => ({ 
 			inputViews: [	...state.inputViews, 
-							(<InputEditor key={ key } data={ data } 
+							(<InputEditor key={ key } data={ data }
+								inputTypes={ this.state.inputTypes } 
 								move={ (action) => { this.moveInput(action, key) } } 
 								delete={ () => { this.deleteInput( key ); } } />)	]
 		}));

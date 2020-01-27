@@ -41,18 +41,6 @@
 	transition-duration: 0.3s;
 }
 
-.HorizontalAlign {
-	display: inline-block;
-}
-
-.AddOptionButton h1 {
-	margin: 0em;
-}
-
-.AddOptionButton label {
-	font-weight: bold;
-}
-
 .AddOptionButton:hover {
 	margin: 1em;
 	border: solid var(--grey) 0.3em;
@@ -61,6 +49,14 @@
 	color: white;
 	text-align: center;
 	width: 50%;
+}
+
+.HorizontalAlign {
+	display: inline-block;
+}
+
+.AddOptionButton h1 {
+	margin: 0em;
 }
 
 .OptionEditorItem input {

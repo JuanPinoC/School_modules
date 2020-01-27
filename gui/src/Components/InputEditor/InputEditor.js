@@ -11,31 +11,36 @@ class inputEditor extends Component {
 
 		const data = props.data;
 
-		this.state = (data != null )?
-		{
-			label:	data.label,
-			type:	data.type,
-			weight: data.weight,
-			optionsData: data.options,
+		this.state = {
+			label:	(data != null )? data.label : '',
+			type:	(data != null )? data.type : 'Number',
+			weight: (data != null )? data.weight : 0,
+			optionsData: (data != null )? data.options : [],
 			optionViews: [],
-			maxValue: data.maxValue,
-			minValue: data.minValue
-		}:{
-			label:	'',
-			type:	'Number',
-			weight: 0,
-			optionsData: [],
-			optionViews: [],
-			maxValue: null,
-			minValue: null
-		}
+			maxValue: (data != null )? data.maxValue : 0,
+			minValue: (data != null )? data.minValue : 0,
+			showItemsConfig: this.getShowItemsConfig( (data != null )? data.type : 'Number' )
+		};
 
 		this.moveOption = this.moveOption.bind(this);
 		this.deleteOption = this.deleteOption.bind(this);
 	}
 
 	onChangeHandler = (fieldName, e) => {
+
 		this.setState({ [fieldName]: e.target.value});
+
+		if ( fieldName === 'type') {
+			this.setState({ showItemsConfig: this.getShowItemsConfig( e.target.value ) });
+		}
+	}
+
+	getShowItemsConfig = ( value ) => {
+
+		const inputTypes = this.props.inputTypes;
+		const element = inputTypes.find( e => e.value === value );
+		return element.config;
+
 	}
 
 	componentDidMount () {
@@ -45,7 +50,7 @@ class inputEditor extends Component {
 		optionsData.forEach( (e) => {
 			this.addOption( e );
 		});
-
+		
 	}
 
 	addOption = ( data = null ) => {
@@ -101,8 +106,11 @@ class inputEditor extends Component {
 
 	render(){
 
-		const optionViews = this.state.optionViews || (<div>Sin opciones</div>); 
-		
+		const inputTypes = this.props.inputTypes;
+		const inputType = this.state.type;
+		const optionViews = this.state.optionViews;
+		const showItemsConfig = this.state.showItemsConfig;
+
 		return(
 			<div className={ styles.InputEditorContainer }>
 				<ActionButtons move={ this.props.move } delete={ this.props.delete } />
@@ -116,39 +124,57 @@ class inputEditor extends Component {
 					<div className={ styles.InputEditorItem}>
 						<label>Tipo: </label>
 						<select className={ styles.InputEditorSelect } 
-								onChange={ (e) => {this.onChangeHandler('type', e)} }>
-							<option value='Number'>Númerica</option>
-							<option value='Text'>Textual</option>
-							<option value='Number Options'>Opción Múltiple Númerica</option>
-							<option value='Text Options'>Opción Múltiple Textual</option>
+								onChange={ (e) => {this.onChangeHandler('type', e)} }
+								value={ inputType }>
+							{
+								inputTypes.map( ( e ) => {
+									return ( <option value={ e.value } >{ e.label }</option> )
+								})
+							}
 						</select>
 					</div>
-					<div className={ styles.InputEditorItem}>
-						<label>Peso: </label>
-						<input className={ styles.InputEditorWeight } type='number' value={ this.state.weight }
-								onChange={ (e) => {this.onChangeHandler('weight', e)} } />
-					</div>
-					<div className={ styles.InputEditorItem}>
-						<label>Max: </label>
-						<input className={ styles.InputEditorLimit } type='number' value={ this.state.maxValue }
-								onChange={ (e) => {this.onChangeHandler('maxValue', e)} } />
-					</div>
-					<div className={ styles.InputEditorItem}>
-						<label>Min: </label>
-						<input className={ styles.InputEditorLimit } type='number' value={ this.state.minValue }
-								onChange={ (e) => {this.onChangeHandler('minValue', e)} } />
-					</div>
+					
+					{	( showItemsConfig.showWeight )?(
+						<div className={ styles.InputEditorItem}>
+							<label>Peso: </label>
+							<input className={ styles.InputEditorWeight } type='number' value={ this.state.weight }
+									onChange={ (e) => {this.onChangeHandler('weight', e)} } />
+						</div>
+						):('')	}
+					
+					{	( showItemsConfig.showMaxValue )?(
+						<div className={ styles.InputEditorItem }>
+							<label>Max: </label>
+							<input className={ styles.InputEditorLimit } type='number' value={ this.state.maxValue }
+									onChange={ (e) => {this.onChangeHandler('maxValue', e)} } />
+						</div>
+						):('')	}
+
+					{	( showItemsConfig.showMinValue )?(
+						<div className={ styles.InputEditorItem}>
+							<label>Min: </label>
+							<input className={ styles.InputEditorLimit } type='number' value={ this.state.minValue }
+									onChange={ (e) => {this.onChangeHandler('minValue', e)} } />
+						</div>
+						):('')	}
 				</div>
-				<div className={ styles.OptionList }>
-					{ (optionViews.length > 0 )? 'Opciones:':'' }
-					<div>
-						{ optionViews }
+
+				{	( showItemsConfig.showOptions )?(
+					<div className={ styles.OptionList }>
+						{ (optionViews.length > 0 )? 'Opciones:':'' }
+						<div>
+							{ optionViews }
+						</div>
 					</div>
-				</div>
-				<div className={ styles.AddOptionButton } onClick={ this.addOption }>
-					<h1 className={ styles.HorizontalAlign}>+</h1>
-					<h3 className={ styles.HorizontalAlign}>Agregar Opción</h3>
-				</div>
+				):('')	}
+
+				{	( showItemsConfig.showOptions )?(
+					<div className={ styles.AddOptionButton } onClick={ this.addOption }>
+						<h1 className={ styles.HorizontalAlign}>+</h1>
+						<h3 className={ styles.HorizontalAlign}>Agregar Opción</h3>
+					</div>
+				):('')	}
+
 			</div>
 		);
 	}

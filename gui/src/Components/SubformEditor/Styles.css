@@ -49,18 +49,6 @@
 	transition-duration: 0.3s;
 }
 
-.HorizontalAlign {
-	display: inline-block;
-}
-
-.AddSubformButton h1 {
-	margin: 0em;
-}
-
-.AddSubformButton label {
-	font-weight: bold;
-}
-
 .AddInputButton:hover {
 	margin: 1em;
 	border: solid white 0.3em;
@@ -69,6 +57,14 @@
 	text-align: center;
 	width: 50%;
 	background-color: var(--green);
+}
+
+.HorizontalAlign {
+	display: inline-block;
+}
+
+.AddInputButton h1 {
+	margin: 0em;
 }
 
 .OptionEditorItem input {
