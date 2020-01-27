@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import styles from './Styles.css';
 
 import OptionEditor from '../OptionEditor/OptionEditor';
+import ActionButtons from '../ActionButtons/ActionButtons';
 
 class inputEditor extends Component {
 
@@ -40,26 +41,23 @@ class inputEditor extends Component {
 	componentDidMount () {
 
 		let optionsData = this.state.optionsData;
-		let optionViews = [];
 
-		optionsData.forEach( (e, i) => {
-			const key = 'i' + Math.round(Math.random() * 1000);
-			optionViews.push(<OptionEditor key={ key } data={e} move={ (action) => { this.moveOption(action, key) } } delete={ () => { this.deleteOption( key ); } } />);			
+		optionsData.forEach( (e) => {
+			this.addOption( e );
 		});
-
-		this.setState({ optionViews: optionViews });
 
 	}
 
-	addOption = () => {
-
-		let optionViews = this.state.optionViews;
+	addOption = ( data = null ) => {
 
 		const key = 'i' + Math.round(Math.random() * 1000);
 
-		optionViews.push(<OptionEditor key={ key } data={ null } move={ (action) => { this.moveOption(action, key) } } delete={ () => { this.deleteOption( key ); } } />);
-
-		this.setState({ optionViews: optionViews });
+		this.setState( (state, props) => ({ 
+			optionViews: [	...state.optionViews, 
+							(<OptionEditor key={ key } data={ data } 
+								move={ (action) => { this.moveOption(action, key) } } 
+								delete={ () => { this.deleteOption( key ) } } />)	]
+		}));
 
 	}
 
@@ -68,8 +66,6 @@ class inputEditor extends Component {
 		let optionViews = this.state.optionViews;
 
 		const index = optionViews.findIndex( (e) => e.key === key );
-
-		console.log(action);
 
 		if(action === 'up' && index !== 0){
 			const x = optionViews[ index - 1];
@@ -109,7 +105,7 @@ class inputEditor extends Component {
 		
 		return(
 			<div className={ styles.InputEditorContainer }>
-				<div className={ styles.removeItemButton } onClick={ this.props.delete }>X</div>
+				<ActionButtons move={ this.props.move } delete={ this.props.delete } />
 				<div className={ styles.InputEditorHeaders}>
 	
 					<div className={ styles.InputEditorItem}>				

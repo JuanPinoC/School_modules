@@ -17,7 +17,7 @@ class formEditor extends Component {
 			subformsData: data.subforms,
 			subformViews: []
 		}
-
+		this.moveSubform = this.moveSubform.bind(this);
 		this.deleteSubform = this.deleteSubform.bind(this);
 	}
 
@@ -28,24 +28,46 @@ class formEditor extends Component {
 	componentDidMount () {
 
 		let subformsData = this.state.subformsData;
-		let subformViews = [];
 
 		subformsData.forEach( (e) => {
-			const key = 'i' + Math.round(Math.random() * 1000);
-			subformViews.push(<SubformEditor key={ key } data={e} delete={ () => { this.deleteSubform( key ); } } />);			
+			this.addSubform( e );
 		});
-
-		this.setState({ subformViews: subformViews });
 
 	}
 
-	addSubform = () => {
-
-		let subformViews = this.state.subformViews;
+	addSubform = ( data = null ) => {
 
 		const key = 'i' + Math.round(Math.random() * 1000);
 
-		subformViews.push(<SubformEditor key={ key } data={ null } delete={ () => { this.deleteSubform( key ); } } />);
+		this.setState( (state, props) => ({ 
+			subformViews: [	...state.subformViews, 
+							(<SubformEditor key={ key } data={ data } 
+								move={ (action) => { this.moveSubform(action, key) } } 
+								delete={ () => { this.deleteSubform( key ); } } />)	]
+		}));
+
+	}
+
+	moveSubform = ( action, key ) => {
+
+		let subformViews = this.state.subformViews;
+
+		const index = subformViews.findIndex( (e) => e.key === key );
+
+		if(action === 'up' && index !== 0){
+			const x = subformViews[ index - 1];
+			const y = subformViews[ index ];
+
+			subformViews[ index - 1 ] = y;
+			subformViews[ index ] = x ;
+		}
+		else if( action === 'down' && index !== subformViews.length - 1 ){
+			const x = subformViews[ index + 1];
+			const y = subformViews[ index ];
+
+			subformViews[ index + 1 ] = y;
+			subformViews[ index ] = x ;
+		}
 
 		this.setState({ subformViews: subformViews });
 

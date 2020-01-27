@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import styles from './Styles.css';
 
 import InputEditor from '../InputEditor/InputEditor';
+import ActionButtons from '../ActionButtons/ActionButtons';
 
 class subformEditor extends Component {
 
@@ -25,6 +26,7 @@ class subformEditor extends Component {
 			inputViews: []
 		}
 
+		this.moveInput = this.moveInput.bind(this);
 		this.deleteInput = this.deleteInput.bind(this);
 	}
 
@@ -35,24 +37,46 @@ class subformEditor extends Component {
 	componentDidMount () {
 
 		let inputsData = this.state.inputsData;
-		let inputViews = [];
 
 		inputsData.forEach( (e) => {
-			const key = 'i' + Math.round(Math.random() * 1000);
-			inputViews.push(<InputEditor key={ key } data={e} delete={ () => { this.deleteInput( key ); } } />);			
+			this.addInput( e );			
 		});
-
-		this.setState({ inputViews: inputViews });
 
 	}
 
-	addInput = () => {
-
-		let inputViews = this.state.inputViews;
+	addInput = ( data = null ) => {
 
 		const key = 'i' + Math.round(Math.random() * 1000);
 
-		inputViews.push(<InputEditor key={ key } data={ null } delete={ () => { this.deleteInput( key ); } } />);
+		this.setState( (state, props) => ({ 
+			inputViews: [	...state.inputViews, 
+							(<InputEditor key={ key } data={ data } 
+								move={ (action) => { this.moveInput(action, key) } } 
+								delete={ () => { this.deleteInput( key ); } } />)	]
+		}));
+
+	}
+
+	moveInput = ( action, key ) => {
+
+		let inputViews = this.state.inputViews;
+
+		const index = inputViews.findIndex( (e) => e.key === key );
+
+		if(action === 'up' && index !== 0){
+			const x = inputViews[ index - 1];
+			const y = inputViews[ index ];
+
+			inputViews[ index - 1 ] = y;
+			inputViews[ index ] = x ;
+		}
+		else if( action === 'down' && index !== inputViews.length - 1 ){
+			const x = inputViews[ index + 1];
+			const y = inputViews[ index ];
+
+			inputViews[ index + 1 ] = y;
+			inputViews[ index ] = x ;
+		}
 
 		this.setState({ inputViews: inputViews });
 
@@ -75,7 +99,7 @@ class subformEditor extends Component {
 
 		return (
 			<div className={ styles.SubformEditorContainer }>
-				<div className={ styles.removeItemButton } onClick={ this.props.delete }>X</div>
+				<ActionButtons move={ this.props.move } delete={ this.props.delete } />
 				<div className={ styles.SubformEditorHeaders}>
 					<div className={ styles.SubformEditorItem}>
 						<label>Nombre de la sección: </label>

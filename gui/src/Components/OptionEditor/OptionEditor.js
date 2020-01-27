@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
 import styles from './Styles.css';
 
+import ActionButtons from '../ActionButtons/ActionButtons';
+
 class optionEditor extends Component {
 
 	constructor(props){
@@ -36,11 +38,7 @@ class optionEditor extends Component {
 					<input className={ styles.OptionEditorValue } type={(this.state.value >= 0)? 'number':'text' } value={ this.state.value }
 							onChange={ (e) => {this.onChangeHandler('value', e)} } />
 				</div>
-				<div className={ styles.ActionButtons }>
-					<div className={ styles.MoveUpButton } onClick={ () => {this.props.move('up')} }>^</div>
-					<div className={ styles.MoveDownButton } onClick={ () => {this.props.move('down')} }>v</div>
-					<div className={ styles.removeItemButton } onClick={ this.props.delete }>X</div>
-				</div>
+				<ActionButtons move={ this.props.move } delete={ this.props.delete } />
 			</div>
 		);
 

@@ -70,22 +70,3 @@
 	height: 1.6em;
 	padding: 0.2em 0.8em 0.2em 0.8em;
 }
-
-.removeItemButton {
-	color: white;
-	background-color: var(--dark-red);
-	border-radius: 0.6em;
-	font-weight: bolder;
-	user-select: none;
-	position: relative;
-	float: right;
-	padding: 0.6em;
-	margin: 0.2em;
-	text-align: center;
-	transition-duration: 0.3s;
-}
-
-.removeItemButton:hover {
-	background-color: var(--red);
-	border-radius: 1em;
-}
