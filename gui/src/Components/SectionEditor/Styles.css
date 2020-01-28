@@ -1,12 +1,12 @@
 
-.SubformEditorContainer {
+.SectionEditorContainer {
 	background-color: white;
 	border: solid var(--dark-red) 0.3em;
 	border-radius: 0.6em;
 	margin-bottom: 0.3em;
 }
 
-.SubformEditorHeaders {
+.SectionEditorHeaders {
 	background-color: var(--red);
 	font-weight: bold;
 	color: white;
@@ -15,13 +15,13 @@
 	border-bottom: solid var(--dark-red) 0.3em ;
 }
 
-.SubformEditorItem {
+.SectionEditorItem {
 	width: 15em;
 	display: inline-block;
 	margin: 0.5em;
 }
 
-.SubformEditorHeaders input {
+.SectionEditorHeaders input {
 	margin-right: 3em;
 	border-style: none;
 	border-radius: 0.2em;
@@ -29,7 +29,7 @@
 	padding: 0.2em 0.8em 0.2em 0.8em;
 }
 
-.SubformEditorHeaders select {
+.SectionEditorHeaders select {
 	border-radius: 0.2em;
 	padding: 0.2em 0.8em 0.2em 0.8em;
 }

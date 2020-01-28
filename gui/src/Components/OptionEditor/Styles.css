@@ -2,20 +2,22 @@
 	background-color: var(--grey);
 	border: solid white 0.2em;
 	border-radius: 0.6em;
-	margin: 0.3em;
+	margin: 0.25em;
 	color: white;
+	padding: 0em;
 }
 
 .OptionEditorItem {
-	width: 15em;
+	width: 25%;
 	display: inline-block;
-	margin: 0.5em;
+	margin: 0.5em 0.2em 0.2em 0.5em;
+	padding: 0.5em;
 }
 
 .OptionEditorItem input {
-	margin-right: 2em;
 	border-style: none;
 	border-radius: 0.2em;
 	height: 1.6em;
 	padding: 0.2em 0.8em 0.2em 0.8em;
+	width: 80%;
 }

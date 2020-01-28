@@ -1,9 +1,11 @@
 const mongoose = require('mongoose');
 
-const ItemSchema = new Schema({ 
-					input: { type: [ mongoose.Schema.Types.ObjectId ], ref: 'Input', required: true },
+const ItemSchema = 
+				new Schema({ 
+					input: {	type: [ mongoose.Schema.Types.ObjectId ], 
+								ref: 'Input', required: true },
 					answerString: { type: String, required: false },
-					answerNumber: { type: String, required: false }
+					answerNumber: { type: Number, required: false }
 				});
 
 const recordSchema = mongoose.Schema({

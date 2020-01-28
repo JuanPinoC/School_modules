@@ -1,13 +1,12 @@
 const moongose = require('mongoose');
 
 const Form = require('../models/form');
-const Subform = require('../models/subform');
+const Section = require('../models/section');
 const Input = require('../models/input');
 
 module.exports = {
 
 	show: (req,res,next) => {
-
 		Form.find()
 			.select('name type weight')
 			.exec()
@@ -32,7 +31,6 @@ module.exports = {
 					error:err
 				});
 			});
-
 	},
 	create: (req,res,next) => {
 

@@ -11,7 +11,7 @@ function App() {
 		name: 'Formulario 1',
 		type: 'Soft Abilities',
 		weight: 100,
-		subforms: [
+		sections: [
 			{
 				name: 'Seccion 1',
 				type: 'sum',
@@ -45,11 +45,31 @@ function App() {
 						type:	'Number Options',
 						weight: 100,
 						options: [ 
-							{ label: "Siempre" , value: 20 },
-							{ label: "Casi siempre" , value: 15 },
-							{ label: "Normalmente" , value: 10 },
-							{ label: "A veces" , value: 5 },
-							{ label: "Nunca" , value: 0 }
+							{
+								label: "Siempre", 
+								numberValue: 20,
+								stringValue: ''
+							},
+							{
+								label: "Casi siempre",
+								numberValue: 15,
+								stringValue: '' 
+							},
+							{
+								label: "Normalmente",
+								numberValue: 10,
+								stringValue: '' 
+							},
+							{
+								label: "A veces",
+								numberValue: 5,
+								stringValue: ''
+							},
+							{
+								label: "Nunca",
+								numberValue: 0,
+								stringValue: '' 
+							}
 						],
 						maxValue: null,
 						minValue: null
@@ -59,8 +79,16 @@ function App() {
 						type:	'Text Options',
 						weight: 0,
 						options: [ 
-							{ label: "Sí" , value: "Sí" },
-							{ label: "No" , value: "No" }
+							{
+								label: "Sí",
+								numberValue: 0,
+								stringValue: "Sí"
+							},
+							{
+								label: "No",
+								numberValue: 0,
+								stringValue: "No"
+							}
 						],
 						maxValue: null,
 						minValue: null

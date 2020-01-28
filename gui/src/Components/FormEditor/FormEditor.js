@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import styles from './Styles.css';
 
-import SubformEditor from '../SubformEditor/SubformEditor';
+import SectionEditor from '../SectionEditor/SectionEditor';
 
 class formEditor extends Component {
 
@@ -14,11 +14,11 @@ class formEditor extends Component {
 			name: data.name,
 			weight: data.weight,
 			type: data.type,
-			subformsData: data.subforms,
-			subformViews: []
+			sectionsData: data.sections,
+			sectionViews: []
 		}
-		this.moveSubform = this.moveSubform.bind(this);
-		this.deleteSubform = this.deleteSubform.bind(this);
+		this.moveSection = this.moveSection.bind(this);
+		this.deleteSection = this.deleteSection.bind(this);
 	}
 
 	onChangeHandler = (fieldName, e) => {
@@ -27,65 +27,65 @@ class formEditor extends Component {
 
 	componentDidMount () {
 
-		let subformsData = this.state.subformsData;
+		let sectionsData = this.state.sectionsData;
 
-		subformsData.forEach( (e) => {
-			this.addSubform( e );
+		sectionsData.forEach( (e) => {
+			this.addSection( e );
 		});
 
 	}
 
-	addSubform = ( data = null ) => {
+	addSection = ( data = null ) => {
 
 		const key = 'i' + Math.round(Math.random() * 1000);
 
 		this.setState( (state, props) => ({ 
-			subformViews: [	...state.subformViews, 
-							(<SubformEditor key={ key } data={ data } 
-								move={ (action) => { this.moveSubform(action, key) } } 
-								delete={ () => { this.deleteSubform( key ); } } />)	]
+			sectionViews: [	...state.sectionViews, 
+							(<SectionEditor key={ key } data={ data } 
+								move={ (action) => { this.moveSection(action, key) } } 
+								delete={ () => { this.deleteSection( key ); } } />)	]
 		}));
 
 	}
 
-	moveSubform = ( action, key ) => {
+	moveSection = ( action, key ) => {
 
-		let subformViews = this.state.subformViews;
+		let sectionViews = this.state.sectionViews;
 
-		const index = subformViews.findIndex( (e) => e.key === key );
+		const index = sectionViews.findIndex( (e) => e.key === key );
 
 		if(action === 'up' && index !== 0){
-			const x = subformViews[ index - 1];
-			const y = subformViews[ index ];
+			const x = sectionViews[ index - 1];
+			const y = sectionViews[ index ];
 
-			subformViews[ index - 1 ] = y;
-			subformViews[ index ] = x ;
+			sectionViews[ index - 1 ] = y;
+			sectionViews[ index ] = x ;
 		}
-		else if( action === 'down' && index !== subformViews.length - 1 ){
-			const x = subformViews[ index + 1];
-			const y = subformViews[ index ];
+		else if( action === 'down' && index !== sectionViews.length - 1 ){
+			const x = sectionViews[ index + 1];
+			const y = sectionViews[ index ];
 
-			subformViews[ index + 1 ] = y;
-			subformViews[ index ] = x ;
+			sectionViews[ index + 1 ] = y;
+			sectionViews[ index ] = x ;
 		}
 
-		this.setState({ subformViews: subformViews });
+		this.setState({ sectionViews: sectionViews });
 
 	}
 
-	deleteSubform = ( key ) => {
-		let subformViews = this.state.subformViews;
+	deleteSection = ( key ) => {
+		let sectionViews = this.state.sectionViews;
 
-		const index = subformViews.findIndex( (e) => e.key === key );
+		const index = sectionViews.findIndex( (e) => e.key === key );
 
-		subformViews.splice(index, 1);
+		sectionViews.splice(index, 1);
 
-		this.setState({ subformViews: subformViews });
+		this.setState({ sectionViews: sectionViews });
 	}
 
 	render () {
 
-		const subformViews = this.state.subformViews || (<div>Vacío</div>); 
+		const sectionViews = this.state.sectionViews || (<div>Vacío</div>); 
 
 		return (
 			<div className={ styles.FormEditorContainer }>
@@ -110,10 +110,10 @@ class formEditor extends Component {
 						</select>
 					</div>
 				</div>
-				<div className={ styles.SubformsList }>
-					{ subformViews }
+				<div className={ styles.SectionsList }>
+					{ sectionViews }
 				</div>
-				<div className={ styles.AddSubformButton } onClick={ this.addSubform }>
+				<div className={ styles.AddSectionButton } onClick={ this.addSection }>
 					<h1 className={ styles.HorizontalAlign}>+</h1>
 					<h3 className={ styles.HorizontalAlign}>Agregar Sección</h3>
 				</div>

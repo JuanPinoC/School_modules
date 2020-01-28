@@ -4,7 +4,7 @@ import styles from './Styles.css';
 import InputEditor from '../InputEditor/InputEditor';
 import ActionButtons from '../ActionButtons/ActionButtons';
 
-class subformEditor extends Component {
+class sectionEditor extends Component {
 
 	constructor (props) {
 		super(props);
@@ -136,22 +136,22 @@ class subformEditor extends Component {
 		const inputViews = this.state.inputViews || (<div>Vacío</div>); 
 
 		return (
-			<div className={ styles.SubformEditorContainer }>
+			<div className={ styles.SectionEditorContainer }>
 				<ActionButtons move={ this.props.move } delete={ this.props.delete } />
-				<div className={ styles.SubformEditorHeaders}>
-					<div className={ styles.SubformEditorItem}>
+				<div className={ styles.SectionEditorHeaders}>
+					<div className={ styles.SectionEditorItem}>
 						<label>Nombre de la sección: </label>
-						<input className={ styles.SubformEditorName } type='text' value={ this.state.name } 
+						<input className={ styles.SectionEditorName } type='text' value={ this.state.name } 
 								onChange={ (e) => {this.onChangeHandler('name', e)} } />
 					</div>
-					<div className={ styles.SubformEditorItem}>
+					<div className={ styles.SectionEditorItem}>
 						<label>Peso: </label>
-						<input className={ styles.SubformEditorWeight } type='number' value={ this.state.weight }
+						<input className={ styles.SectionEditorWeight } type='number' value={ this.state.weight }
 								onChange={ (e) => {this.onChangeHandler('weight', e)} } />
 					</div>
-					<div className={ styles.SubformEditorItem}>
+					<div className={ styles.SectionEditorItem}>
 						<label>Acción: </label>
-						<select className={ styles.SubformEditorSelect } 
+						<select className={ styles.SectionEditorSelect } 
 								onChange={ (e) => {this.onChangeHandler('type', e)} }>
 							<option value='sum'>Sumar</option>
 							<option value='avg'>Promediar</option>
@@ -172,4 +172,4 @@ class subformEditor extends Component {
 	}
 }
 
-export default subformEditor;
+export default sectionEditor;
