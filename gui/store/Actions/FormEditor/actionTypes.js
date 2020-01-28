@@ -1,1 +1,0 @@
-export const UPDATE_SECTIONS = 'UPDATE_SECTIONS';

@@ -55,11 +55,11 @@ class inputEditor extends Component {
 
 	addOption = ( data = null ) => {
 
-		const key = 'i' + Math.round(Math.random() * 1000);
+		const key = 'o' + Math.round(Math.random() * 1000);
 
 		this.setState( (state, props) => ({ 
 			optionViews: [	...state.optionViews, 
-							(<OptionEditor key={ key } data={ data } 
+							(<OptionEditor id={ key } key={ key } data={ data } parent={ this.id }
 								move={ (action) => { this.moveOption(action, key) } } 
 								delete={ () => { this.deleteOption( key ) } } />)	]
 		}));

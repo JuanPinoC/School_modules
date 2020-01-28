@@ -37,11 +37,11 @@ class formEditor extends Component {
 
 	addSection = ( data = null ) => {
 
-		const key = 'i' + Math.round(Math.random() * 1000);
+		const key = 's' + Math.round(Math.random() * 1000);
 
 		this.setState( (state, props) => ({ 
 			sectionViews: [	...state.sectionViews, 
-							(<SectionEditor key={ key } data={ data } 
+							(<SectionEditor id={ key } key={ key } data={ data } 
 								move={ (action) => { this.moveSection(action, key) } } 
 								delete={ () => { this.deleteSection( key ); } } />)	]
 		}));

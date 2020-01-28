@@ -87,7 +87,7 @@ class sectionEditor extends Component {
 
 		this.setState( (state, props) => ({ 
 			inputViews: [	...state.inputViews, 
-							(<InputEditor key={ key } data={ data }
+							(<InputEditor id={ key } key={ key } data={ data } parent={ this.props.id }
 								inputTypes={ this.state.inputTypes } 
 								move={ (action) => { this.moveInput(action, key) } } 
 								delete={ () => { this.deleteInput( key ); } } />)	]

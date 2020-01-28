@@ -1,1 +1,0 @@
-export { updateSections } from './actions';
