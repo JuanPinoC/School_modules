@@ -1,4 +1,10 @@
-import {} from '../Actions/FormEditor/actionTypes';
+import {
+
+		CREATE_SECTION, UPDATE_SECTION, DELETE_SECTION, MOVE_SECTION,
+		CREATE_INPUT, UPDATE_INPUT, DELETE_INPUT, MOVE_INPUT,
+		UPDATE_OPTIONS
+
+} from '../Actions/FormEditor/actionTypes';
 
 const formInitialState = {
 			sections: []
@@ -26,6 +32,10 @@ const reducer = ( oldState = formInitialState, action) => {
 
 	let state = {};
 	let sections = oldState.sections;
+	
+	let parentIndex = ( typeof action.parent !== 'undefined' )? sections.findIndex( (e) => e.key === action.parent ) : null;
+	let parentInputs = ( typeof action.parent !== 'undefined' )? sections[ parentIndex ].inputs : [];
+	let index = ( typeof action.parent !== 'undefined' )? parentInputs.findIndex( (e) => e.key === action.key ) : sections.findIndex( (e) => e.key === action.key ) ;
 
 	switch ( action.type ) {
 
@@ -38,21 +48,17 @@ const reducer = ( oldState = formInitialState, action) => {
 
 		case UPDATE_SECTION:
 
-			const index = sections.findIndex( (e) => e.key === action.key );
 			sections[ index ] = { ...sections[ index ], name: action.name, type: action.type, weight: action.weight  };
 
 			break;
 
 		case DELETE_SECTION:
-
-			const index = sections.findIndex( (e) => e.key === action.key );
+		
 			sections.splice(index, 1);
 
 			break;
 
 		case MOVE_SECTION:
-
-			const index = sections.findIndex( (e) => e.key === key );
 
 			if(action.direction === 'up' && index !== 0){
 				const x = sections[ index - 1];
@@ -75,16 +81,11 @@ const reducer = ( oldState = formInitialState, action) => {
 		//INPUT
 		case CREATE_INPUT:
 
-			const parentIndex = sections.findIndex( (e) => e.key === action.parent );
 			sections[ parentIndex ].inputs = [...sections[ parentIndex ].inputs, { ...inputInitialState, key: action.key } ];
 
 			break;
 
 		case UPDATE_INPUT:
-
-			const parentIndex = sections.findIndex( (e) => e.key === action.parent );
-			const parentInputs = sections[ parentIndex ].inputs;
-			const index = parentInputs.findIndex( (e) => e.key === action.key );
 
 			sections[parentIndex].inputs[index] = { 
 													...sections[parentIndex].inputs[index],
@@ -99,19 +100,11 @@ const reducer = ( oldState = formInitialState, action) => {
 
 		case DELETE_INPUT:
 
-			const parentIndex = sections.findIndex( (e) => e.key === action.parent );
-			const parentInputs = sections[ parentIndex ].inputs;
-			const index = parentInputs.findIndex( (e) => e.key === action.key );
-
 			sections[parentIndex].inputs.splice(index, 1);
 
 			break;
 
 		case MOVE_INPUT:
-
-			const parentIndex = sections.findIndex( (e) => e.key === action.parent );
-			const parentInputs = sections[ parentIndex ].inputs;
-			const index = parentInputs.findIndex( (e) => e.key === action.key );
 
 			if(action.direction === 'up' && index !== 0){
 				const x = sections[parentIndex].inputs[ index - 1];
@@ -134,10 +127,6 @@ const reducer = ( oldState = formInitialState, action) => {
 
 		//OPTION
 		case UPDATE_OPTIONS:
-
-			const parentIndex = sections.findIndex( (e) => e.key === action.parent );
-			const parentInputs = sections[ parentIndex ].inputs;
-			const index = parentInputs.findIndex( (e) => e.key === action.key );
 
 			sections[parentIndex].inputs[ index ].options = action.options;
 
