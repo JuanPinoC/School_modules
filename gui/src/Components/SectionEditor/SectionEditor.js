@@ -55,10 +55,10 @@ class sectionEditor extends Component {
 		];
 
 		this.state = {
-			name: ( data != null )? data.name : '',
-			weight: ( data != null )? data.weight : 0,
-			type: ( data != null )? data.type : 'sum',
-			inputsData: ( data != null )? data.inputs : [],
+			name: data.name || '',
+			weight: data.weight || 0,
+			type: data.type || 'sum',
+			inputsData: data.inputs || [],
 			inputViews: [],
 			inputTypes: inputTypes
 		};

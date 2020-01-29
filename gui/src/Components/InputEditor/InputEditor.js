@@ -12,14 +12,14 @@ class inputEditor extends Component {
 		const data = props.data;
 
 		this.state = {
-			label:	(data != null )? data.label : '',
-			type:	(data != null )? data.type : 'Number',
-			weight: (data != null )? data.weight : 0,
-			optionsData: (data != null )? data.options : [],
+			label: data.label || '',
+			type: data.type || 'Number',
+			weight: data.weight || 0,
+			optionsData: data.options || [],
 			optionViews: [],
-			maxValue: (data != null )? data.maxValue : 0,
-			minValue: (data != null )? data.minValue : 0,
-			showItemsConfig: this.getShowItemsConfig( (data != null )? data.type : 'Number' )
+			maxValue: data.maxValue || 0,
+			minValue: data.minValue || 0,
+			showItemsConfig: this.getShowItemsConfig( data.type || 'Number' )
 		};
 
 		this.moveOption = this.moveOption.bind(this);

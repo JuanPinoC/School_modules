@@ -11,10 +11,10 @@ class formEditor extends Component {
 		const data = props.data;
 
 		this.state = {
-			name: data.name,
-			weight: data.weight,
-			type: data.type,
-			sectionsData: data.sections,
+			name: data.name || '',
+			weight: data.weight || 0,
+			type: data.type || 'Soft Abilities',
+			sectionsData: data.sections || [],
 			sectionViews: []
 		}
 		this.moveSection = this.moveSection.bind(this);

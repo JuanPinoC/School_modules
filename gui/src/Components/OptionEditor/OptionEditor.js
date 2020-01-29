@@ -11,9 +11,9 @@ class optionEditor extends Component {
 		const data = props.data;
 
 		this.state = {
-			label: ( data != null )? data.label : '',
-			numberValue: ( data != null )? data.numberValue : 0,
-			stringValue: ( data != null )? data.stringValue : ''
+			label: data.label || '',
+			numberValue: data.numberValue || 0,
+			stringValue: data.stringValue || ''
 		};
 	}
 
