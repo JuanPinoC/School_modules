@@ -1,38 +1,56 @@
 import React, { Component } from 'react';
 import styles from './Styles.css';
 
+import { connect } from 'react-redux';
+import { updateInput } from '../../Store/Actions/FormEditor/index';
+
 import OptionEditor from '../OptionEditor/OptionEditor';
 import ActionButtons from '../ActionButtons/ActionButtons';
+
+import { moveElementInArray } from '../../Functions/FormEditorFunctions';
+
+
+const optionBaseForm = {
+							label: '', 
+							numberValue: 0,
+							stringValue: ''
+						};
 
 class inputEditor extends Component {
 
 	constructor(props){
 		super(props);
 
-		const data = props.data;
-
 		this.state = {
-			label: data.label || '',
-			type: data.type || 'Number',
-			weight: data.weight || 0,
-			optionsData: data.options || [],
 			optionViews: [],
-			maxValue: data.maxValue || 0,
-			minValue: data.minValue || 0,
-			showItemsConfig: this.getShowItemsConfig( data.type || 'Number' )
+			showItemsConfig: this.getShowItemsConfig( this.props.type || 'Number' )
 		};
 
 		this.moveOption = this.moveOption.bind(this);
 		this.deleteOption = this.deleteOption.bind(this);
+
+		this.optionFieldChangeHandler = this.optionFieldChangeHandler.bind(this);
 	}
 
 	onChangeHandler = (fieldName, e) => {
 
-		this.setState({ [fieldName]: e.target.value});
+		this.props.onUpdateInput( this.props.parent, this.props.id, fieldName, e.target.value );
 
 		if ( fieldName === 'type') {
 			this.setState({ showItemsConfig: this.getShowItemsConfig( e.target.value ) });
 		}
+	}
+
+	optionFieldChangeHandler = ( key, field, value ) => {
+
+		let options = this.props.options;
+
+		const index = options.findIndex( (e) => e.key === key );
+
+		options[ index ] = {...options[ index ], [field]: value};
+
+		this.props.onUpdateInput( this.props.parent, this.props.id, 'options', options );
+
 	}
 
 	getShowItemsConfig = ( value ) => {
@@ -45,9 +63,9 @@ class inputEditor extends Component {
 
 	componentDidMount () {
 
-		let optionsData = this.state.optionsData;
+		let options = this.props.options;
 
-		optionsData.forEach( (e) => {
+		options.forEach( (e) => {
 			this.addOption( e );
 		});
 		
@@ -55,39 +73,28 @@ class inputEditor extends Component {
 
 	addOption = ( data = null ) => {
 
-		const key = 'o' + Math.round(Math.random() * 1000);
+		const key = data._id || 'o' + Math.round(Math.random() * 1000);
 
-		this.setState( (state, props) => ({ 
-			optionViews: [	...state.optionViews, 
+		this.setState( (state, props) => ({
+			optionViews: [	...state.optionViews,
 							(<OptionEditor id={ key } key={ key } data={ data } parent={ this.id }
-								move={ (action) => { this.moveOption(action, key) } } 
+								onFieldChangeHandler={ this.optionFieldChangeHandler } 
+								move={ (action) => { this.moveOption(action, key) } }
 								delete={ () => { this.deleteOption( key ) } } />)	]
 		}));
+
+		if( typeof data._id === 'undefined' ){
+
+			this.props.onUpdateInput( this.props.parent, this.props.id, 'options', [ ...this.props.options, { ...optionBaseForm } ] );
+
+		}
 
 	}
 
 	moveOption = ( action, key ) => {
 
-		let optionViews = this.state.optionViews;
-
-		const index = optionViews.findIndex( (e) => e.key === key );
-
-		if(action === 'up' && index !== 0){
-			const x = optionViews[ index - 1];
-			const y = optionViews[ index ];
-
-			optionViews[ index - 1 ] = y;
-			optionViews[ index ] = x ;
-		}
-		else if( action === 'down' && index !== optionViews.length - 1 ){
-			const x = optionViews[ index + 1];
-			const y = optionViews[ index ];
-
-			optionViews[ index + 1 ] = y;
-			optionViews[ index ] = x ;
-		}
-
-		this.setState({ optionViews: optionViews });
+		this.setState({ optionViews: moveElementInArray( this.state.optionViews, key, action ) });
+		this.props.onUpdateInput( this.props.parent, this.props.id, 'options', [ moveElementInArray( this.props.options, key, action ) ]);
 
 	}
 
@@ -101,13 +108,19 @@ class inputEditor extends Component {
 
 		this.setState({ optionViews: optionViews });
 
+		let options = this.props.options;
+
+		options.splice(index, 1);
+
+		this.props.onUpdateInput( this.props.parent, this.props.id, 'options', options);
+
 	}
 
 
 	render(){
 
 		const inputTypes = this.props.inputTypes;
-		const inputType = this.state.type;
+		const inputType = this.props.type;
 		const optionViews = this.state.optionViews;
 		const showItemsConfig = this.state.showItemsConfig;
 
@@ -118,7 +131,7 @@ class inputEditor extends Component {
 	
 					<div className={ styles.InputEditorItem}>				
 						<label>Enunciado: </label>
-						<input className={ styles.InputEditorLabel } type='text' value={ this.state.label } 
+						<input className={ styles.InputEditorLabel } type='text' value={ this.props.label } 
 								onChange={ (e) => {this.onChangeHandler('label', e)} } />
 					</div>
 					<div className={ styles.InputEditorItem}>
@@ -137,7 +150,7 @@ class inputEditor extends Component {
 					{	( showItemsConfig.showWeight )?(
 						<div className={ styles.InputEditorItem}>
 							<label>Peso: </label>
-							<input className={ styles.InputEditorWeight } type='number' value={ this.state.weight }
+							<input className={ styles.InputEditorWeight } type='number' value={ this.props.weight }
 									onChange={ (e) => {this.onChangeHandler('weight', e)} } />
 						</div>
 						):('')	}
@@ -145,7 +158,7 @@ class inputEditor extends Component {
 					{	( showItemsConfig.showMaxValue )?(
 						<div className={ styles.InputEditorItem }>
 							<label>Max: </label>
-							<input className={ styles.InputEditorLimit } type='number' value={ this.state.maxValue }
+							<input className={ styles.InputEditorLimit } type='number' value={ this.props.maxValue }
 									onChange={ (e) => {this.onChangeHandler('maxValue', e)} } />
 						</div>
 						):('')	}
@@ -153,7 +166,7 @@ class inputEditor extends Component {
 					{	( showItemsConfig.showMinValue )?(
 						<div className={ styles.InputEditorItem}>
 							<label>Min: </label>
-							<input className={ styles.InputEditorLimit } type='number' value={ this.state.minValue }
+							<input className={ styles.InputEditorLimit } type='number' value={ this.props.minValue }
 									onChange={ (e) => {this.onChangeHandler('minValue', e)} } />
 						</div>
 						):('')	}
@@ -181,4 +194,29 @@ class inputEditor extends Component {
 
 }
 
-export default inputEditor;
+const mapStateToProps = (state, ownProps) => {
+
+	const sections = state.formEditor.sections;
+	const sectionId = sections.findIndex( (e) => e.key === ownProps.parent );
+	const parentInputs = sections[ sectionId ].inputs;
+	const id = parentInputs.findIndex( (e) => e.key === ownProps.id );
+
+	return ( id >= 0 )?
+	{
+		label: parentInputs[ id ].label,
+		type: parentInputs[ id ].type,
+		weight: parentInputs[ id ].weight,
+		options: parentInputs[ id ].options,
+		maxValue: parentInputs[ id ].maxValue,
+		minValue: parentInputs[ id ].minValue
+
+	} : {};
+};
+
+const mapDispatchProps = dispatch => {
+	return {
+		onUpdateInput: ( parent, key, field, value ) => dispatch( updateInput( parent, key, field, value ) ),
+	};
+};
+
+export default connect( mapStateToProps, mapDispatchProps )( inputEditor );

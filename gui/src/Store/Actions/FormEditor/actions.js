@@ -1,12 +1,30 @@
 import {
+
+		//FORM
+		SET_FORM, UPDATE_FORM,
 		//SECTION
 		CREATE_SECTION, UPDATE_SECTION, DELETE_SECTION, MOVE_SECTION,
 		//INPUT
-		CREATE_INPUT, UPDATE_INPUT, DELETE_INPUT, MOVE_INPUT,
-		//OPTION
-		UPDATE_OPTIONS
+		CREATE_INPUT, UPDATE_INPUT, DELETE_INPUT, MOVE_INPUT
 
 } from './actionTypes';
+
+/* Form */
+export const setForm = ( form ) => {
+	return {
+		type: SET_FORM,
+		form: form
+	}
+}
+
+export const updateForm = ( field, value ) => {
+	return {
+		type: UPDATE_FORM,
+		field: field,
+		value: value
+	}
+}
+
 
 /* Section */
 export const createSection = ( key ) => {
@@ -16,13 +34,12 @@ export const createSection = ( key ) => {
 	}
 };
 
-export const updateSection = ( key, name, type, weight ) => {
+export const updateSection = ( key, field, value ) => {
 	return {
 		type: UPDATE_SECTION,
 		key: key,
-		name: name,
-		type: type,
-		weight: weight
+		field: field,
+		value: value
 	}
 };
 
@@ -50,16 +67,13 @@ export const createInput = ( parent, key ) => {
 	}
 };
 
-export const updateInput = ( parent, key, label, type, weight, maxValue, minValue ) => {
+export const updateInput = ( parent, key, field, value ) => {
 	return {
 		type: UPDATE_INPUT,
 		parent: parent,
 		key: key,
-		label: label,
-		type: type,
-		weight: weight,
-		maxValue: maxValue,
-		minValue: minValue
+		field: field,
+		value: value
 	}
 };
 
@@ -77,14 +91,5 @@ export const moveInput = ( parent, key, direction ) => {
 		parent: parent,
 		key: key,
 		direction: direction
-	}
-};
-
-export const updateOptions = ( parent, key, options ) => {
-	return {
-		type: UPDATE_OPTIONS,
-		parent: parent,
-		key: key,
-		options: options
 	}
 };

@@ -1,15 +1,19 @@
 import React, { Component } from 'react';
 import styles from './Styles.css';
 
+import { connect } from 'react-redux';
+import { updateSection, createInput, moveInput, deleteInput } from '../../Store/Actions/FormEditor/index';
+
 import InputEditor from '../InputEditor/InputEditor';
 import ActionButtons from '../ActionButtons/ActionButtons';
+
+import { moveElementInArray } from '../../Functions/FormEditorFunctions';
 
 class sectionEditor extends Component {
 
 	constructor (props) {
+		
 		super(props);
-
-		const data = props.data;
 
 		const inputTypes = [
 			{
@@ -55,10 +59,6 @@ class sectionEditor extends Component {
 		];
 
 		this.state = {
-			name: data.name || '',
-			weight: data.weight || 0,
-			type: data.type || 'sum',
-			inputsData: data.inputs || [],
 			inputViews: [],
 			inputTypes: inputTypes
 		};
@@ -68,14 +68,16 @@ class sectionEditor extends Component {
 	}
 
 	onChangeHandler = (fieldName, e) => {
-		this.setState({ [fieldName]: e.target.value});
+
+		this.props.onUpdateSection( this.props.id, fieldName, e.target.value);
+
 	}
 
 	componentDidMount () {
 
-		let inputsData = this.state.inputsData;
+		let inputs = this.props.inputs;
 
-		inputsData.forEach( (e) => {
+		inputs.forEach( (e) => {
 			this.addInput( e );			
 		});
 
@@ -83,40 +85,25 @@ class sectionEditor extends Component {
 
 	addInput = ( data = null ) => {
 
-		const key = 'i' + Math.round(Math.random() * 1000);
-
+		const key = data._id || 'i' + Math.round(Math.random() * 1000);
+		
 		this.setState( (state, props) => ({ 
 			inputViews: [	...state.inputViews, 
 							(<InputEditor id={ key } key={ key } data={ data } parent={ this.props.id }
-								inputTypes={ this.state.inputTypes } 
+								inputTypes={ this.state.inputTypes }
 								move={ (action) => { this.moveInput(action, key) } } 
 								delete={ () => { this.deleteInput( key ); } } />)	]
 		}));
+
+		this.props.onAddInput( this.props.id, key );
 
 	}
 
 	moveInput = ( action, key ) => {
 
-		let inputViews = this.state.inputViews;
+		this.setState({ inputViews: moveElementInArray( this.state.inputViews, key, action ) });
 
-		const index = inputViews.findIndex( (e) => e.key === key );
-
-		if(action === 'up' && index !== 0){
-			const x = inputViews[ index - 1];
-			const y = inputViews[ index ];
-
-			inputViews[ index - 1 ] = y;
-			inputViews[ index ] = x ;
-		}
-		else if( action === 'down' && index !== inputViews.length - 1 ){
-			const x = inputViews[ index + 1];
-			const y = inputViews[ index ];
-
-			inputViews[ index + 1 ] = y;
-			inputViews[ index ] = x ;
-		}
-
-		this.setState({ inputViews: inputViews });
+		this.props.onMoveInput( this.props.id, key, action );
 
 	}
 
@@ -129,6 +116,8 @@ class sectionEditor extends Component {
 		inputViews.splice(index, 1);
 
 		this.setState({ inputViews: inputViews });
+
+		this.props.onDeleteInput( this.props.id, key );
 	}
 
 	render () {
@@ -141,18 +130,18 @@ class sectionEditor extends Component {
 				<div className={ styles.SectionEditorHeaders}>
 					<div className={ styles.SectionEditorItem}>
 						<label>Nombre de la sección: </label>
-						<input className={ styles.SectionEditorName } type='text' value={ this.state.name } 
+						<input className={ styles.SectionEditorName } type='text' value={ this.props.name } 
 								onChange={ (e) => {this.onChangeHandler('name', e)} } />
 					</div>
 					<div className={ styles.SectionEditorItem}>
 						<label>Peso: </label>
-						<input className={ styles.SectionEditorWeight } type='number' value={ this.state.weight }
+						<input className={ styles.SectionEditorWeight } type='number' value={ this.props.weight }
 								onChange={ (e) => {this.onChangeHandler('weight', e)} } />
 					</div>
 					<div className={ styles.SectionEditorItem}>
 						<label>Acción: </label>
 						<select className={ styles.SectionEditorSelect } 
-								onChange={ (e) => {this.onChangeHandler('type', e)} }>
+								onChange={ (e) => {this.onChangeHandler('action', e)} }>
 							<option value='sum'>Sumar</option>
 							<option value='avg'>Promediar</option>
 							<option value='text'>Ninguna</option>
@@ -172,4 +161,27 @@ class sectionEditor extends Component {
 	}
 }
 
-export default sectionEditor;
+const mapStateToProps = (state, ownProps) => {
+
+	const sections = state.formEditor.sections;
+	const id = sections.findIndex( (e) => e.key === ownProps.id );
+
+	return ( id >= 0 )?
+	{
+		name: sections[ id ].name,
+		weight: sections[ id ].weight,
+		action: sections[ id ].action,
+		inputs: sections[ id ].inputs
+	} : {};
+};
+
+const mapDispatchProps = dispatch => {
+	return {
+		onUpdateSection: ( key, field, value ) => dispatch( updateSection(key, field, value ) ),
+		onAddInput: ( parent, key ) => dispatch( createInput( parent, key ) ),
+		onMoveInput: ( parent, key, direction ) => dispatch( moveInput( parent, key, direction ) ),
+		onDeleteInput: ( parent, key ) => dispatch( deleteInput( parent, key ) )
+	};
+};
+
+export default connect( mapStateToProps, mapDispatchProps )( sectionEditor );

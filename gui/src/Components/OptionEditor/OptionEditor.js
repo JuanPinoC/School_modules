@@ -6,6 +6,7 @@ import ActionButtons from '../ActionButtons/ActionButtons';
 class optionEditor extends Component {
 
 	constructor(props){
+		
 		super(props);
 
 		const data = props.data;
@@ -15,10 +16,14 @@ class optionEditor extends Component {
 			numberValue: data.numberValue || 0,
 			stringValue: data.stringValue || ''
 		};
+
 	}
 
 	onChangeHandler = (fieldName, e) => {
+		
 		this.setState({ [fieldName]: e.target.value});
+		this.props.onFieldChangeHandler( this.props.id, fieldName, e.target.value );
+
 	}
 
 	render(){

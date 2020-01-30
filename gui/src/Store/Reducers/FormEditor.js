@@ -1,19 +1,25 @@
 import {
-
+		SET_FORM, UPDATE_FORM,
 		CREATE_SECTION, UPDATE_SECTION, DELETE_SECTION, MOVE_SECTION,
-		CREATE_INPUT, UPDATE_INPUT, DELETE_INPUT, MOVE_INPUT,
-		UPDATE_OPTIONS
+		CREATE_INPUT, UPDATE_INPUT, DELETE_INPUT, MOVE_INPUT
 
 } from '../Actions/FormEditor/actionTypes';
 
+import { moveElementInArray } from '../../Functions/FormEditorFunctions';
+
 const formInitialState = {
+			name: '',
+			weight: 0,
+			type: 'Soft Abilities',
+			action: 'sum',
+			description: '',
 			sections: []
 		};
 
 const sectionInitialState = {
 			key: '',
 			name: '',
-			type: 'sum',
+			action: 'sum',
 			weight: 0,
 			inputs: []
 		};
@@ -32,12 +38,34 @@ const reducer = ( oldState = formInitialState, action) => {
 
 	let state = {};
 	let sections = oldState.sections;
-	
+
 	let parentIndex = ( typeof action.parent !== 'undefined' )? sections.findIndex( (e) => e.key === action.parent ) : null;
 	let parentInputs = ( typeof action.parent !== 'undefined' )? sections[ parentIndex ].inputs : [];
-	let index = ( typeof action.parent !== 'undefined' )? parentInputs.findIndex( (e) => e.key === action.key ) : sections.findIndex( (e) => e.key === action.key ) ;
+
+	let index = ( typeof action.parent !== 'undefined' )? 
+						parentInputs.findIndex( (e) => e.key === action.key ) : 
+						( typeof action.key !== 'undefined' )?
+						sections.findIndex( (e) => e.key === action.key ) : 0;
+
 
 	switch ( action.type ) {
+		
+		//FORM
+		case SET_FORM:
+
+			return action.form;
+		
+			break;
+
+		case UPDATE_FORM:
+	
+			return {
+				...oldState,
+				[action.field]: action.value
+			};
+	
+			break;
+
 
 		//SECTION
 		case CREATE_SECTION:
@@ -48,7 +76,7 @@ const reducer = ( oldState = formInitialState, action) => {
 
 		case UPDATE_SECTION:
 
-			sections[ index ] = { ...sections[ index ], name: action.name, type: action.type, weight: action.weight  };
+			sections[ index ] = { ...sections[ index ], [action.field]: action.value  };
 
 			break;
 
@@ -75,13 +103,15 @@ const reducer = ( oldState = formInitialState, action) => {
 				sections[ index ] = x ;
 			}
 
+//			sections = moveElementInArray( sections, index, action.direction );
+
 			break;
 
 
 		//INPUT
 		case CREATE_INPUT:
 
-			sections[ parentIndex ].inputs = [...sections[ parentIndex ].inputs, { ...inputInitialState, key: action.key } ];
+			sections[ parentIndex ].inputs = [ ...sections[ parentIndex ].inputs, { ...inputInitialState, key: action.key } ];
 
 			break;
 
@@ -89,11 +119,7 @@ const reducer = ( oldState = formInitialState, action) => {
 
 			sections[parentIndex].inputs[index] = { 
 													...sections[parentIndex].inputs[index],
-													label: action.label,
-													type: action.type,
-													weight: action.weight,
-													maxValue: action.maxValue,
-													minValue: action.minValue
+													[action.field]: action.value
 												};
 
 			break;
@@ -121,20 +147,13 @@ const reducer = ( oldState = formInitialState, action) => {
 				sections[parentIndex].inputs[ index ] = x ;
 			}
 
-			break;
-
-
-
-		//OPTION
-		case UPDATE_OPTIONS:
-
-			sections[parentIndex].inputs[ index ].options = action.options;
+//			sections[parentIndex].inputs = moveElementInArray( sections[parentIndex].inputs, index, action.direction );
 
 			break;
 
 	}
 
-	state = { sections: sections };
+	state = { ...oldState, sections: sections };
 
 	return state;
 };

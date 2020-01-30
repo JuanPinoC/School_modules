@@ -10,11 +10,13 @@ function App() {
 	const formEditorData = {
 		name: 'Formulario 1',
 		type: 'Soft Abilities',
+		action: 'avg',
+		description: '',
 		weight: 100,
 		sections: [
 			{
 				name: 'Seccion 1',
-				type: 'sum',
+				action: 'sum',
 				weight: 40,
 				inputs: [
 					{
@@ -37,7 +39,7 @@ function App() {
 			},
 			{
 				name: 'Seccion 2',
-				type: 'avg',
+				action: 'avg',
 				weight: 60,
 				inputs: [
 					{

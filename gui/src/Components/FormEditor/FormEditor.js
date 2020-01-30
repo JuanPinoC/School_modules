@@ -1,20 +1,20 @@
 import React, { Component } from 'react';
 import styles from './Styles.css';
 
+import { connect } from 'react-redux';
+import { updateForm, createSection, moveSection, deleteSection } from '../../Store/Actions/FormEditor/index';
+
 import SectionEditor from '../SectionEditor/SectionEditor';
+
+import { moveElementInArray } from '../../Functions/FormEditorFunctions';
 
 class formEditor extends Component {
 
 	constructor (props) {
+
 		super(props);
 
-		const data = props.data;
-
 		this.state = {
-			name: data.name || '',
-			weight: data.weight || 0,
-			type: data.type || 'Soft Abilities',
-			sectionsData: data.sections || [],
 			sectionViews: []
 		}
 		this.moveSection = this.moveSection.bind(this);
@@ -22,14 +22,16 @@ class formEditor extends Component {
 	}
 
 	onChangeHandler = (fieldName, e) => {
-		this.setState({ [fieldName]: e.target.value});
+
+		this.props.onUpdateForm( fieldName, e.target.value);
+	
 	}
 
 	componentDidMount () {
 
-		let sectionsData = this.state.sectionsData;
+		const sections = this.props.sections;
 
-		sectionsData.forEach( (e) => {
+		sections.forEach( (e) => {
 			this.addSection( e );
 		});
 
@@ -37,7 +39,7 @@ class formEditor extends Component {
 
 	addSection = ( data = null ) => {
 
-		const key = 's' + Math.round(Math.random() * 1000);
+		const key = data._id || 's' + Math.round(Math.random() * 1000);
 
 		this.setState( (state, props) => ({ 
 			sectionViews: [	...state.sectionViews, 
@@ -46,30 +48,15 @@ class formEditor extends Component {
 								delete={ () => { this.deleteSection( key ); } } />)	]
 		}));
 
+		this.props.onAddSection( key );
+
 	}
 
 	moveSection = ( action, key ) => {
 
-		let sectionViews = this.state.sectionViews;
-
-		const index = sectionViews.findIndex( (e) => e.key === key );
-
-		if(action === 'up' && index !== 0){
-			const x = sectionViews[ index - 1];
-			const y = sectionViews[ index ];
-
-			sectionViews[ index - 1 ] = y;
-			sectionViews[ index ] = x ;
-		}
-		else if( action === 'down' && index !== sectionViews.length - 1 ){
-			const x = sectionViews[ index + 1];
-			const y = sectionViews[ index ];
-
-			sectionViews[ index + 1 ] = y;
-			sectionViews[ index ] = x ;
-		}
-
-		this.setState({ sectionViews: sectionViews });
+		this.setState({ sectionViews: moveElementInArray( this.state.sectionViews, key, action ) });
+		
+		this.props.onMoveSection( key, action );
 
 	}
 
@@ -81,6 +68,8 @@ class formEditor extends Component {
 		sectionViews.splice(index, 1);
 
 		this.setState({ sectionViews: sectionViews });
+
+		this.props.onDeleteSection( key );
 	}
 
 	render () {
@@ -92,12 +81,12 @@ class formEditor extends Component {
 				<div className={ styles.FormEditorHeaders}>
 					<div className={ styles.FormEditorItem}>
 						<label>Nombre: </label>
-						<input className={ styles.FormEditorName } type='text' value={ this.state.name } 
+						<input className={ styles.FormEditorName } type='text' value={ this.props.name } 
 								onChange={ (e) => {this.onChangeHandler('name', e)} } />
 					</div>
 					<div className={ styles.FormEditorItem}>
 						<label>Peso: </label>
-						<input className={ styles.FormEditorWeight } type='number' value={ this.state.weight }
+						<input className={ styles.FormEditorWeight } type='number' value={ this.props.weight }
 								onChange={ (e) => {this.onChangeHandler('weight', e)} } />
 					</div>
 					<div className={ styles.FormEditorItem}>
@@ -108,6 +97,20 @@ class formEditor extends Component {
 							<option value='Hard Abilities'>Observación en clase</option>
 							<option value='Interview'>Entrevista</option>
 						</select>
+					</div>
+					<div className={ styles.FormEditorItem}>
+						<label>Acción: </label>
+						<select className={ styles.FormEditorSelect } 
+								onChange={ (e) => {this.onChangeHandler('action', e)} }>
+							<option value='sum'>Sumar</option>
+							<option value='avg'>Promediar</option>
+							<option value='none'>Ninguna</option>
+						</select>
+					</div>
+					<div className={ styles.FormEditorItem}>
+						<label>Descripción: </label>
+						<input className={ styles.FormEditorName } type='text' value={ this.props.description } 
+								onChange={ (e) => {this.onChangeHandler('description', e)} } />
 					</div>
 				</div>
 				<div className={ styles.SectionsList }>
@@ -122,4 +125,24 @@ class formEditor extends Component {
 	}
 }
 
-export default formEditor;
+const mapStateToProps = state => {
+	return {
+		name: state.formEditor.name,
+		weight: state.formEditor.weight,
+		type: state.formEditor.type,
+		action: state.formEditor.action,
+		description: state.formEditor.description,
+		sections: state.formEditor.sections
+	};
+};
+
+const mapDispatchProps = dispatch => {
+	return {
+		onUpdateForm: ( field, value ) => { dispatch( updateForm( field, value ) ) },
+		onAddSection: ( key ) => { dispatch( createSection( key ) ) },
+		onMoveSection: ( key, direction ) => { dispatch( moveSection( key, direction ) ) },
+		onDeleteSection: ( key ) => { dispatch( deleteSection( key ) ) }
+	};
+};
+
+export default connect( mapStateToProps, mapDispatchProps )( formEditor );
