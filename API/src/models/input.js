@@ -1,7 +1,6 @@
 const mongoose = require('mongoose');
 
-const OptionSchema =
-					new Schema({
+const OptionSchema = mongoose.Schema({
 						label: { type: String, required: true },
 						stringValue: { type: String, required: true },
 						numberValue: { type: Number, required: true }
@@ -12,7 +11,7 @@ const InputTypes = ['Number','Text','Number Options','Text Options'];
 const inputSchema = mongoose.Schema({
 	_id:	mongoose.Schema.Types.ObjectId,
 	label:	{ type: String, required: true },
-	type:	{ type: [ mongoose.Schema.Types.ObjectId ], enum: InputTypes, required: true },
+	type:	{ type: [ String ], enum: InputTypes, required: true },
 	section:	{ type: [ mongoose.Schema.Types.ObjectId ], ref: 'Section', required: true },
 	weight: { type: Number , required: false },
 	options: [ OptionSchema ],

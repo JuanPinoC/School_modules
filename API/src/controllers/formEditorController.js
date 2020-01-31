@@ -4,6 +4,8 @@ const Form = require('../models/form');
 const Section = require('../models/section');
 const Input = require('../models/input');
 
+const SectionController = require('../controllers/sectionController');
+
 module.exports = {
 
 	show: (req,res,next) => {
@@ -18,6 +20,8 @@ module.exports = {
 							_id: doc._id,
 							name: doc.name,
 							type: doc.type,
+							action: doc.action,
+							description: doc.description,
 							weight: doc.weight
 						}
 					})
@@ -34,7 +38,36 @@ module.exports = {
 	},
 	create: (req,res,next) => {
 
+		const form = new Form({
+			_id: new mongoose.Types.ObjectId(),
+			name: req.body.name,
+			type: req.body.type,
+			action: req.body.action,
+			description: req.body.description,
+			weight: req.body.weight
+		});
 
+		form.save()
+			.then( (result) => {
+
+				const sections = req.body.sections;
+
+				sections.forEach(
+					(element) => {
+						SectionController.create( result._id, element );
+					}
+				);
+
+				res.status(201).json({
+					message: 'Created Succesfully',
+					createdObj: result
+				})
+			})
+			.catch( (err) => {
+				res.status(500).json({
+					error: err
+				});	
+			});
 
 	},
 	find: (req,res,next) => {

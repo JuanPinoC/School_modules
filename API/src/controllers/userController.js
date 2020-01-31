@@ -53,7 +53,7 @@ module.exports = {
 						}
 						else{
 							const user = new User({
-								_id; new mongoose.Types.ObjectId(),
+								_id: new mongoose.Types.ObjectId(),
 								name: req.body.name,
 								type: req.body.type,
 								email: req.body.email,

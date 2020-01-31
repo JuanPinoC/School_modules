@@ -1,0 +1,37 @@
+:root {
+	--bg-color: #D3D3D3;
+	--form-bg-color: #042d6e;
+	--light-red: #db2a35;
+	--red: #e0000e;
+	--dark-red: #790b12;
+	--grey: #D3D3D3;
+}
+
+.LoginContainer {
+	height: 50.5em;
+	font-family: 'Arial', Arial, serif;
+	background: var( --bg-color );
+	padding: 5em;
+}
+
+.Form {
+	margin: auto;
+	width: 50%;
+	background: var( --form-bg-color );
+	border-radius: 1em;
+	padding: 2.5em;
+	justify-content: center;
+	box-shadow: 0px 10px 10px rgba(0, 0, 0, 0.4);
+}
+
+.Title {
+	text-align: center;
+	color: #ffffff;
+	font-weight: bolder;
+}
+
+p {
+	text-align: center;
+	color: #ffffff;
+	font-weight: bold;
+}

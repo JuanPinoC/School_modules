@@ -1,0 +1,36 @@
+.ButtonContainer {
+	text-align: center;
+	background: #ffffff;
+	color: var( --red );
+	padding: 1%;
+	border: solid var( --light-red ) 0.2em;
+	border-radius: 0.8em;
+	margin-top: 6em;
+	margin: auto;
+	transition-duration: 0.3s;
+	background: linear-gradient(135deg, #ffffff 0%, #ffffff 75%, var( --light-red ) 76%, var( --light-red ) 100%);
+}
+
+.ButtonContainer:hover {
+	background: var( --red );
+	color: #ffffff;
+	border: solid var( --red ) 0.2em;
+	border-right: solid var( --red ) 0.5em;
+	border-bottom: solid var( --red ) 0.5em;
+	transition-duration: 0.3s;
+	box-shadow: 0px 10px 10px rgba(0,0,0,0.8);
+	background: linear-gradient(135deg, var( --light-red ) 0%, var( --light-red ) 75%,var( --red ) 76%,var( --red ) 100%);
+}
+
+.ButtonText {
+	font-weight: bolder;
+	margin: 0.4em;
+}
+
+.primary {
+	width: 90%;
+}
+
+.secondary {
+	width: 60%;
+}

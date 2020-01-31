@@ -21,12 +21,6 @@ class formEditor extends Component {
 		this.deleteSection = this.deleteSection.bind(this);
 	}
 
-	onChangeHandler = (fieldName, e) => {
-
-		this.props.onUpdateForm( fieldName, e.target.value);
-	
-	}
-
 	componentDidMount () {
 
 		const sections = this.props.sections;
@@ -35,6 +29,12 @@ class formEditor extends Component {
 			this.addSection( e );
 		});
 
+	}
+
+	onChangeHandler = (fieldName, e) => {
+
+		this.props.onUpdateForm( fieldName, e.target.value);
+	
 	}
 
 	addSection = ( data = null ) => {
@@ -70,6 +70,34 @@ class formEditor extends Component {
 		this.setState({ sectionViews: sectionViews });
 
 		this.props.onDeleteSection( key );
+	}
+
+	saveForm = (e) => {
+/*
+		let obj = {};
+
+		const formData = new formData();
+
+		const params = {
+			method: 'post',
+			url: url,
+			data: obj,
+			headers: {
+				'Content-Type': 'multipart/form-data',
+				'Authorization': 'Bearer ' + localStorage.getItem('jwtToken')
+			}
+		};
+
+		axios(params)
+		.then( (res) => {
+
+			console.log('Created');
+
+		})
+		.catch( (res) => {
+			alert('Error');
+		});
+*/
 	}
 
 	render () {

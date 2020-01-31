@@ -4,6 +4,7 @@ import logo from './logo.svg';
 import styles from './App.css';
 
 import FormEditor from './Components/FormEditor/FormEditor';
+import Login from './Components/Login/Login';
 
 function App() {
 
@@ -101,10 +102,14 @@ function App() {
 	};
 
 	return (
-		<div>
-			<FormEditor data={formEditorData} />			
+		<div className={ styles.AppContainer } >
+			<FormEditor />
 		</div>
 	);
 }
 
 export default App;
+
+/*
+<FormEditor data={formEditorData} />
+*/

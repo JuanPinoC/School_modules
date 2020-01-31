@@ -1,0 +1,22 @@
+
+.InputContainer {
+	text-align: center;
+	margin: 1em;
+}
+
+.Input {
+	width: 90%;
+	font-size: 1.3em;
+	background: #ffffff;
+	padding: 0.4em 1em 0.4em 1em;
+	border-radius: 0.8em;
+	border-style: solid;
+	border-color: var( --form-bg-color );
+	border-width: 0.1em;
+	transition-duration: 0.3s;
+}
+
+.Input:focus {
+	outline-width: 0;
+	box-shadow: 0px 5px 5px rgba(0, 0, 0, 0.2);
+}

@@ -141,7 +141,7 @@ class inputEditor extends Component {
 								value={ inputType }>
 							{
 								inputTypes.map( ( e ) => {
-									return ( <option value={ e.value } >{ e.label }</option> )
+									return ( <option key={ e.value } value={ e.value } >{ e.label }</option> )
 								})
 							}
 						</select>
