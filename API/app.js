@@ -4,6 +4,7 @@ const morgan = require('morgan');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 
+const userTypeRoutes = require('./src/routes/userType');
 const userRoutes = require('./src/routes/user');
 const formEditorRoutes = require('./src/routes/formEditor');
 
@@ -49,6 +50,7 @@ app.options('/*', (req, res, next) => {
 	res.sendStatus(200);
 });
 
+app.use('/userType', userTypeRoutes);
 app.use('/user', userRoutes);
 app.use('/formEditor', formEditorRoutes);
 

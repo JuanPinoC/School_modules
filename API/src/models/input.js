@@ -16,7 +16,9 @@ const inputSchema = mongoose.Schema({
 	weight: { type: Number , required: false },
 	options: [ OptionSchema ],
 	maxValue: { type: Number , required: false },
-	minValue: { type: Number , required: false }
+	minValue: { type: Number , required: false },
+	//que usuario deberia llenarlo
+	//escala de colores
 });
 
 module.exports = mongoose.model('Input', inputSchema, 'inputs');

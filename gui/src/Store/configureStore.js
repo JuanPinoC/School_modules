@@ -1,9 +1,11 @@
 import { createStore, combineReducers } from 'redux';
 
 import formEditorReducer from './Reducers/FormEditor';
+import userReducer from './Reducers/User';
 
 const rootReducer = combineReducers({
-	formEditor: formEditorReducer
+	formEditor: formEditorReducer,
+	user: userReducer,
 	// ...
 });
 

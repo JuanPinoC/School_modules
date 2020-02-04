@@ -1,4 +1,4 @@
-const moongose = require('mongoose');
+const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
 const User = require('../models/user');
 const jwt = require('jsonwebtoken');
@@ -81,6 +81,7 @@ module.exports = {
 					})
 				}
 			});
+			
 	},
 	
 	find: (req,res,next) => {
@@ -167,43 +168,46 @@ module.exports = {
 	},
 	login: (req,res,next) => {
 
-		User.find( { email: req.body.email } )
+		User.findOne( { email: req.body.email } )
+			.populate('type')
 			.exec()
-			.then(user => {
-				if (user.length < 1) {
-					return res.status(401).json({
-						message: 'Auth failed'
-					});
-				}
-				bcrypt.compare(req.body.password, user[0].password, (err, result) => {
-					if (err) {
-						return res.status(401).json({
-							message: 'Auth failed'
-						});
-					}
-					if (result) {
-						const token = jwt.sign(
-						{
-							email: user[0].email,
-							userId: user[0]._id,
-							//type: user[0].type
-						},
-						//process.env.JWT_KEY,
-						'secret',
-						{
-							expiresIn: "1h"
+			.then( user => {
+
+				if (typeof user !== 'undefined') {
+
+					bcrypt.compare(req.body.password, user.password, (err, result) => {
+
+						if (err) {
+							return res.status(401).json({
+								message: 'Auth failed'
+							});
 						}
-						);
-						return res.status(200).json({
-							message: 'Auth succesful',
-							token: token,
-							headers: req.headers
-						});
-					}
-					res.status(401).json({
-						message: 'Auth failed'
+						else if (result) {
+							const token = jwt.sign(
+							{
+								_id: user._id,
+								email: user.email,
+								type: user.type._id
+							},
+							//process.env.JWT_KEY,
+							'secret',
+							{
+								expiresIn: "1h"
+							}
+							);
+							return res.status(200).json({
+								message: 'Auth succesful',
+								token: token,
+								name: user.name,
+								email: user.email,
+								type: user.type.name
+							});
+						}
+
 					});
-				});
+					
+				}
+
 			})
 			.catch(err => {
 				console.log(err);

@@ -4,7 +4,7 @@
   "description": "School_modules",
   "main": "index.js",
   "scripts": {
-    "start": "node server.js",
+    "start": "nodemon server.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -25,5 +25,8 @@
     "morgan": "^1.9.1",
     "nan": "^2.14.0",
     "node-pre-gyp": "^0.14.0"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.2"
   }
 }

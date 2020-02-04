@@ -6,11 +6,10 @@ const checkAuth = require('../middlewares/check-auth');
 const accessRules = require('../middlewares/access-rules');
 
 /*
-router.post('/create', checkAuth, accessRules, User.create);
-router.get('/find', checkAuth, accessRules, User.find);
-router.post('/update', checkAuth, accessRules, User.update);
-router.get('/delete', checkAuth, accessRules, User.delete);
-router.post('/login',User.login);
+router.post('/create', checkAuth, accessRules, FormEditor.create);
+router.get('/find', checkAuth, accessRules, FormEditor.find);
+router.post('/update', checkAuth, accessRules, FormEditor.update);
+router.get('/delete', checkAuth, accessRules, FormEditor.delete);
 */
 
 module.exports = router;

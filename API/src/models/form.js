@@ -9,7 +9,10 @@ const formSchema = mongoose.Schema({
 	type:	{ type: String, enum: FormTypes, required: true },
 	action: { type: String, enum: FormActions, required: true },
 	description: { type: String, required: true },
-	weight: { type: Number, required: true }
+	weight: { type: Number, required: true },
+	// usuario: evaluador,
+	// usuario: evaluado,
+	// fecha ( forma de limitar a un intento )
 });
 
 module.exports = mongoose.model('Form', formSchema, 'forms');
