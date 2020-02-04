@@ -12,13 +12,12 @@ const inputSchema = mongoose.Schema({
 	_id:	mongoose.Schema.Types.ObjectId,
 	label:	{ type: String, required: true },
 	type:	{ type: [ String ], enum: InputTypes, required: true },
-	section:	{ type: [ mongoose.Schema.Types.ObjectId ], ref: 'Section', required: true },
+	section:	{ type: mongoose.Schema.Types.ObjectId, ref: 'Section', required: true },
 	weight: { type: Number , required: false },
 	options: [ OptionSchema ],
 	maxValue: { type: Number , required: false },
 	minValue: { type: Number , required: false },
-	//que usuario deberia llenarlo
-	//escala de colores
+	evaluatedUserField: { type: Boolean, required: true} //que usuario deberia llenarlo
 });
 
 module.exports = mongoose.model('Input', inputSchema, 'inputs');
