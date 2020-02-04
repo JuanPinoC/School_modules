@@ -146,6 +146,11 @@ class inputEditor extends Component {
 							}
 						</select>
 					</div>
+					<div className={ styles.InputEditorItem}>				
+						<label>Campo para el evaluado: </label>
+						<input className={ styles.InputEditorLabel } type='checkbox' value={ this.props.evaluatedUserField } 
+								onChange={ (e) => {this.onChangeHandler('evaluatedUserField', e)} } />
+					</div>
 					
 					{	( showItemsConfig.showWeight )?(
 						<div className={ styles.InputEditorItem}>

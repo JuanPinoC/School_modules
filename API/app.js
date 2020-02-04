@@ -6,6 +6,7 @@ const mongoose = require('mongoose');
 
 const userTypeRoutes = require('./src/routes/userType');
 const userRoutes = require('./src/routes/user');
+const colorScaleRoutes = require('./src/routes/colorScale');
 const formEditorRoutes = require('./src/routes/formEditor');
 
 mongoose.set('useNewUrlParser', true);
@@ -52,6 +53,7 @@ app.options('/*', (req, res, next) => {
 
 app.use('/userType', userTypeRoutes);
 app.use('/user', userRoutes);
+app.use('/colorScale', colorScaleRoutes);
 app.use('/formEditor', formEditorRoutes);
 
 app.use( (req, res, next) => {

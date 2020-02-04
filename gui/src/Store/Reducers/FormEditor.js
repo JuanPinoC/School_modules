@@ -31,7 +31,8 @@ const inputInitialState = {
 			weight: 0,
 			maxValue: 0,
 			minValue: 0,
-			options: []
+			options: [],
+			evaluatedUserField: false
 		};
 
 const reducer = ( oldState = formInitialState, action) => {

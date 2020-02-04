@@ -42,7 +42,7 @@ class loginContainer extends Component {
 			)
 			.then( ( res ) => {
 
-				this.setState({ userTypes: res.data.types });
+				this.setState({ userTypes: res.data.records });
 
 			})
 			.catch( (res) => {
@@ -66,7 +66,7 @@ class loginContainer extends Component {
 			data: obj,
 			headers: {
 				'Content-Type': 'application/json',
-	//			'Authorization': 'Bearer ' + localStorage.getItem('jwtToken')
+				'Authorization': 'Bearer ' + localStorage.getItem('jwtToken')
 			}
 		};
 			

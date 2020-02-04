@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
 import styles from './Styles.css';
 
+import axios from '../../Axios/Axios';
+
 import { connect } from 'react-redux';
 import { updateForm, createSection, moveSection, deleteSection } from '../../Store/Actions/FormEditor/index';
 
@@ -15,7 +17,8 @@ class formEditor extends Component {
 		super(props);
 
 		this.state = {
-			sectionViews: []
+			sectionViews: [],
+			colorScales: []
 		}
 		this.moveSection = this.moveSection.bind(this);
 		this.deleteSection = this.deleteSection.bind(this);
@@ -30,6 +33,28 @@ class formEditor extends Component {
 		});
 
 	}
+
+	componentDidMount(){
+		this.getColorScales();
+	}
+
+	getColorScales = () => {
+		
+		axios.get(
+					'colorScale/',
+					{ headers: { 'Authorization': 'Bearer' + sessionStorage.getItem('jwtToken') }} 
+			)
+			.then( ( res ) => {
+
+				this.setState({ colorScale: res.data.records });
+
+			})
+			.catch( (res) => {
+				console.log(res);
+			});
+
+	}
+
 
 	onChangeHandler = (fieldName, e) => {
 

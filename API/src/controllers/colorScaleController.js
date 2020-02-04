@@ -1,11 +1,11 @@
 const moongose = require('mongoose');
 
-const UserType = require('../models/userType');
+const ColorScale = require('../models/colorScale');
 
 module.exports = {
 
 	list: (req,res,next) => {
-		UserType.find()
+		ColorScale.find()
 			.select('_id name')
 			.exec()
 			.then( docs => {
