@@ -57,7 +57,7 @@ class loginContainer extends Component {
 		return (
 			<div className={ styles.LoginContainer }>
 				<div className={ styles.Form }>
-					<h2 className={ styles.Title }>Ingresar</h2>
+					<h2 className={ styles.Title }>Inicio de Sesión</h2>
 					<Input type='email' label='E-mail' name='email' value={ this.state.email } onChange={ this.onChangeHandler } />
 					<Input type='password' label='Contraseña' name='password' value={ this.state.password } onChange={ this.onChangeHandler } />
 					<br/>

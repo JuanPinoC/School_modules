@@ -7,6 +7,7 @@ import { connect } from 'react-redux';
 import { updateForm, createSection, moveSection, deleteSection } from '../../Store/Actions/FormEditor/index';
 
 import SectionEditor from '../SectionEditor/SectionEditor';
+import Input from '../Input/Input';
 
 import { moveElementInArray } from '../../Functions/FormEditorFunctions';
 
@@ -19,12 +20,15 @@ class formEditor extends Component {
 		this.state = {
 			sectionViews: [],
 			colorScales: []
-		}
+		};
+
 		this.moveSection = this.moveSection.bind(this);
 		this.deleteSection = this.deleteSection.bind(this);
 	}
 
 	componentDidMount () {
+
+		this.getColorScales();
 
 		const sections = this.props.sections;
 
@@ -34,19 +38,15 @@ class formEditor extends Component {
 
 	}
 
-	componentDidMount(){
-		this.getColorScales();
-	}
-
 	getColorScales = () => {
 		
 		axios.get(
 					'colorScale/',
-					{ headers: { 'Authorization': 'Bearer' + sessionStorage.getItem('jwtToken') }} 
+					{ headers: { 'Authorization': 'Bearer ' + sessionStorage.getItem('jwtToken') }} 
 			)
 			.then( ( res ) => {
-
-				this.setState({ colorScale: res.data.records });
+				this.setState({ colorScales: res.data.records });
+				console.log(this.state.colorScales);
 
 			})
 			.catch( (res) => {
@@ -161,6 +161,10 @@ class formEditor extends Component {
 						</select>
 					</div>
 					<div className={ styles.FormEditorItem}>
+						<Input label='Escala de colores' type='select' options={ this.state.colorScales } value={ this.props.colorScale }
+								name='colorScale' onChange={ this.onChangeHandler } />
+					</div>
+					<div className={ styles.FormEditorItem}>
 						<label>Descripción: </label>
 						<input className={ styles.FormEditorName } type='text' value={ this.props.description } 
 								onChange={ (e) => {this.onChangeHandler('description', e)} } />
@@ -185,7 +189,8 @@ const mapStateToProps = state => {
 		type: state.formEditor.type,
 		action: state.formEditor.action,
 		description: state.formEditor.description,
-		sections: state.formEditor.sections
+		sections: state.formEditor.sections,
+		colorScale: state.formEditor.colorScale
 	};
 };
 

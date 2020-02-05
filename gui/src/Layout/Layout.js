@@ -120,21 +120,33 @@ class Layout extends Component {
 	constructor (props) {
 		super(props);
 
+		this.state = {
+			signedIn: false
+		};
+
 		this.onSignIn = this.onSignIn.bind(this);
 		this.onSignOut = this.onSignOut.bind(this);
 	}
 
 	onSignIn = ( userData ) => {
+
+		this.setState({ signedIn: true });
+
 		this.props.onSetUserData( userData.token, userData.name, userData.email, userData.type );
+
 	}
 
 	onSignOut = () => {
+
+		this.setState({ signedIn: false });
+
 		this.props.onRemoveUserData();
+
 	}
 
 	render(){
 
-		return ( this.props.token !== '' )?
+		return ( this.state.signedIn )?
 					(
 						<Router>
 							<div className={ styles.LayoutContainer } >
@@ -143,13 +155,13 @@ class Layout extends Component {
 									<nav>
 										<ul>
 											<li>
-												<Link to="/formEditor">Editor de Formularios</Link>
+												<Link to='/formEditor'>Editor de Formularios</Link>
 											</li>
 											<li>
-												<Link to="/userForm">Formulario de Usuarios</Link>
+												<Link to='/userForm'>Formulario de Usuarios</Link>
 											</li>
 											<li>
-												<div onClick={ this.onSignOut }>Salir</div>
+												<Link to='/' onClick={ this.onSignOut }>Salir</Link>
 											</li>
 										</ul>
 									</nav>
@@ -157,10 +169,10 @@ class Layout extends Component {
 								
 								<div className={ styles.MainContent }>
 									<Switch>
-										<Route path="/formEditor">
+										<Route path='/formEditor'>
 											<FormEditor />
 										</Route>
-										<Route path="/userForm">
+										<Route path='/userForm'>
 											<UserForm />
 										</Route>
 									</Switch>

@@ -13,7 +13,8 @@ const formInitialState = {
 			type: 'Soft Abilities',
 			action: 'sum',
 			description: '',
-			sections: []
+			sections: [],
+			colorScale: ''
 		};
 
 const sectionInitialState = {

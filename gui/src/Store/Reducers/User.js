@@ -6,7 +6,7 @@ import {
 
 
 const userInitialState = {
-			token: '',
+			token: sessionStorage.getItem('jwtToken'),
 			name: '',
 			email: '',
 			type: ''
@@ -19,7 +19,9 @@ const reducer = ( oldState = userInitialState, action) => {
 	switch ( action.type ) {
 		
 		case SET_USER_DATA:
-			
+
+			sessionStorage.setItem('jwtToken', action.token)
+
 			state = {
 				token: action.token,
 				name: action.name,
@@ -31,8 +33,11 @@ const reducer = ( oldState = userInitialState, action) => {
 
 		case REMOVE_USER_DATA:
 
+			sessionStorage.removeItem('jwtToken');
+
 			state = {
-				...userInitialState
+				...userInitialState,
+				token:''
 			};
 	
 			break;
