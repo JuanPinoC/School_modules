@@ -26,8 +26,7 @@ class input extends Component {
 				return (
 					<div className={ styles.InputContainer }>
 						<textarea name={ this.props.name } rows="10" cols="50" placeholder={ this.props.label } 
-							onChange={ (e) => this.props.onChange( this.props.name, e )}>
-							{ this.props.value }
+							value={ this.props.value } onChange={ (e) => this.props.onChange( this.props.name, e )}>
 						</textarea>
 					</div>
 				);

@@ -14,7 +14,8 @@ module.exports = {
 			weight: element.weight,
 			options: element.options,
 			maxValue: element.maxValue,
-			minValue: element.minValue
+			minValue: element.minValue,
+			evaluatedUserField: element.minValue
 		});
 
 		form.save()

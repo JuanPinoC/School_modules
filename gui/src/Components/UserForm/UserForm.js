@@ -77,6 +77,7 @@ class loginContainer extends Component {
 		.catch( (res) => {
 			console.log(res);
 		});
+		
 	}
 
 	render() {

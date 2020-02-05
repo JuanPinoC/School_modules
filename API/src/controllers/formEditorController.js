@@ -22,7 +22,8 @@ module.exports = {
 							type: doc.type,
 							action: doc.action,
 							description: doc.description,
-							weight: doc.weight
+							weight: doc.weight,
+							colorScale: doc.colorScale
 						}
 					})
 				};
@@ -38,13 +39,19 @@ module.exports = {
 	},
 	create: (req,res,next) => {
 
+	console.log( req.body );
+
+	console.log( req.body.sections );
+
+/*
 		const form = new Form({
 			_id: new mongoose.Types.ObjectId(),
 			name: req.body.name,
 			type: req.body.type,
 			action: req.body.action,
 			description: req.body.description,
-			weight: req.body.weight
+			weight: req.body.weight,
+			colorScale: req.colorScale
 		});
 
 		form.save()
@@ -68,7 +75,7 @@ module.exports = {
 					error: err
 				});	
 			});
-
+*/
 	},
 	find: (req,res,next) => {
 

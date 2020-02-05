@@ -34,11 +34,12 @@ class inputEditor extends Component {
 
 	onChangeHandler = (fieldName, e) => {
 
-		this.props.onUpdateInput( this.props.parent, this.props.id, fieldName, e.target.value );
+		this.props.onUpdateInput( this.props.parent, this.props.id, fieldName, (fieldName === 'evaluatedUserField')? e.target.checked : e.target.value );
 
 		if ( fieldName === 'type') {
 			this.setState({ showItemsConfig: this.getShowItemsConfig( e.target.value ) });
 		}
+
 	}
 
 	optionFieldChangeHandler = ( key, field, value ) => {

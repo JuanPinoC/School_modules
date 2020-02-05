@@ -19,6 +19,8 @@ class formEditor extends Component {
 
 		this.state = {
 			sectionViews: [],
+			types: [],
+			actions: [],
 			colorScales: []
 		};
 
@@ -28,6 +30,8 @@ class formEditor extends Component {
 
 	componentDidMount () {
 
+		this.getTypes();
+		this.getActions();
 		this.getColorScales();
 
 		const sections = this.props.sections;
@@ -38,6 +42,30 @@ class formEditor extends Component {
 
 	}
 
+	getTypes = () => {
+
+		const types = [
+			{ _id:'Soft Abilities' , name:'Habilidades blandas' },
+			{ _id:'Hard Abilities' , name:'Observación en clase' },
+			{ _id:'Interview' , name:'Entrevista' }
+		]
+
+		this.setState({ types: types });
+
+	}
+
+	getActions = () => {
+
+		const actions = [
+			{ _id:'sum' , name:'Sumar' },
+			{ _id:'avg' , name:'Promediar' },
+			{ _id:'none' , name:'Ninguna' }
+		]
+
+		this.setState({ actions: actions });
+		
+	}
+
 	getColorScales = () => {
 		
 		axios.get(
@@ -46,7 +74,6 @@ class formEditor extends Component {
 			)
 			.then( ( res ) => {
 				this.setState({ colorScales: res.data.records });
-				console.log(this.state.colorScales);
 
 			})
 			.catch( (res) => {
@@ -59,7 +86,7 @@ class formEditor extends Component {
 	onChangeHandler = (fieldName, e) => {
 
 		this.props.onUpdateForm( fieldName, e.target.value);
-	
+
 	}
 
 	addSection = ( data = null ) => {
@@ -98,31 +125,37 @@ class formEditor extends Component {
 	}
 
 	saveForm = (e) => {
-/*
-		let obj = {};
 
-		const formData = new formData();
+		let obj = {
+					name: this.props.name,
+					weight: this.props.weight,
+					type: this.props.type,
+					action: this.props.action,
+					description: this.props.description,
+					sections: this.props.sections,
+					colorScale: this.props.colorScale
+				};
 
 		const params = {
 			method: 'post',
-			url: url,
+			url: 'formEditor/create',
 			data: obj,
 			headers: {
-				'Content-Type': 'multipart/form-data',
-				'Authorization': 'Bearer ' + localStorage.getItem('jwtToken')
+				'Content-Type': 'application/json',
+				'Authorization': 'Bearer ' + sessionStorage.getItem('jwtToken')
 			}
 		};
 
 		axios(params)
 		.then( (res) => {
 
-			console.log('Created');
+			alert('Formulario guardado.');
 
 		})
 		.catch( (res) => {
 			alert('Error');
 		});
-*/
+
 	}
 
 	render () {
@@ -132,42 +165,30 @@ class formEditor extends Component {
 		return (
 			<div className={ styles.FormEditorContainer }>
 				<div className={ styles.FormEditorHeaders}>
-					<div className={ styles.FormEditorItem}>
-						<label>Nombre: </label>
-						<input className={ styles.FormEditorName } type='text' value={ this.props.name } 
-								onChange={ (e) => {this.onChangeHandler('name', e)} } />
+					<div className={ styles.AddSectionButton } onClick={ this.saveForm }>
+						<h2 className={ styles.HorizontalAlign}>Guardar Formulario</h2>
 					</div>
 					<div className={ styles.FormEditorItem}>
-						<label>Peso: </label>
-						<input className={ styles.FormEditorWeight } type='number' value={ this.props.weight }
-								onChange={ (e) => {this.onChangeHandler('weight', e)} } />
+						<Input label='Nombre' type='text' name='name' value={ this.props.name } onChange={ this.onChangeHandler } />
 					</div>
 					<div className={ styles.FormEditorItem}>
-						<label>Tipo: </label>
-						<select className={ styles.FormEditorSelect } 
-								onChange={ (e) => {this.onChangeHandler('type', e)} }>
-							<option value='Soft Abilities'>Habilidades blandas</option>
-							<option value='Hard Abilities'>Observación en clase</option>
-							<option value='Interview'>Entrevista</option>
-						</select>
+						<Input label='Peso' type='number' name='weight' value={ this.props.weight } onChange={ this.onChangeHandler } />
 					</div>
 					<div className={ styles.FormEditorItem}>
-						<label>Acción: </label>
-						<select className={ styles.FormEditorSelect } 
-								onChange={ (e) => {this.onChangeHandler('action', e)} }>
-							<option value='sum'>Sumar</option>
-							<option value='avg'>Promediar</option>
-							<option value='none'>Ninguna</option>
-						</select>
+						<Input label='Tipo' type='select' options={ this.state.types } name='type' 
+							value={ this.props.type } onChange={ this.onChangeHandler } />
 					</div>
 					<div className={ styles.FormEditorItem}>
-						<Input label='Escala de colores' type='select' options={ this.state.colorScales } value={ this.props.colorScale }
-								name='colorScale' onChange={ this.onChangeHandler } />
+						<Input label='Acción' type='select' options={ this.state.actions } name='action'
+							value={ this.props.action } onChange={ this.onChangeHandler } />
+					</div>
+					<div className={ styles.FormEditorItem}>
+						<Input label='Escala de colores' type='select' options={ this.state.colorScales } name='colorScale'
+						value={ this.props.colorScale }	 onChange={ this.onChangeHandler } />
 					</div>
 					<div className={ styles.FormEditorItem}>
 						<label>Descripción: </label>
-						<input className={ styles.FormEditorName } type='text' value={ this.props.description } 
-								onChange={ (e) => {this.onChangeHandler('description', e)} } />
+						<Input label='Descripción' type='textarea' name='description' value={ this.props.description } onChange={ this.onChangeHandler } />
 					</div>
 				</div>
 				<div className={ styles.SectionsList }>

@@ -11,8 +11,6 @@ const formSchema = mongoose.Schema({
 	description: { type: String, required: true },
 	weight: { type: Number, required: true },
 	colorScale: { type: mongoose.Schema.Types.ObjectId, ref: 'ColorScale', required: true }
-	// usuario: evaluador,
-	// usuario: evaluado,
 	// fecha ( forma de limitar a un intento )
 });
 
