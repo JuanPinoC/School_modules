@@ -1,12 +1,12 @@
-const moongose = require('mongoose');
+const mongoose = require('mongoose');
 
 const Input = require('../models/input');
 
 module.exports = {
 
-	create: ( sectionId, element ) => {
+	create: ( sectionId, order, element, resolve, reject ) => {
 
-		const section = new Section({
+		const input = new Input({
 			_id: new mongoose.Types.ObjectId(),
 			label: element.label,
 			type: element.type,
@@ -15,17 +15,16 @@ module.exports = {
 			options: element.options,
 			maxValue: element.maxValue,
 			minValue: element.minValue,
-			evaluatedUserField: element.minValue
+			evaluatedUserField: element.minValue,
+			order: order
 		});
 
-		form.save()
+		input.save()
 			.then( (result) => {
-				res.status(200).json(response);
+				resolve();
 			})
 			.catch( (err) => {
-				res.status(500).json({
-					error: err
-				});	
+				reject();
 			});
 
 	},

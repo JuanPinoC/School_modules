@@ -1,14 +1,15 @@
 
 .InputContainer {
+	font-family: 'Arial', Arial, serif;
 	text-align: center;
 	margin: 0.5em;
 }
 
 .Input {
-	width: 90%;
+	width: 85%;
 	background: #ffffff;
 	padding: 0.4em 1em 0.4em 1em;
-	border-radius: 0.8em;
+	border-radius: 0.5em;
 	border-style: solid;
 	border-color: var( --form-bg-color );
 	border-width: 0.1em;
@@ -21,10 +22,26 @@
 }
 
 .InputContainer select {
-	width: 20em;
+	width: 90%;
 	border-style: none;
-	border-radius: 0.2em;
-	padding: 0.2em 0.8em 0.2em 0.8em;
+	border-radius: 0.5em;
+	padding: 0.4em 0.7em 0.4em 0.7em;
 }
 
+.InputContainer textarea {
+	font-family: 'Arial', Arial, serif;
+	width: 85%;
+	border-style: none;
+	border-radius: 0.5em;
+	padding: 0.4em 0.7em 0.4em 0.7em;
+}
+
+.InputContainer textarea:focus {
+	outline-width: 0;
+	box-shadow: 0px 5px 5px rgba(0, 0, 0, 0.2);
+}
+
+.SelectOption {
+	color: var(--grey);
+}
 

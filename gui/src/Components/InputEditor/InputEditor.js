@@ -10,7 +10,7 @@ import ActionButtons from '../ActionButtons/ActionButtons';
 import { moveElementInArray } from '../../Functions/FormEditorFunctions';
 
 
-const optionBaseForm = {
+const optionBaseForm = {	key: '',
 							label: '', 
 							numberValue: 0,
 							stringValue: ''
@@ -52,6 +52,8 @@ class inputEditor extends Component {
 
 		this.props.onUpdateInput( this.props.parent, this.props.id, 'options', options );
 
+		console.log( this.props.options );
+
 	}
 
 	getShowItemsConfig = ( value ) => {
@@ -76,6 +78,8 @@ class inputEditor extends Component {
 
 		const key = data._id || 'o' + Math.round(Math.random() * 1000);
 
+		console.log( key );
+
 		this.setState( (state, props) => ({
 			optionViews: [	...state.optionViews,
 							(<OptionEditor id={ key } key={ key } data={ data } parent={ this.id }
@@ -86,7 +90,7 @@ class inputEditor extends Component {
 
 		if( typeof data._id === 'undefined' ){
 
-			this.props.onUpdateInput( this.props.parent, this.props.id, 'options', [ ...this.props.options, { ...optionBaseForm } ] );
+			this.props.onUpdateInput( this.props.parent, this.props.id, 'options', [ ...this.props.options, { ...optionBaseForm, key: key } ] );
 
 		}
 

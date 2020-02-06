@@ -1,14 +1,3 @@
-:root {
-	--dark-blue: #000f48;
-	--blue: #042d6e;
-	--dark-red: #790b12;
-	--red: #b3232c;
-	--dark-green: #008000;
-	--green: #228B22;
-	--grey: #D3D3D3;
-	--dark-yellow: #E5BC3B;
-	--yellow: #FFCC11;
-}
 
 .FormEditorContainer {
 	margin: 2em;
@@ -22,28 +11,34 @@
 	background-color:var(--blue);
 	color: white;
 	font-weight: bold;
-	padding: 1em;
+	padding: 0.5em;
 	border-radius: 0.3em 0.3em 0em 0em; 
 	border-bottom: solid var(--dark-blue) 0.3em ;
+
+	display: grid;
+	grid-template-columns: 33% 33% 33%;
+	grid-gap: 0.5em;
+}
+
+@media only screen and (max-width: 768px) {
+	.FormEditorHeaders {
+		background-color:var(--blue);
+		color: white;
+		font-weight: bold;
+		padding: 0.5em;
+		border-radius: 0.3em 0.3em 0em 0em; 
+		border-bottom: solid var(--dark-blue) 0.3em ;
+
+		display: grid;
+		grid-template-columns: 90%;
+		grid-gap: 0.5em;
+	}
 }
 
 .FormEditorItem {
-	width: 20em;
-	display: inline-block;
-	margin: 0.5em;
-}
-
-.FormEditorHeaders input {
-	margin-right: 3em;
-	border-style: none;
-	border-radius: 0.2em;
-	height: 1.6em;
-	padding: 0.2em 0.8em 0.2em 0.8em;
-}
-
-.FormEditorHeaders select {
-	border-radius: 0.2em;
-	padding: 0.2em 0.8em 0.2em 0.8em;
+	/*width: 20em;*/
+	/*display: inline-block;*/
+	/*margin: 0.5em;*/
 }
 
 .SectionsList {

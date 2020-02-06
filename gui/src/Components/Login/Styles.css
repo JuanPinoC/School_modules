@@ -1,11 +1,3 @@
-:root {
-	--bg-color: #D3D3D3;
-	--form-bg-color: #042d6e;
-	--light-red: #db2a35;
-	--red: #e0000e;
-	--dark-red: #790b12;
-	--grey: #D3D3D3;
-}
 
 .LoginContainer {
 	font-family: 'Arial', Arial, serif;

@@ -6,8 +6,8 @@ const FormActions = ['sum','avg','none'];
 const formSchema = mongoose.Schema({
 	_id:	mongoose.Schema.Types.ObjectId,
 	name:	{ type: String, required: true },
-	type:	{ type: String, enum: FormTypes, required: true },
-	action: { type: String, enum: FormActions, required: true },
+	type:	{ type: String, enum: FormTypes, default: 'Soft Abilities' },
+	action: { type: String, enum: FormActions, default: 'none' },
 	description: { type: String, required: true },
 	weight: { type: Number, required: true },
 	colorScale: { type: mongoose.Schema.Types.ObjectId, ref: 'ColorScale', required: true }

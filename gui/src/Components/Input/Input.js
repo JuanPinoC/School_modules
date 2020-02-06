@@ -14,7 +14,7 @@ class input extends Component {
 					<div className={ styles.InputContainer }>
 						<select className={ styles.Input } name={ this.props.name } value={ this.props.value } 
 								onChange={ (e) => this.props.onChange( this.props.name, e )}>
-							<option>{this.props.label}</option>
+							<option className={ styles.SelectOption }>{this.props.label}</option>
 							{ optionViews }
 						</select>
 					</div>

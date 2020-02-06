@@ -1,8 +1,6 @@
-const moongose = require('mongoose');
+const mongoose = require('mongoose');
 
 const Form = require('../models/form');
-const Section = require('../models/section');
-const Input = require('../models/input');
 
 const SectionController = require('../controllers/sectionController');
 
@@ -31,7 +29,6 @@ module.exports = {
 				res.status(200).json(response);
 			})
 			.catch(err => {
-				console.log(err);
 				res.status(500).json({
 					error:err
 				});
@@ -39,11 +36,6 @@ module.exports = {
 	},
 	create: (req,res,next) => {
 
-	console.log( req.body );
-
-	console.log( req.body.sections );
-
-/*
 		const form = new Form({
 			_id: new mongoose.Types.ObjectId(),
 			name: req.body.name,
@@ -51,7 +43,7 @@ module.exports = {
 			action: req.body.action,
 			description: req.body.description,
 			weight: req.body.weight,
-			colorScale: req.colorScale
+			colorScale: req.body.colorScale
 		});
 
 		form.save()
@@ -59,25 +51,87 @@ module.exports = {
 
 				const sections = req.body.sections;
 
-				sections.forEach(
-					(element) => {
-						SectionController.create( result._id, element );
-					}
-				);
+				let sectionPromises = sections.map((item, index) => {
+				
+					let itemPromise = new Promise(
+													( resolve, reject ) => {
+														SectionController.create( result._id, index, item, resolve, reject );
+													});
 
-				res.status(201).json({
-					message: 'Created Succesfully',
-					createdObj: result
-				})
+					return itemPromise.then( () => { return true } ).catch( () => { return false } );
+				
+				});
+
+				Promise.all(sectionPromises).then( arrayOfResponses => {
+
+					if( arrayOfResponses.every( (e) => e ) ){
+						res.status(201).json({
+							message: 'Created Succesfully',
+							createdObj: result
+						});
+					}else{
+						res.status(500).json({
+							error: err
+						});
+					}
+
+				});
+
 			})
 			.catch( (err) => {
 				res.status(500).json({
 					error: err
-				});	
+				});
 			});
-*/
+
 	},
 	find: (req,res,next) => {
+
+		const id = req.query.id;
+
+		console.log(id);
+
+		Form.aggregate([
+/*
+							{
+								$match: {
+									_id: id
+								}
+							},
+*/
+							{
+								$lookup:
+										{
+											from: 'sections',
+											localField: '_id',
+											foreignField: 'form',
+											as: 'sections'
+										}
+							}
+/*							,
+							{
+								$project:{
+									_id: '$id',
+									name: '$name',
+									type: '$type',
+									action: '$action',
+									description: '$description',
+									weight: '$weight',
+									colorScale: '$colorScale',
+									sections: '$sections'
+								}
+							}
+*/
+						])
+			.exec()
+			.then( doc => {
+				res.status(200).json(doc);
+			})
+			.catch(err => {
+				res.status(500).json({
+					error:err
+				});
+			});
 
 	},
 	update: (req,res,next) => {

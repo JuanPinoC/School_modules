@@ -153,7 +153,7 @@ class formEditor extends Component {
 
 		})
 		.catch( (res) => {
-			alert('Error');
+			console.log(res);
 		});
 
 	}
@@ -164,10 +164,11 @@ class formEditor extends Component {
 
 		return (
 			<div className={ styles.FormEditorContainer }>
-				<div className={ styles.FormEditorHeaders}>
-					<div className={ styles.AddSectionButton } onClick={ this.saveForm }>
+								<div className={ styles.AddSectionButton } onClick={ this.saveForm }>
 						<h2 className={ styles.HorizontalAlign}>Guardar Formulario</h2>
 					</div>
+				<div className={ styles.FormEditorHeaders}>
+
 					<div className={ styles.FormEditorItem}>
 						<Input label='Nombre' type='text' name='name' value={ this.props.name } onChange={ this.onChangeHandler } />
 					</div>
@@ -187,7 +188,6 @@ class formEditor extends Component {
 						value={ this.props.colorScale }	 onChange={ this.onChangeHandler } />
 					</div>
 					<div className={ styles.FormEditorItem}>
-						<label>Descripción: </label>
 						<Input label='Descripción' type='textarea' name='description' value={ this.props.description } onChange={ this.onChangeHandler } />
 					</div>
 				</div>
