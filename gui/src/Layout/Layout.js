@@ -20,6 +20,9 @@ import FormEditor from '../Components/FormEditor/FormEditor';
 import Login from '../Components/Login/Login';
 import UserForm from '../Components/UserForm/UserForm';
 
+/* Records */
+import FillableForm from '../Components/FillableForm/FillableForm';
+
 
 class Layout extends Component {
 /*
@@ -161,6 +164,9 @@ class Layout extends Component {
 												<Link to='/userForm'>Formulario de Usuarios</Link>
 											</li>
 											<li>
+												<Link to='/fillableForm'>Llenar evaluación</Link>
+											</li>
+											<li>
 												<Link to='/' onClick={ this.onSignOut }>Salir</Link>
 											</li>
 										</ul>
@@ -174,6 +180,9 @@ class Layout extends Component {
 										</Route>
 										<Route path='/userForm'>
 											<UserForm />
+										</Route>
+										<Route path='/fillableForm'>
+											<FillableForm />
 										</Route>
 									</Switch>
 								</div>

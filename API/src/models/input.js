@@ -2,8 +2,8 @@ const mongoose = require('mongoose');
 
 const OptionSchema = mongoose.Schema({
 						label: { type: String, required: true },
-						stringValue: { type: String, required: true },
-						numberValue: { type: Number, required: true }
+						stringValue: { type: String, required: false },
+						numberValue: { type: Number, required: false }
 					});
 
 const InputTypes = ['Number','Text','Number Options','Text Options'];

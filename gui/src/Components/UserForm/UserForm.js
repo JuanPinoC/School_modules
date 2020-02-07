@@ -38,12 +38,10 @@ class loginContainer extends Component {
 		
 		axios.get(
 					'userType/',
-					{ headers: { 'Authorization': 'Bearer' + sessionStorage.getItem('jwtToken') }} 
+					{ headers: { 'Authorization': 'Bearer' + sessionStorage.getItem('jwtToken') } } 
 			)
 			.then( ( res ) => {
-
 				this.setState({ userTypes: res.data.records });
-
 			})
 			.catch( (res) => {
 				console.log(res);
@@ -53,7 +51,7 @@ class loginContainer extends Component {
 
 	onSubmitHandler = () => {
 
-		let obj = {
+		const data = {
 			name: this.state.name,
 			type: this.state.type,
 			email: this.state.email,
@@ -63,16 +61,16 @@ class loginContainer extends Component {
 		const params = {
 			method: 'post',
 			url: 'user/create',
-			data: obj,
+			data: data,
 			headers: {
 				'Content-Type': 'application/json',
-				'Authorization': 'Bearer ' + localStorage.getItem('jwtToken')
+				'Authorization': 'Bearer ' + sessionStorage.getItem('jwtToken')
 			}
 		};
-			
+		
 		axios(params)
 		.then( (res) => {
-			console.log('Created');
+			alert('Usuario guardado.');
 		})
 		.catch( (res) => {
 			console.log(res);

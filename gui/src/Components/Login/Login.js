@@ -6,6 +6,7 @@ import axios from '../../Axios/Axios';
 import Input from '../Input/Input';
 import SubmitButton from '../SubmitButton/SubmitButton';
 
+
 class loginContainer extends Component {
 
 	constructor (props) {
@@ -27,26 +28,23 @@ class loginContainer extends Component {
 
 	onSubmitHandler = () => {
 
-		let obj = {};
-
-		obj.email = this.state.email;
-		obj.password = this.state.password;
+		const data = {
+			email: this.state.email,
+			password: this.state.password
+		};
 
 		const params = {
 			method: 'post',
 			url: 'user/login',
-			data: obj,
+			data: data,
 			headers: {
-				'Content-Type': 'application/json',
-	//			'Authorization': 'Bearer ' + localStorage.getItem('jwtToken')
+				'Content-Type': 'application/json'
 			}
 		};
 			
 		axios(params)
 		.then( (res) => {
-
 			this.props.onSignIn( res.data );
-
 		})
 		.catch( (res) => {
 			alert('Usuario o contraseña incorrectos.');

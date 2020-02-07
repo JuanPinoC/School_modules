@@ -9,7 +9,7 @@ import { updateForm, createSection, moveSection, deleteSection } from '../../Sto
 import SectionEditor from '../SectionEditor/SectionEditor';
 import Input from '../Input/Input';
 
-import { moveElementInArray } from '../../Functions/FormEditorFunctions';
+import { FormTypes, FormActions, getColorScales, moveElementInArray } from '../../Functions/FormEditorFunctions';
 
 class formEditor extends Component {
 
@@ -19,8 +19,8 @@ class formEditor extends Component {
 
 		this.state = {
 			sectionViews: [],
-			types: [],
-			actions: [],
+			types: FormTypes,
+			actions: FormActions,
 			colorScales: []
 		};
 
@@ -30,9 +30,9 @@ class formEditor extends Component {
 
 	componentDidMount () {
 
-		this.getTypes();
-		this.getActions();
-		this.getColorScales();
+		let colorScalesPromise = new Promise( ( resolve, reject ) => { getColorScales(resolve, reject); });
+
+		colorScalesPromise.then( ( res ) => { this.setState({ colorScales: res }); } );
 
 		const sections = this.props.sections;
 
@@ -41,47 +41,6 @@ class formEditor extends Component {
 		});
 
 	}
-
-	getTypes = () => {
-
-		const types = [
-			{ _id:'Soft Abilities' , name:'Habilidades blandas' },
-			{ _id:'Hard Abilities' , name:'Observación en clase' },
-			{ _id:'Interview' , name:'Entrevista' }
-		]
-
-		this.setState({ types: types });
-
-	}
-
-	getActions = () => {
-
-		const actions = [
-			{ _id:'sum' , name:'Sumar' },
-			{ _id:'avg' , name:'Promediar' },
-			{ _id:'none' , name:'Ninguna' }
-		]
-
-		this.setState({ actions: actions });
-		
-	}
-
-	getColorScales = () => {
-		
-		axios.get(
-					'colorScale/',
-					{ headers: { 'Authorization': 'Bearer ' + sessionStorage.getItem('jwtToken') }} 
-			)
-			.then( ( res ) => {
-				this.setState({ colorScales: res.data.records });
-
-			})
-			.catch( (res) => {
-				console.log(res);
-			});
-
-	}
-
 
 	onChangeHandler = (fieldName, e) => {
 
@@ -126,7 +85,7 @@ class formEditor extends Component {
 
 	saveForm = (e) => {
 
-		let obj = {
+		const data = {
 					name: this.props.name,
 					weight: this.props.weight,
 					type: this.props.type,
@@ -139,7 +98,7 @@ class formEditor extends Component {
 		const params = {
 			method: 'post',
 			url: 'formEditor/create',
-			data: obj,
+			data: data,
 			headers: {
 				'Content-Type': 'application/json',
 				'Authorization': 'Bearer ' + sessionStorage.getItem('jwtToken')
@@ -148,12 +107,10 @@ class formEditor extends Component {
 
 		axios(params)
 		.then( (res) => {
-
 			alert('Formulario guardado.');
-
 		})
-		.catch( (res) => {
-			console.log(res);
+		.catch( (err) => {
+			console.log(err);
 		});
 
 	}

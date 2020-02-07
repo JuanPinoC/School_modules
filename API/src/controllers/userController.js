@@ -14,7 +14,7 @@ module.exports = {
 			.then( docs => {
 				const response = {
 					count: docs.length,
-					users: docs.map( doc => {
+					records: docs.map( doc => {
 						return {
 							_id: doc._id,
 							email: doc.email,

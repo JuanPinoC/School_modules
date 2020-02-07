@@ -5,7 +5,7 @@ const Section = require('../models/section');
 
 const SectionController = require('../controllers/sectionController');
 
-const errorHandler = ( res, error ) => {
+const errorHandler = ( res, err ) => {
 	res.status(500).json({
 		error:err
 	});
@@ -35,7 +35,7 @@ module.exports = {
 
 				res.status(200).json(response);
 			})
-			.catch(err => errorHandler(res, err) );
+			.catch( err => errorHandler(res, err) );
 	},
 	create: (req,res,next) => {
 
@@ -73,13 +73,13 @@ module.exports = {
 							createdObj: result
 						});
 					}else{
-						errorHandler(res, err);
+						errorHandler(res, 'Error at sections creation.');
 					}
 
-				});
+				}).catch( err => errorHandler(res, err) );
 
 			})
-			.catch(err => errorHandler(res, err) );
+			.catch( err => errorHandler(res, err) );
 
 	},
 	find: (req,res,next) => {
@@ -103,25 +103,37 @@ module.exports = {
 							foreignField: 'section',
 							as: 'inputs'
 						}
+					},
+					{
+						$project: {
+							__v: 0,
+							'inputs.__v': 0
+						}
 					}
 				])
 				.exec()
 				.then( (sections) => {
 
 					res.status(200).json({
-						...form,
+						_id:	form._id,
+						name:	form.name,
+						type:	form.type,
+						action: form.action,
+						description: form.description,
+						weight: form.weight,
+						colorScale: form.colorScale,
 						sections: sections
 					});
 
 				})
-				.catch(err => errorHandler(res, err) );
+				.catch( err => errorHandler(res, err) );
 
 			})
-			.catch(err => errorHandler(res, err) );
+			.catch( err => errorHandler(res, err) );
 
 	},
 	update: (req,res,next) => {
-
+		
 	},
 	delete: (req,res,next) => {
 

@@ -7,7 +7,7 @@ import { updateSection, createInput, moveInput, deleteInput } from '../../Store/
 import InputEditor from '../InputEditor/InputEditor';
 import ActionButtons from '../ActionButtons/ActionButtons';
 
-import { moveElementInArray } from '../../Functions/FormEditorFunctions';
+import { InputTypes, moveElementInArray } from '../../Functions/FormEditorFunctions';
 
 class sectionEditor extends Component {
 
@@ -15,52 +15,9 @@ class sectionEditor extends Component {
 		
 		super(props);
 
-		const inputTypes = [
-			{
-				value: 'Number',
-				label: 'Númerica',
-				config: {
-						showWeight: true,
-						showOptions: false,
-						showMaxValue: true,
-						showMinValue: true
-				}
-			},
-			{
-				value: 'Text',
-				label: 'Textual',
-				config: {
-						showWeight: false,
-						showOptions: false,
-						showMaxValue: true,
-						showMinValue: true
-				}
-			},
-			{
-				value: 'Number Options',
-				label: 'Opción Múltiple Númerica',
-				config: {
-						showWeight: true,
-						showOptions: true,
-						showMaxValue: false,
-						showMinValue: false
-				}
-			},
-			{
-				value: 'Text Options',
-				label: 'Opción Múltiple Textual',
-				config: {
-						showWeight: false,
-						showOptions: true,
-						showMaxValue: false,
-						showMinValue: false
-				}
-			}
-		];
-
 		this.state = {
 			inputViews: [],
-			inputTypes: inputTypes
+			inputTypes: InputTypes
 		};
 
 		this.moveInput = this.moveInput.bind(this);

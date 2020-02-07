@@ -4,6 +4,12 @@ const Section = require('../models/section');
 
 const InputController = require('../controllers/inputController');
 
+const errorHandler = ( res, err ) => {
+	res.status(500).json({
+		error:err
+	});
+};
+
 module.exports = {
 
 	create: ( formId, order, element, resolve, reject ) => {
@@ -41,7 +47,7 @@ module.exports = {
 						reject();
 					}
 
-				});
+				}).catch( err => errorHandler(res, err) );
 
 			})
 			.catch( (err) => {

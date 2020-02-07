@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 
-const SectionActions = ['sum','avg','text'];
+const SectionActions = ['sum','avg','none'];
 
 const sectionSchema = mongoose.Schema({
 	_id:	mongoose.Schema.Types.ObjectId,

@@ -6,7 +6,7 @@ module.exports = {
 
 	list: (req,res,next) => {
 		ColorScale.find()
-			.select('_id name')
+			.select('_id name items')
 			.exec()
 			.then( docs => {
 				const response = {
