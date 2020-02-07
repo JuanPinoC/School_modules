@@ -1,8 +1,15 @@
 const mongoose = require('mongoose');
 
 const Form = require('../models/form');
+const Section = require('../models/section');
 
 const SectionController = require('../controllers/sectionController');
+
+const errorHandler = ( res, error ) => {
+	res.status(500).json({
+		error:err
+	});
+};
 
 module.exports = {
 
@@ -28,11 +35,7 @@ module.exports = {
 
 				res.status(200).json(response);
 			})
-			.catch(err => {
-				res.status(500).json({
-					error:err
-				});
-			});
+			.catch(err => errorHandler(res, err) );
 	},
 	create: (req,res,next) => {
 
@@ -70,68 +73,51 @@ module.exports = {
 							createdObj: result
 						});
 					}else{
-						res.status(500).json({
-							error: err
-						});
+						errorHandler(res, err);
 					}
 
 				});
 
 			})
-			.catch( (err) => {
-				res.status(500).json({
-					error: err
-				});
-			});
+			.catch(err => errorHandler(res, err) );
 
 	},
 	find: (req,res,next) => {
 
 		const id = req.query.id;
 
-		console.log(id);
-
-		Form.aggregate([
-/*
-							{
-								$match: {
-									_id: id
-								}
-							},
-*/
-							{
-								$lookup:
-										{
-											from: 'sections',
-											localField: '_id',
-											foreignField: 'form',
-											as: 'sections'
-										}
-							}
-/*							,
-							{
-								$project:{
-									_id: '$id',
-									name: '$name',
-									type: '$type',
-									action: '$action',
-									description: '$description',
-									weight: '$weight',
-									colorScale: '$colorScale',
-									sections: '$sections'
-								}
-							}
-*/
-						])
+		Form.findById(id)
 			.exec()
-			.then( doc => {
-				res.status(200).json(doc);
+			.then( (form) => {
+
+				Section.aggregate([
+					{	
+						$match: {
+							form: mongoose.Types.ObjectId(id),
+						}
+					},
+					{
+						$lookup: {
+							from: 'inputs',
+							localField: '_id',
+							foreignField: 'section',
+							as: 'inputs'
+						}
+					}
+				])
+				.exec()
+				.then( (sections) => {
+
+					res.status(200).json({
+						...form,
+						sections: sections
+					});
+
+				})
+				.catch(err => errorHandler(res, err) );
+
 			})
-			.catch(err => {
-				res.status(500).json({
-					error:err
-				});
-			});
+			.catch(err => errorHandler(res, err) );
 
 	},
 	update: (req,res,next) => {
@@ -142,3 +128,48 @@ module.exports = {
 	}
 
 };
+
+/*
+
+db.sections.aggregate([
+	{	$match: {
+			form: ObjectId('5e3bc29efeddbb2098651654')
+		}
+	},
+	{
+		$lookup: {
+			from: 'inputs',
+			localField: '_id',
+			foreignField: 'section',
+			as: 'inputs'
+		}
+	}
+]);
+
+db.forms.aggregate([
+	{	$match: {
+			_id: ObjectId('5e3bc29efeddbb2098651654')
+		}
+	},
+	{
+		$lookup: {
+			from: 'sections',
+			localField: '_id',
+			foreignField: 'form',
+			as: 'sections'
+		}
+	},
+	{ $unwind : '$sections' },
+	{
+		$lookup: {
+			from: 'inputs', 
+			localField: 'sections._id', 
+			foreignField: 'section',
+			as: 'sections.inputs'
+		}
+	}
+]);
+
+db.forms.aggregate([ {$match: { _id: ObjectId('5e3bc29efeddbb2098651654') } }, { $lookup: { from: 'sections', localField: '_id', foreignField: 'form', as: 'sections' } } ]).pretty();
+
+*/
