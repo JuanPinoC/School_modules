@@ -2,9 +2,9 @@
 	user-select: none;
 	text-align: center;
 	background: #ffffff;
-	color: var( --red );
-	padding: 0.2em;
-	border: solid var( --light-red ) 0.2em;
+	color: var( --bg-color );
+	padding: 0.4em;
+	border: solid var( --bg-color ) 0.2em;
 	border-radius: 0.8em;
 	margin-top: 6em;
 	margin: auto;
@@ -12,14 +12,14 @@
 }
 
 .ButtonContainer:hover {
-	background: var( --red );
+	background: var( --bg-color );
 	color: #ffffff;
+	box-shadow: 0px 0.3em 0.3em rgba(0,0,0,0.2);
 	transition-duration: 0.3s;
-	box-shadow: 0px 10px 10px rgba(0,0,0,0.8);
 }
 
 .ButtonText {
-	font-weight: bolder;
+	font-weight: bold;
 	margin: 0.2em;
 	font-size: 1em;
 }

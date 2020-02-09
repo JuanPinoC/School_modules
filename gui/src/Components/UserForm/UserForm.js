@@ -6,6 +6,8 @@ import axios from '../../Axios/Axios';
 import Input from '../Input/Input';
 import SubmitButton from '../SubmitButton/SubmitButton';
 
+import { getUserTypes } from '../../Functions/FormEditorFunctions';
+
 class loginContainer extends Component {
 
 	constructor (props) {
@@ -31,21 +33,9 @@ class loginContainer extends Component {
 	}
 
 	componentDidMount(){
-		this.getUserTypes();
-	}
 
-	getUserTypes = () => {
-		
-		axios.get(
-					'userType/',
-					{ headers: { 'Authorization': 'Bearer' + sessionStorage.getItem('jwtToken') } } 
-			)
-			.then( ( res ) => {
-				this.setState({ userTypes: res.data.records });
-			})
-			.catch( (res) => {
-				console.log(res);
-			});
+		let userTypesPromise = new Promise( ( resolve, reject ) => { getUserTypes(resolve, reject); });
+		userTypesPromise.then( ( res ) => { this.setState({ userTypes: res }); } );
 
 	}
 
@@ -64,7 +54,7 @@ class loginContainer extends Component {
 			data: data,
 			headers: {
 				'Content-Type': 'application/json',
-				'Authorization': 'Bearer ' + sessionStorage.getItem('jwtToken')
+				'Authorization': 'Bearer ' + localStorage.getItem('jwtToken')
 			}
 		};
 		

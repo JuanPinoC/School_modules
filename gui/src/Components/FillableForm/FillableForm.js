@@ -6,9 +6,10 @@ import axios from '../../Axios/Axios';
 import { connect } from 'react-redux';
 //import { updateForm, createSection, moveSection, deleteSection } from '../../Store/Actions/FormEditor/index';
 
-import { FormTypes, FormActions, getColorScales, getUsers, moveElementInArray } from '../../Functions/FormEditorFunctions';
+import { FormTypes, FormActions, getColorScales, getUsers, getForm, moveElementInArray } from '../../Functions/FormEditorFunctions';
 
 import Input from '../Input/Input';
+import SubmitButton from '../SubmitButton/SubmitButton';
 
 const item = {
 	input: '',
@@ -23,6 +24,7 @@ class FillableForm extends Component {
 		super(props);
 
 		this.state = {
+			formId: '5e3cdab9d6364d2f6cf4da17',
 			evaluated: '',
 			form: {},
 			items: [],
@@ -37,37 +39,41 @@ class FillableForm extends Component {
 
 	componentDidMount () {
 
-		this.getForm();
-
 		let usersPromise = new Promise( ( resolve, reject ) => { getUsers(resolve, reject); });
 		usersPromise.then( ( res ) => { this.setState({ users: res }); } );
 
 		let colorScalesPromise = new Promise( ( resolve, reject ) => { getColorScales(resolve, reject); });
 		colorScalesPromise.then( ( res ) => { this.setState({ colorScales: res }); } );
 
-	}
-
-	getForm = () => {
-		
-		axios.get(
-				'formEditor/find?id=' + '5e3cdab9d6364d2f6cf4da17',
-				{ headers: { 'Authorization': 'Bearer ' + sessionStorage.getItem('jwtToken') } } 
-		)
-		.then( (res) => {
-			this.setState({ form: res.data });
+		let formPromise = new Promise( ( resolve, reject ) => { getForm( this.state.formId, resolve, reject); });
+		formPromise.then( ( res ) => { 
+			this.setState({ form: res });
 			this.getSectionViews();
-		})
-		.catch( (err) => {
-			console.log(err);
-			alert('Error');			
-		});
-
+		} );
 	}
 
 	onChangeHandler = ( inputId, e ) => {
-		console.log( inputId, e);
+
+		if( inputId === 'evaluated' ){
+			this.setState({ evaluated: e.target.value });
+			return;
+		}
+		
 		let items = this.state.items;
-		items[inputId] = e.target.value;
+		
+		const id = items.findIndex( (e) => e.input === inputId );
+
+		if( id < 0 ) {
+			items.push({
+					input: inputId,
+					answer: e.target.value
+			});
+		} else {
+			items[id] = {
+					input: inputId,
+					answer:	e.target.value
+			};
+		}
 
 		this.setState({ items: items });
 	}
@@ -78,10 +84,10 @@ class FillableForm extends Component {
 
 		let sectionViews = sections.map( (section) => {
 			return (
-				<div key={ section._id }>
-					<h4> section.name </h4>
-					<h5> section.weight </h5>
-					<h5> section.order </h5>
+				<div className={ styles.Section } key={ section._id }>
+					<h3 className={ styles.SectionName }>{ section.name }</h3>
+					<h5 className={ styles.SectionWeight }>{ section.weight }</h5>
+					<h5>{ section.order }</h5>
 					<div className={ styles.InputsList }>
 						{ this.getInputViews(section.inputs) }
 					</div>
@@ -97,48 +103,42 @@ class FillableForm extends Component {
 
 		let inputViews = inputs.map( (input) => {
 
-			if(input.evaluatedUserField) this.setState({ evaluatedUserFields: [ ...this.state.evaluatedUserFields, input._id ] }) ;
+			if( input.evaluatedUserField ) this.setState({ evaluatedUserFields: [ ...this.state.evaluatedUserFields, input._id ] });
 
 			switch(input.type){
 				case 'Number':
 					return(
-						<div order={ input.order } >
-							<Input label={ input.label } type='number' name={ input._id } value={ this.items[input._id] } 
-									onChange={ this.onChangeHandler } 
-									max={ input.maxValue }
-									min={ input.minValue } />
-						</div>
+						<Input label={ input.label } type='number' name={ input._id } value={ this.state.items[input._id] } 
+								onChange={ this.onChangeHandler } 
+								max={ input.maxValue }
+								min={ input.minValue } />
+
 					);
 					break;
 
 				case 'Text':
 					return(
-						<div order={ input.order } >
-							<Input label={ input.label } type='textarea' name={ input._id } value={ this.items[input._id] } 
-									onChange={ this.onChangeHandler } 
-									max={ input.maxValue }
-									min={ input.minValue } />
-						</div>
+						<Input label={ input.label } type='textarea' name={ input._id } value={ this.state.items[input._id] } 
+								onChange={ this.onChangeHandler } 
+								max={ input.maxValue }
+								min={ input.minValue } />
 					);
 					break;
 
 				case 'Number Options':
+
 					return(
-						<div order={ input.order } >
-							<Input label={ input.label } type='radiobuttons' name={ input._id } value={ this.items[input._id] } 
-									onChange={ this.onChangeHandler } 
-									options={ input.options } />
-						</div>
+						<Input label={ input.label } type='radiobuttons' name={ input._id } value={ this.state.items[input._id] } 
+								onChange={ this.onChangeHandler } 
+								options={ input.options } />
 					);
 					break;
 
 				case 'Text Options':
 					return(
-						<div order={ input.order } >
-							<Input label={ input.label } type='radiobuttons' name={ input._id } value={ this.items[input._id] } 
+							<Input label={ input.label } type='radiobuttons' name={ input._id } value={ this.state.items[input._id] } 
 									onChange={ this.onChangeHandler } 
 									options={ input.options } />
-						</div>
 					);
 					break;
 
@@ -149,6 +149,33 @@ class FillableForm extends Component {
 		return inputViews;
 	}
 
+	submitForm = () => {
+
+		const data = {
+			evaluatedUser: this.state.evaluated,
+			form: this.state.formId,
+			items: this.state.items
+		};
+
+		const params = {
+			method: 'post',
+			url: 'record/create',
+			data: data,
+			headers: {
+				'Content-Type': 'application/json'
+			}
+		};
+			
+		axios(params)
+		.then( (res) => {
+			this.props.onSignIn( res.data );
+		})
+		.catch( (res) => {
+			alert('Usuario o contraseña incorrectos.');
+		});
+
+	}
+
 	render () {
 
 		const form = { ...this.state.form, sections: [] };
@@ -156,11 +183,14 @@ class FillableForm extends Component {
 		return (
 			<div className={ styles.FillableFormContainer }>
 				<div className={ styles.FormFields}>
-					<h2>{ form.name }</h2>
-					<h3>{ form.type }</h3>
-					<h5>{ form.weight }</h5>
-					<p>{ form.description }</p>
+					<h1 className={ styles.FormTitle }>{ form.name }</h1>
+					<h2 className={ styles.FormField }>Tipo: { form.type }</h2>
+					<h2 className={ styles.FormField }>Peso: { form.weight }</h2>
+					<Input label='Usuario Evaluado:' type='select' name='evaluated' value={ this.state.evaluated } 
+								onChange={ this.onChangeHandler } options={ this.state.users } />
+					<p>Descripción: { form.description }</p>
 					<h5> ColorScale </h5>
+					<SubmitButton onClick={ this.submitForm } text={'Guardar Evaluación'}/>
 				</div>
 				<div className={ styles.SectionsList }>
 					{ this.state.sectionViews }

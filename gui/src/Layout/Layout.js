@@ -124,7 +124,7 @@ class Layout extends Component {
 		super(props);
 
 		this.state = {
-			signedIn: false
+			signedIn: props.token !== null
 		};
 
 		this.onSignIn = this.onSignIn.bind(this);

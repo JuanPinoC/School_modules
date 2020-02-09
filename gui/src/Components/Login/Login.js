@@ -49,20 +49,20 @@ class loginContainer extends Component {
 		.catch( (res) => {
 			alert('Usuario o contraseña incorrectos.');
 		});
+		
 	}
 
 	render() {
 		return (
-			<div className={ styles.LoginContainer }>
-				<div className={ styles.Form }>
-					<h2 className={ styles.Title }>Inicio de Sesión</h2>
-					<Input type='email' label='E-mail' name='email' value={ this.state.email } onChange={ this.onChangeHandler } />
-					<Input type='password' label='Contraseña' name='password' value={ this.state.password } onChange={ this.onChangeHandler } />
-					<br/>
-					<div className={ styles.ButtonContainer }>
-						<SubmitButton text='Ingresar' type='primary' onClick={ this.onSubmitHandler } />
-					</div>
+			<div className={ styles.FormContainer }>
+				<h2 className={ styles.Title }>Inicio de Sesión</h2>
+				<Input type='email' label='E-mail' name='email' value={ this.state.email } onChange={ this.onChangeHandler } />
+				<Input type='password' label='Contraseña' name='password' value={ this.state.password } onChange={ this.onChangeHandler } />
+				<br/>
+				<div className={ styles.ButtonContainer }>
+					<SubmitButton text='Ingresar' type='primary' onClick={ this.onSubmitHandler } />
 				</div>
+
 			</div>
 		);
 	}

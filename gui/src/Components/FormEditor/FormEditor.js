@@ -101,7 +101,7 @@ class formEditor extends Component {
 			data: data,
 			headers: {
 				'Content-Type': 'application/json',
-				'Authorization': 'Bearer ' + sessionStorage.getItem('jwtToken')
+				'Authorization': 'Bearer ' + localStorage.getItem('jwtToken')
 			}
 		};
 

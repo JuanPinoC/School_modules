@@ -1,6 +1,70 @@
 
 import axios from '../Axios/Axios';
 
+const getToken = () => {
+	return localStorage.getItem('jwtToken');
+}
+
+export const getColorScales = (resolve, reject) => {
+		
+	axios.get(
+				'colorScale/',
+				{ headers: { 'Authorization': 'Bearer ' + getToken() } } 
+		)
+		.then( (res) => {
+			resolve(res.data.records);
+		})
+		.catch( (err) => {
+			reject();
+		});
+
+};
+
+export const getUsers = (resolve, reject) => {
+		
+	axios.get(
+				'user/',
+				{ headers: { 'Authorization': 'Bearer ' + getToken() } } 
+		)
+		.then( (res) => {
+			resolve(res.data.records);
+		})
+		.catch( (err) => {
+			reject();
+		});
+
+};
+
+export const getUserTypes = (resolve, reject) => {
+		
+	axios.get(
+				'userType/',
+				{ headers: { 'Authorization': 'Bearer' + getToken() } } 
+		)
+		.then( ( res ) => {
+			resolve(res.data.records);
+		})
+		.catch( (res) => {
+			reject();
+		});
+
+};
+
+export const getForm = (id, resolve, reject) => {
+		
+	axios.get(
+			'formEditor/find?id=' + id,
+			{ headers: { 'Authorization': 'Bearer ' + getToken() } } 
+	)
+	.then( (res) => {
+		resolve(res.data);
+	})
+	.catch( (err) => {
+		reject();		
+	});
+
+};
+
 export const FormTypes = [
 			{ _id:'Soft Abilities' , name:'Habilidades blandas' },
 			{ _id:'Hard Abilities' , name:'Observación en clase' },
@@ -12,36 +76,6 @@ export const FormActions = [
 			{ _id:'avg' , name:'Promediar' },
 			{ _id:'none' , name:'Ninguna' }
 ];
-
-export const getColorScales = (resolve, reject) => {
-		
-	axios.get(
-				'colorScale/',
-				{ headers: { 'Authorization': 'Bearer ' + sessionStorage.getItem('jwtToken') } } 
-		)
-		.then( (res) => {
-			resolve(res.data.records);
-		})
-		.catch( (err) => {
-			reject()
-		});
-
-};
-
-export const getUsers = (resolve, reject) => {
-		
-	axios.get(
-				'user/',
-				{ headers: { 'Authorization': 'Bearer ' + sessionStorage.getItem('jwtToken') } } 
-		)
-		.then( (res) => {
-			resolve(res.data.records);
-		})
-		.catch( (err) => {
-			reject()
-		});
-
-};
 
 export const InputTypes = [
 			{

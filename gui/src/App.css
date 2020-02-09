@@ -11,12 +11,16 @@
 	--dark-yellow: #E5BC3B;
 	--yellow: #FFCC11;
 
-	--bg-color: #D3D3D3;
-	--form-bg-color: #042d6e;
+	--bg-color: #3498db;
+	--form-bg-color: #ffffff;
 }
 
 
 .AppContainer {
 	width: 100%;
 	height: 100%;
+}
+
+body {
+	background-color: var( --bg-color);
 }
