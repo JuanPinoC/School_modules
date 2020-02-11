@@ -36,10 +36,11 @@ class input extends Component {
 	}
 
 	onBlur = () => {
-		if( this.props.type === 'text' || 'textarea' && this.props.value === '' ){
+
+		if( ( this.props.type === 'text' || 'textarea' || 'email' || 'password') && this.props.value === '' ){
 			this.setState({ LabelDinamicStyles: [ styles.FloatingLabel, styles.FloatingLabelInputBlur ].join(' ')  });
 			return;
-		}else if(this.props.type === 'number' && this.props.value >= 0 || this.props.value <= 0 ){
+		}else if(this.props.type === 'number' && ( this.props.value >= 0 || this.props.value <= 0 ) ){
 			this.setState({ LabelDinamicStyles: [ styles.FloatingLabel, styles.FloatingLabelInputFocus ].join(' ')  });
 			return;
 		}
@@ -48,7 +49,7 @@ class input extends Component {
 	render() {
 
 		const options = this.props.options || [];
-		const optionViews = ( this.props.type == 'select' )?
+		const optionViews = ( this.props.type === 'select' )?
 							options.map( (e) => (<option className={ styles.SelectOption } key={e._id} value={e._id}>{ e.name }</option>) ) : 
 							options.map( (e) => {
 
@@ -58,7 +59,9 @@ class input extends Component {
 										<div key={e._id} 
 												className={ ( checked )? OptionCheckedStyles.Container : styles.RadioButtonContainer } 
 												onClick={ () => this.onOptionSelected( e._id ) }>
-											<div className={ ( checked )? OptionCheckedStyles.Button : styles.RadioButton } ></div>
+											<div className={ ( checked )? OptionCheckedStyles.Button : styles.RadioButton } >
+												<img src={ require('../../img/checkmark.png') } alt="check mark"/>
+											</div>
 											<label className={ ( checked )? OptionCheckedStyles.Label : styles.RadioButtonLabel }>{ e.label }</label>
 										</div>
 								);

@@ -6,12 +6,14 @@ import {
 	BrowserRouter as Router,
 	Switch,
 	Route,
-	Link
+	Redirect
 } from "react-router-dom";
 
 import { connect } from 'react-redux';
 import { setUserData, removeUserData } from '../Store/Actions/User/index';
 
+
+import Toolbar from '../Toolbar/Toolbar'; 
 
 /* Form Editor */
 import FormEditor from '../Components/FormEditor/FormEditor';
@@ -124,28 +126,39 @@ class Layout extends Component {
 		super(props);
 
 		this.state = {
-			signedIn: props.token !== null
+			signedIn: props.token !== null,
+			toolbarOpen: true
 		};
 
 		this.onSignIn = this.onSignIn.bind(this);
 		this.onSignOut = this.onSignOut.bind(this);
+		this.closeToolbar = this.closeToolbar.bind(this);
 	}
 
 	onSignIn = ( userData ) => {
 
-		this.setState({ signedIn: true });
-
 		this.props.onSetUserData( userData.token, userData.name, userData.email, userData.type );
+
+		this.setState({ signedIn: true });
 
 	}
 
 	onSignOut = () => {
 
-		this.setState({ signedIn: false });
-
 		this.props.onRemoveUserData();
 
+		this.setState({ signedIn: false });
+
 	}
+
+	openToolbar = () => {
+		this.setState({ toolbarOpen: true });
+	}
+
+	closeToolbar = () => {
+		this.setState({ toolbarOpen: false });
+	}
+
 
 	render(){
 
@@ -154,26 +167,17 @@ class Layout extends Component {
 						<Router>
 							<div className={ styles.LayoutContainer } >
 
-								<div className={ styles.Toolbar }>
-									<nav>
-										<ul>
-											<li>
-												<Link to='/formEditor'>Editor de Formularios</Link>
-											</li>
-											<li>
-												<Link to='/userForm'>Formulario de Usuarios</Link>
-											</li>
-											<li>
-												<Link to='/fillableForm'>Llenar evaluación</Link>
-											</li>
-											<li>
-												<Link to='/' onClick={ this.onSignOut }>Salir</Link>
-											</li>
-										</ul>
-									</nav>
+								<div className={ styles.SuperiorBar }>
+									<div className={ styles.ToolbarButton } onClick={ this.openToolbar }>
+										<img src={ require('../img/menu.png') } alt="menu icon"/>
+									</div>
+								</div>
+
+								<div className={ ( this.state.toolbarOpen )? styles.Toolbar : styles.ToolbarHidden }>
+									<Toolbar closeToolbar={ this.closeToolbar } onSignOut={ this.onSignOut } hidden={ !this.state.toolbarOpen } />
 								</div>
 								
-								<div className={ styles.MainContent }>
+								<div className={ ( this.state.toolbarOpen )? styles.MainContent : styles.MainContentNoToolbar }>
 									<Switch>
 										<Route path='/formEditor'>
 											<FormEditor />
@@ -194,9 +198,9 @@ class Layout extends Component {
 						</Router>
 					):(
 						<Router>
-							<div className={ styles.AppContainer } >
+							<div className={ styles.LayoutContainer } >
 
-								<div className={ styles.MainContent }>
+								<div className={ styles.MainContentNoToolbar }>
 									<Switch>
 										<Route path="/">
 											<Login onSignIn={ this.onSignIn } />

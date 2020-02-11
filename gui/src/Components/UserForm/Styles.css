@@ -1,13 +1,10 @@
 
 .LoginContainer {
 	font-family: 'Arial', Arial, serif;
-	background: var( --bg-color );
-	padding: 5em;
 }
 
 .Form {
 	margin: auto;
-	width: 50%;
 	background: var( --form-bg-color );
 	border-radius: 0.5em;
 	padding: 2.5em;

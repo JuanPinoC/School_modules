@@ -1,20 +1,24 @@
 
 .FormEditorContainer {
-	margin: 2em;
+	font-family: 'Arial', Arial, serif;
 	background-color: white;
 	border-radius: 0.5em;
 	box-shadow: 0px 10px 10px rgba(0, 0, 0, 0.2);
-	padding: 0.5em;
-	
+}
+
+.TitleContainer {
+	font-weight: bold;
+	padding: 2em;
+	border-bottom: solid #f5f5f5 0.4em;
 }
 
 .FormEditorHeaders {
 	background-color: white;
 	color: white;
 	font-weight: bold;
-	padding: 0.5em;
+	padding: 2em;
 	border-radius: 0.3em 0.3em 0em 0em; 
-	border-bottom: solid var(--dark-blue) 0.3em ;
+	border-bottom: solid var(--bg-color) 0.3em ;
 
 	display: grid;
 	grid-template-columns: 33% 33% 33%;
@@ -37,40 +41,35 @@
 }
 
 .FormEditorItem {
-	/*width: 20em;*/
-	/*display: inline-block;*/
-	/*margin: 0.5em;*/
+
 }
 
 .SectionsList {
-	padding: 1em;
+	padding: 1em 2em 1em 2em;
 }
 
-.AddSectionButton {
-	user-select: none;
-	margin: 1em;
+.AddElementButton {
+	cursor: pointer;
 	border: solid var(--green) 0.3em;
 	border-radius: 0.6em;
 	color: var(--green);
 	text-align: center;
-	width: 50%;
 	transition-duration: 0.3s;
 }
 
-.AddSectionButton:hover {
-	margin: 1em;
+.AddElementButton:hover {
 	border: solid white 0.3em;
 	border-radius: 0.6em;
 	color: white;
 	text-align: center;
-	width: 50%;
 	background-color: var(--green);
+}
+
+.AddElementButton h3 {
+	margin-right: 0.5em;
 }
 
 .HorizontalAlign {
 	display: inline-block;
 }
 
-.AddSectionButton h1 {
-	margin: 0em;
-}

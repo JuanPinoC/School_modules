@@ -121,9 +121,14 @@ class formEditor extends Component {
 
 		return (
 			<div className={ styles.FormEditorContainer }>
-								<div className={ styles.AddSectionButton } onClick={ this.saveForm }>
+				
+				<div className={ styles.TitleContainer }>
+					<h1>Editor de Formularios</h1>
+					<div className={ styles.AddElementButton } onClick={ this.saveForm }>
 						<h2 className={ styles.HorizontalAlign}>Guardar Formulario</h2>
 					</div>
+				</div>
+				
 				<div className={ styles.FormEditorHeaders}>
 
 					<div className={ styles.FormEditorItem}>
@@ -148,12 +153,16 @@ class formEditor extends Component {
 						<Input label='Descripción' type='textarea' name='description' value={ this.props.description } onChange={ this.onChangeHandler } />
 					</div>
 				</div>
+				<div className={ styles.TitleContainer}>
+					<h1>Secciones del Formulario</h1>
+				</div>
 				<div className={ styles.SectionsList }>
 					{ sectionViews }
 				</div>
-				<div className={ styles.AddSectionButton } onClick={ this.addSection }>
-					<h1 className={ styles.HorizontalAlign}>+</h1>
-					<h3 className={ styles.HorizontalAlign}>Agregar Sección</h3>
+				<div className={ styles.TitleContainer}>
+					<div className={ styles.AddElementButton } onClick={ this.addSection }>
+						<h3 className={ styles.HorizontalAlign}>Agregar Sección +</h3>
+					</div>
 				</div>
 			</div>
 		);

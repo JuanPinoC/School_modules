@@ -62,7 +62,6 @@ class loginContainer extends Component {
 				<div className={ styles.ButtonContainer }>
 					<SubmitButton text='Ingresar' type='primary' onClick={ this.onSubmitHandler } />
 				</div>
-
 			</div>
 		);
 	}

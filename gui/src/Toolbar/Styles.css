@@ -1,0 +1,30 @@
+.ToolbarContainer {
+	height: 100%;
+	margin: 0%;
+	padding: 0%;
+	background-color: black;
+}
+
+nav ul {
+	list-style-type: none;
+	margin: 0%;
+	padding: 0%;
+}
+
+nav ul li {
+	border: solid #1e1f26 1px;
+	color: white;
+	transition-duration: 0.3s;
+}
+
+nav ul li:hover {
+	background-color: #1e1f26;
+}
+
+a {
+	display: block;
+	padding: 1em;
+	text-decoration: none;
+	color: white;
+	cursor: pointer;
+}

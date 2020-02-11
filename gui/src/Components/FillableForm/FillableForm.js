@@ -4,7 +4,6 @@ import styles from './Styles.css';
 import axios from '../../Axios/Axios';
 
 import { connect } from 'react-redux';
-//import { updateForm, createSection, moveSection, deleteSection } from '../../Store/Actions/FormEditor/index';
 
 import { FormTypes, FormActions, getColorScales, getUsers, getForm, moveElementInArray } from '../../Functions/FormEditorFunctions';
 
@@ -105,10 +104,12 @@ class FillableForm extends Component {
 
 			if( input.evaluatedUserField ) this.setState({ evaluatedUserFields: [ ...this.state.evaluatedUserFields, input._id ] });
 
+			const key = 'i' + Math.round(Math.random() * 1000);
+
 			switch(input.type){
 				case 'Number':
 					return(
-						<Input label={ input.label } type='number' name={ input._id } value={ this.state.items[input._id] } 
+						<Input key={ key } label={ input.label } type='number' name={ input._id } value={ this.state.items[input._id] } 
 								onChange={ this.onChangeHandler } 
 								max={ input.maxValue }
 								min={ input.minValue } />
@@ -118,7 +119,7 @@ class FillableForm extends Component {
 
 				case 'Text':
 					return(
-						<Input label={ input.label } type='textarea' name={ input._id } value={ this.state.items[input._id] } 
+						<Input key={ key } label={ input.label } type='textarea' name={ input._id } value={ this.state.items[input._id] } 
 								onChange={ this.onChangeHandler } 
 								max={ input.maxValue }
 								min={ input.minValue } />
@@ -128,7 +129,7 @@ class FillableForm extends Component {
 				case 'Number Options':
 
 					return(
-						<Input label={ input.label } type='radiobuttons' name={ input._id } value={ this.state.items[input._id] } 
+						<Input key={ key } label={ input.label } type='radiobuttons' name={ input._id } value={ this.state.items[input._id] } 
 								onChange={ this.onChangeHandler } 
 								options={ input.options } />
 					);
@@ -136,7 +137,7 @@ class FillableForm extends Component {
 
 				case 'Text Options':
 					return(
-							<Input label={ input.label } type='radiobuttons' name={ input._id } value={ this.state.items[input._id] } 
+							<Input key={ key } label={ input.label } type='radiobuttons' name={ input._id } value={ this.state.items[input._id] } 
 									onChange={ this.onChangeHandler } 
 									options={ input.options } />
 					);
