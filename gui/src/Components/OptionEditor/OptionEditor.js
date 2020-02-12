@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import styles from './Styles.css';
 
+import Input from '../Input/Input';
 import ActionButtons from '../ActionButtons/ActionButtons';
 
 class optionEditor extends Component {
@@ -17,6 +18,7 @@ class optionEditor extends Component {
 			stringValue: data.stringValue || ''
 		};
 
+		this.onChangeHandler = this.onChangeHandler.bind(this);
 	}
 
 	onChangeHandler = (fieldName, e) => {
@@ -31,17 +33,20 @@ class optionEditor extends Component {
 		return(
 			<div className={ styles.OptionEditorContainer }>
 				<div className={ styles.OptionEditorItem }>				
-					<label>Nombre: </label>
-					<input className={ styles.OptionEditorLabel } 
-							type='text' value={ this.state.label }
-							onChange={ (e) => {this.onChangeHandler('label', e)} } />
+					<Input label='Nombre' type='text' name='label' value={ this.state.label } onChange={ this.onChangeHandler } />
 				</div>
 				<div className={ styles.OptionEditorItem }>
-					<label>Valor: </label>
-					<input className={ styles.OptionEditorValue } 
-							type={(this.state.numberValue >= 0)? 'number':'text' } 
-							value={ this.state.numberValue }
-							onChange={ (e) => {this.onChangeHandler('numberValue', e)} } />
+					
+					{
+						( true )?
+							(
+								<Input label='Valor' type='number' name='numberValue' value={ this.state.numberValue } onChange={ this.onChangeHandler } />
+							):
+							(
+								<Input label='Valor' type='text' name='stringValue' value={ this.state.stringValue } onChange={ this.onChangeHandler } />
+							)
+					}
+					
 				</div>
 				<ActionButtons move={ this.props.move } delete={ this.props.delete } />
 			</div>

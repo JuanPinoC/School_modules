@@ -4,10 +4,12 @@ import styles from './Styles.css';
 import { connect } from 'react-redux';
 import { updateSection, createInput, moveInput, deleteInput } from '../../Store/Actions/FormEditor/index';
 
+import Input from '../Input/Input';
+
 import InputEditor from '../InputEditor/InputEditor';
 import ActionButtons from '../ActionButtons/ActionButtons';
 
-import { InputTypes, moveElementInArray } from '../../Functions/FormEditorFunctions';
+import { FormActions, InputTypes, moveElementInArray } from '../../Functions/FormEditorFunctions';
 
 class sectionEditor extends Component {
 
@@ -22,6 +24,8 @@ class sectionEditor extends Component {
 
 		this.moveInput = this.moveInput.bind(this);
 		this.deleteInput = this.deleteInput.bind(this);
+
+		this.onChangeHandler = this.onChangeHandler.bind(this);
 	}
 
 	onChangeHandler = (fieldName, e) => {
@@ -83,34 +87,29 @@ class sectionEditor extends Component {
 
 		return (
 			<div className={ styles.SectionEditorContainer }>
-				<ActionButtons move={ this.props.move } delete={ this.props.delete } />
+
+				<div className={ styles.TitleContainer}>
+					<ActionButtons move={ this.props.move } delete={ this.props.delete } />
+					<h2>Sección {this.props.order + 1}</h2>
+				</div>
+			
 				<div className={ styles.SectionEditorHeaders}>
 					<div className={ styles.SectionEditorItem}>
-						<label>Nombre de la sección: </label>
-						<input className={ styles.SectionEditorName } type='text' value={ this.props.name } 
-								onChange={ (e) => {this.onChangeHandler('name', e)} } />
+						<Input label='Nombre' type='text' name='name' value={ this.props.name } onChange={ this.onChangeHandler } color='white' />
 					</div>
 					<div className={ styles.SectionEditorItem}>
-						<label>Peso: </label>
-						<input className={ styles.SectionEditorWeight } type='number' value={ this.props.weight }
-								onChange={ (e) => {this.onChangeHandler('weight', e)} } />
+						<Input label='Peso' type='number' name='weight' value={ this.props.weight } onChange={ this.onChangeHandler } color='white' />
 					</div>
 					<div className={ styles.SectionEditorItem}>
-						<label>Acción: </label>
-						<select className={ styles.SectionEditorSelect } 
-								onChange={ (e) => {this.onChangeHandler('action', e)} }>
-							<option value='sum'>Sumar</option>
-							<option value='avg'>Promediar</option>
-							<option value='text'>Ninguna</option>
-						</select>
+						<Input label='Acción' type='select' name='action' options={ FormActions }
+								value={ this.props.action } onChange={ this.onChangeHandler } color='white' />
 					</div>
 				</div>
 				<div className={ styles.InputsList }>
 					{ inputViews }
 				</div>
 				<div className={ styles.AddInputButton } onClick={ this.addInput }>
-					<h1 className={ styles.HorizontalAlign}>+</h1>
-					<h3 className={ styles.HorizontalAlign}>Agregar Pregunta</h3>
+					<h3 className={ styles.HorizontalAlign}>Agregar Pregunta +</h3>
 				</div>
 				
 			</div>
@@ -128,7 +127,8 @@ const mapStateToProps = (state, ownProps) => {
 		name: sections[ id ].name,
 		weight: sections[ id ].weight,
 		action: sections[ id ].action,
-		inputs: sections[ id ].inputs
+		inputs: sections[ id ].inputs,
+		order: id
 	} : {};
 };
 

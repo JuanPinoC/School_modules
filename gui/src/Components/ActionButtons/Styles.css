@@ -1,58 +1,41 @@
-.ActionButtons {
+
+.ActionButtonsContainer {
 	position: relative;
 	float: right;
+	margin: 0.5em;
 }
 
-.removeItemButton,
-.MoveUpButton,
-.MoveDownButton {
+.Button {
+	width: 1em;
+	height: 1em;
 	display: inline-block;
-}
-
-.removeItemButton {
-	color: white;
-	background-color: var(--dark-red);
-	border: solid var(--red) 0.1em;
-	border-radius: 0.6em;
-	font-weight: bolder;
-	user-select: none;
+	border-radius: 0.5em;
+	cursor: pointer;
 	padding: 0.5em;
 	margin: 0.2em;
-	text-align: center;
 	transition-duration: 0.3s;
 }
 
-.removeItemButton:hover {
-	background-color: var(--red);
-	border: solid white 0.1em;
-	border-radius: 1em;
-}
-
-.MoveUpButton {
-	font-size: 1.5em;
-	padding: 0em 0.2em 0.2em 0.2em;
-}
-
-.MoveDownButton {
-	font-size: 1.3em;
-	padding: 0.2em 0.3em 0.3em 0.3em;
-}
-
-.MoveUpButton,
-.MoveDownButton {
-	user-select: none;
-	color: white;
-	font-weight: bolder;
+.bgYellow {
 	background-color: var(--dark-yellow);
-	border: solid var(--yellow) 0.1em;
-	border-radius: 0.4em;
-	margin: 0.2em 0.1em 0.2em 0.1em;
-	transition-duration: 0.3s;
+	border: solid var(--dark-yellow) 0.2em;
 }
 
-.MoveUpButton:hover,
-.MoveDownButton:hover {
+.bgYellow:hover {
 	background-color: var(--yellow);
-	border: solid white 0.1em;
-	border-radius: 1em;
+	border: solid white 0.2em;
+}
+
+.bgRed {
+	background-color: var(--dark-red);
+	border: solid var(--dark-red) 0.2em;
+}
+
+.bgRed:hover {
+	background-color: var(--red);
+	border: solid white 0.2em;
+}
+
+.Button img {
+	width: 100%;
 }

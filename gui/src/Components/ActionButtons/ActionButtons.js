@@ -6,10 +6,16 @@ class actionButtons extends Component {
 	render(){
 
 		return(
-			<div className={ styles.ActionButtons }>
-				<div className={ styles.MoveUpButton } onClick={ () => {this.props.move('up')} }>^</div>
-				<div className={ styles.MoveDownButton } onClick={ () => {this.props.move('down')} }>v</div>
-				<div className={ styles.removeItemButton } onClick={ this.props.delete }>X</div>
+			<div className={ styles.ActionButtonsContainer }>
+				<div className={ [ styles.Button, styles.bgYellow ].join(' ') } onClick={ () => {this.props.move('up')} }>
+					<img src={ require('../../img/arrowup.png') } alt="move up"/>
+				</div>
+				<div className={ [ styles.Button, styles.bgYellow ].join(' ') } onClick={ () => {this.props.move('down')} }>
+					<img src={ require('../../img/arrowdown.png') } alt="move down"/>
+				</div>
+				<div className={ [ styles.Button, styles.bgRed ].join(' ') } onClick={ this.props.delete }>
+					<img src={ require('../../img/cross.png') } alt="delete"/>
+				</div>
 			</div>
 		);
 

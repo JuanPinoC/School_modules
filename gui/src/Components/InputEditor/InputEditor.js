@@ -4,13 +4,15 @@ import styles from './Styles.css';
 import { connect } from 'react-redux';
 import { updateInput } from '../../Store/Actions/FormEditor/index';
 
+import Input from '../Input/Input';
 import OptionEditor from '../OptionEditor/OptionEditor';
 import ActionButtons from '../ActionButtons/ActionButtons';
 
 import { moveElementInArray } from '../../Functions/FormEditorFunctions';
 
 
-const optionBaseForm = {	key: '',
+const optionBaseForm = {	
+							key: '',
 							label: '', 
 							numberValue: 0,
 							stringValue: ''
@@ -29,6 +31,7 @@ class inputEditor extends Component {
 		this.moveOption = this.moveOption.bind(this);
 		this.deleteOption = this.deleteOption.bind(this);
 
+		this.onChangeHandler = this.onChangeHandler.bind(this);
 		this.optionFieldChangeHandler = this.optionFieldChangeHandler.bind(this);
 	}
 
@@ -51,8 +54,6 @@ class inputEditor extends Component {
 		options[ index ] = {...options[ index ], [field]: value};
 
 		this.props.onUpdateInput( this.props.parent, this.props.id, 'options', options );
-
-		console.log( this.props.options );
 
 	}
 
@@ -77,8 +78,6 @@ class inputEditor extends Component {
 	addOption = ( data = null ) => {
 
 		const key = data._id || 'o' + Math.round(Math.random() * 1000);
-
-		console.log( key );
 
 		this.setState( (state, props) => ({
 			optionViews: [	...state.optionViews,
@@ -131,72 +130,63 @@ class inputEditor extends Component {
 
 		return(
 			<div className={ styles.InputEditorContainer }>
-				<ActionButtons move={ this.props.move } delete={ this.props.delete } />
+				<div className={ styles.TitleContainer}>
+					<ActionButtons move={ this.props.move } delete={ this.props.delete } />
+					<h3>Pregunta {this.props.order + 1}</h3>
+					<div className={ styles.TitleItem }>				
+						<Input label='Campo para el evaluado' type='checkbox' name='evaluatedUserField' value={ this.props.evaluatedUserField } 
+								onChange={ this.onChangeHandler } />
+					</div>
+				</div>
+
 				<div className={ styles.InputEditorHeaders}>
 	
-					<div className={ styles.InputEditorItem}>				
-						<label>Enunciado: </label>
-						<input className={ styles.InputEditorLabel } type='text' value={ this.props.label } 
-								onChange={ (e) => {this.onChangeHandler('label', e)} } />
+					<div className={ styles.InputEditorItem}>
+						<Input label='Enunciado' type='text' name='label' value={ this.props.label } onChange={ this.onChangeHandler } />
 					</div>
 					<div className={ styles.InputEditorItem}>
-						<label>Tipo: </label>
-						<select className={ styles.InputEditorSelect } 
-								onChange={ (e) => {this.onChangeHandler('type', e)} }
-								value={ inputType }>
-							{
-								inputTypes.map( ( e ) => {
-									return ( <option key={ e.value } value={ e.value } >{ e.label }</option> )
-								})
-							}
-						</select>
-					</div>
-					<div className={ styles.InputEditorItem}>				
-						<label>Campo para el evaluado: </label>
-						<input className={ styles.InputEditorLabel } type='checkbox' value={ this.props.evaluatedUserField } 
-								onChange={ (e) => {this.onChangeHandler('evaluatedUserField', e)} } />
+						<Input label='Tipo' type='select' name='type' value={ this.props.type } 
+							options={ inputTypes.map( ( e ) => { return { _id: e.value, name: e.label}; } ) } onChange={ this.onChangeHandler } />
 					</div>
 					
 					{	( showItemsConfig.showWeight )?(
 						<div className={ styles.InputEditorItem}>
-							<label>Peso: </label>
-							<input className={ styles.InputEditorWeight } type='number' value={ this.props.weight }
-									onChange={ (e) => {this.onChangeHandler('weight', e)} } />
+							<Input label='Peso' type='number' name='weight' value={ this.props.weight } 
+									onChange={ this.onChangeHandler } />
 						</div>
 						):('')	}
 					
 					{	( showItemsConfig.showMaxValue )?(
 						<div className={ styles.InputEditorItem }>
-							<label>Max: </label>
-							<input className={ styles.InputEditorLimit } type='number' value={ this.props.maxValue }
-									onChange={ (e) => {this.onChangeHandler('maxValue', e)} } />
+							<Input label='Max' type='number' name='maxValue' value={ this.props.maxValue } 
+									onChange={ this.onChangeHandler } />
 						</div>
 						):('')	}
 
 					{	( showItemsConfig.showMinValue )?(
 						<div className={ styles.InputEditorItem}>
-							<label>Min: </label>
-							<input className={ styles.InputEditorLimit } type='number' value={ this.props.minValue }
-									onChange={ (e) => {this.onChangeHandler('minValue', e)} } />
+							<Input label='Min' type='number' name='minValue' value={ this.props.minValue } 
+									onChange={ this.onChangeHandler } />
 						</div>
 						):('')	}
 				</div>
 
-				{	( showItemsConfig.showOptions )?(
-					<div className={ styles.OptionList }>
-						{ (optionViews.length > 0 )? 'Opciones:':'' }
+				<div  className={ styles.OptionsList }>
+					{	( showItemsConfig.showOptions )?(
 						<div>
-							{ optionViews }
+							{ (optionViews.length > 0 )? 'Opciones:':'' }
+							<div>
+								{ optionViews }
+							</div>
 						</div>
-					</div>
-				):('')	}
+					):('')	}
 
-				{	( showItemsConfig.showOptions )?(
-					<div className={ styles.AddOptionButton } onClick={ this.addOption }>
-						<h1 className={ styles.HorizontalAlign}>+</h1>
-						<h3 className={ styles.HorizontalAlign}>Agregar Opción</h3>
-					</div>
-				):('')	}
+					{	( showItemsConfig.showOptions )?(
+						<div className={ styles.AddOptionButton } onClick={ this.addOption }>
+							<h4 className={ styles.HorizontalAlign}>Agregar Opción +</h4>
+						</div>
+					):('')	}
+				</div>
 
 			</div>
 		);
@@ -218,7 +208,9 @@ const mapStateToProps = (state, ownProps) => {
 		weight: parentInputs[ id ].weight,
 		options: parentInputs[ id ].options,
 		maxValue: parentInputs[ id ].maxValue,
-		minValue: parentInputs[ id ].minValue
+		minValue: parentInputs[ id ].minValue,
+		evaluatedUserField: parentInputs[ id ].evaluatedUserField,
+		order: id
 
 	} : {};
 };

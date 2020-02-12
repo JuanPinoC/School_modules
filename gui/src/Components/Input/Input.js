@@ -8,6 +8,19 @@ const OptionCheckedStyles = {
 			Button: [ styles.RadioButton, styles.RadioButtonChecked ].join(' ')
 		};
 
+const CheckBtnCheckedStyles = {
+			Container: [ styles.RadioButtonContainer, styles.RadioButtonContainerChecked ].join(' '),
+			Label: [ styles.RadioButtonLabel, styles.RadioButtonLabelChecked ].join(' '),
+			Button: [ styles.CheckButton, styles.CheckButtonChecked ].join(' ')
+		};
+
+const DinamicLabelStyles = {
+			OnWhiteFocus: [ styles.FloatingLabel, styles.FloatingLabelInputFocus, styles.whiteFont ].join(' '),
+			Focus: [ styles.FloatingLabel, styles.FloatingLabelInputFocus ].join(' '),
+			Blur: [ styles.FloatingLabel, styles.FloatingLabelInputBlur ].join(' ')
+};
+
+
 class input extends Component {
 
 	constructor(props){
@@ -17,14 +30,10 @@ class input extends Component {
 		this.state = {
 			name: this.props.name,
 			value: '',
-			LabelDinamicStyles: styles.FloatingLabel
+			booleanValue: false,
+			labelStyle: styles.FloatingLabel
 		};
 
-	}
-
-	onOptionSelected = ( value ) => {
-		this.props.onChange( this.state.name, { target: { value: value } } );
-		this.setState({ value: value });
 	}
 
 	componentDidMount = () => {
@@ -32,18 +41,30 @@ class input extends Component {
 	}
 
 	onFocus = () => {
-		this.setState({ LabelDinamicStyles: [ styles.FloatingLabel, styles.FloatingLabelInputFocus ].join(' ')  });
+		this.setState({ labelStyle: ( this.props.color === 'white' )? DinamicLabelStyles.OnWhiteFocus : DinamicLabelStyles.Focus });
 	}
 
 	onBlur = () => {
 
 		if( ( this.props.type === 'text' || 'textarea' || 'email' || 'password') && this.props.value === '' ){
-			this.setState({ LabelDinamicStyles: [ styles.FloatingLabel, styles.FloatingLabelInputBlur ].join(' ')  });
+			this.setState({ labelStyle: DinamicLabelStyles.Blur  });
 			return;
 		}else if(this.props.type === 'number' && ( this.props.value >= 0 || this.props.value <= 0 ) ){
-			this.setState({ LabelDinamicStyles: [ styles.FloatingLabel, styles.FloatingLabelInputFocus ].join(' ')  });
+			this.onFocus();
 			return;
 		}
+	}
+
+	onOptionSelected = ( value ) => {
+		this.props.onChange( this.state.name, { target: { value: value } } );
+		this.setState({ value: value });
+	}
+
+	onCheckBoxChange = () => {
+
+		this.props.onChange( this.state.name, { target: { booleanValue: !this.state.booleanValue } } );
+		this.setState({ booleanValue: !this.state.booleanValue });
+
 	}
 
 	render() {
@@ -68,34 +89,20 @@ class input extends Component {
 							});
 
 		switch( this.props.type ){
-			case 'select':
-				
+			case 'select':	
 				return (
 					<div className={ styles.InputContainer }>
 						<select className={ styles.InputSelect } name={ this.props.name } value={ this.props.value } 
 								onChange={ (e) => this.props.onChange( this.props.name, e )}>
 							{ optionViews }
 						</select>
-						<span className={ [ styles.FloatingLabel, styles.FloatingLabelInputFocus ].join(' ') } >{ this.props.label }</span>
+						<span className={ ( this.props.color === 'white' )? DinamicLabelStyles.OnWhiteFocus : DinamicLabelStyles.Focus } >
+							{ this.props.label }
+						</span>
 					</div>
 				);
-
 				break;
-			case 'textarea':
-				
-				return (
-					<div className={ styles.InputContainer }>
-						<textarea className={ styles.TextArea } name={ this.props.name } rows="10" cols="50"
-							value={ this.props.value } onChange={ (e) => this.props.onChange( this.props.name, e )}
-							maxLength={ this.props.max } minLength={ this.props.min }
-							onFocus={ this.onFocus }
-							onBlur={ this.onBlur }>
-						</textarea>
-						<span className={ this.state.LabelDinamicStyles } >{ this.props.label }</span>
-					</div>
-				);
 
-				break;
 			case 'radiobuttons':
 				return(
 					<div className={ styles.InputContainer }>
@@ -106,17 +113,35 @@ class input extends Component {
 					</div>
 				);
 				break;
+
 			case 'checkbox':
 				return(
-					<div className={ styles.InputContainer }>
-						<label>{ this.props.label }</label>
-						<input type='checkbox' value={ this.props.value } 
-							onChange={ (e) => { this.onChangeHandler(this.props.name, { target: { value: e.target.checked } } )} } />
+					<div className={ styles.InputContainer } onClick={ this.onCheckBoxChange }>
+						<label className={ styles.CheckButtonLabel }>
+							{ this.props.label }
+						</label>
+						<div className={ ( this.state.booleanValue === true )? CheckBtnCheckedStyles.Button : styles.CheckButton }>
+							<img src={ require('../../img/checkmark.png') } alt="check mark"/>
+						</div>
 					</div>
 				);	
 				break;
-			default:
 
+			case 'textarea':
+				return (
+					<div className={ styles.InputContainer }>
+						<textarea className={ styles.TextArea } name={ this.props.name } rows="10" cols="50"
+							value={ this.props.value } onChange={ (e) => this.props.onChange( this.props.name, e )}
+							maxLength={ this.props.max } minLength={ this.props.min }
+							onFocus={ this.onFocus }
+							onBlur={ this.onBlur }>
+						</textarea>
+						<span className={ this.state.labelStyle } >{ this.props.label }</span>
+					</div>
+				);
+				break;
+
+			default:
 				return(
 					<div className={ styles.InputContainer }>
 						<input className={ styles.Input } type={ this.props.type } name={ this.props.name } value={ this.props.value }
@@ -124,10 +149,9 @@ class input extends Component {
 								onChange={ (e) => this.props.onChange( this.props.name, e ) }
 								onFocus={ this.onFocus }
 								onBlur={ this.onBlur } />
-						<span className={ this.state.LabelDinamicStyles } >{ this.props.label }</span>
+						<span className={ this.state.labelStyle } >{ this.props.label }</span>
 					</div>
 				);
-					
 				break;
 		}
 

@@ -1,10 +1,27 @@
 
 .InputEditorContainer {
-	background-color: var(--grey);
-	border: solid var(--grey) 0.3em;
-	border-radius: 0.6em;
-	margin-bottom: 0.3em;
+	background-color: white;
+	border: solid black 1px;
+	border-radius: 0.2em;
+	margin-bottom: 1.5em;
 	font-weight: bold;
+	box-shadow: 0px 7px 7px rgba(0, 0, 0, 0.2);
+}
+
+.TitleContainer {
+	font-weight: bold;
+	color: var( --bg-color );
+	padding: 1em;
+	border-bottom: solid black 0.1px;
+}
+
+.TitleContainer h3{
+	display: inline-block;
+}
+
+.TitleItem {
+		margin-left: 5em;
+	display: inline-block;
 }
 
 .InputEditorHeaders {
@@ -17,17 +34,10 @@
 	margin: 0.5em;
 }
 
-.InputEditorHeaders input {
-	margin-right: 3em;
-	border-style: none;
-	border-radius: 0.2em;
-	height: 1.6em;
-	padding: 0.2em 0.8em 0.2em 0.8em;
-}
-
-.InputEditorHeaders select {
-	border-radius: 0.2em;
-	padding: 0.2em 0.8em 0.2em 0.8em;
+.OptionsList{
+	margin: 1em;
+	padding: 1em;
+	border-radius: 0.5em;
 }
 
 .AddOptionButton {
@@ -37,26 +47,25 @@
 	border-radius: 0.6em;
 	color: var(--dark-green);
 	text-align: center;
-	width: 50%;
+	width: 30%;
 	transition-duration: 0.3s;
 }
 
 .AddOptionButton:hover {
 	margin: 1em;
-	border: solid var(--grey) 0.3em;
+	border: solid white 0.3em;
 	background-color: var(--green);
 	border-radius: 0.6em;
 	color: white;
 	text-align: center;
-	width: 50%;
 }
 
 .HorizontalAlign {
 	display: inline-block;
 }
 
-.AddOptionButton h1 {
-	margin: 0em;
+.AddOptionButton h4 {
+	margin: 1em;
 }
 
 .OptionEditorItem input {

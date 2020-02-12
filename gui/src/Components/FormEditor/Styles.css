@@ -54,6 +54,7 @@
 	border-radius: 0.6em;
 	color: var(--green);
 	text-align: center;
+	width: 60%;
 	transition-duration: 0.3s;
 }
 

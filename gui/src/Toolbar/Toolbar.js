@@ -21,7 +21,10 @@ class toolbar extends Component {
 								<Link className={ styles.Link } to='/userForm'>Formulario de Usuarios</Link>
 							</li>
 							<li>
-								<Link className={ styles.Link } to='/fillableForm'>Llenar evaluación</Link>
+								<Link className={ styles.Link } to='/fillableForm'>Llenar Evaluación</Link>
+							</li>
+							<li>
+								<Link className={ styles.Link } to='/recordsTable'>Registros</Link>
 							</li>
 							<li onClick={ this.props.onSignOut }>
 								<a>Salir</a>

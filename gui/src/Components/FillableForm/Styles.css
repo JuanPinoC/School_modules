@@ -11,6 +11,10 @@
 	border-radius: 0.5em 0.5em 0em 0em;
 	color: white;
 	padding: 2em;
+
+	display: grid;
+	grid-template-columns: 33% 33% 33%;
+	grid-gap: 0.5em;
 }
 
 .FormField { 
