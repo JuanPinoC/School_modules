@@ -26,6 +26,9 @@ class toolbar extends Component {
 							<li>
 								<Link className={ styles.Link } to='/recordsTable'>Registros</Link>
 							</li>
+							<li>
+								<Link className={ styles.Link } to='/evaluationPlanForm'>Planes de Evaluación</Link>
+							</li>
 							<li onClick={ this.props.onSignOut }>
 								<a>Salir</a>
 							</li>

@@ -1,0 +1,15 @@
+.FormItemContainer {
+	background-color: white;
+	border-radius: 0.2em;
+	border: solid var( --bg-color) 0.1em;
+	margin: 1em;
+	color: white;
+	padding: 0em;
+}
+
+.FormItem {
+	width: 25%;
+	display: inline-block;
+	margin: 0.2em 0.4em 0.2em 0.2em;
+	
+}

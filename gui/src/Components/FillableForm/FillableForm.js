@@ -12,8 +12,7 @@ import SubmitButton from '../SubmitButton/SubmitButton';
 
 const item = {
 	input: '',
-	answerString: '',
-	answerNumber: 0
+	answer: null
 };
 
 class FillableForm extends Component {
@@ -153,7 +152,7 @@ class FillableForm extends Component {
 	submitForm = () => {
 
 		const data = {
-			evaluatedUser: this.state.evaluated,
+			evaluated: this.state.evaluated,
 			form: this.state.formId,
 			items: this.state.items
 		};
@@ -163,16 +162,17 @@ class FillableForm extends Component {
 			url: 'record/create',
 			data: data,
 			headers: {
-				'Content-Type': 'application/json'
+				'Content-Type': 'application/json',
+				'Authorization': 'Bearer ' + localStorage.getItem('jwtToken')
 			}
 		};
 			
 		axios(params)
 		.then( (res) => {
-			this.props.onSignIn( res.data );
+			console.log( res );
 		})
 		.catch( (res) => {
-			alert('Usuario o contraseña incorrectos.');
+			console.log( res );
 		});
 
 	}

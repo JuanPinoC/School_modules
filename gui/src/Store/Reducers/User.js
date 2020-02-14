@@ -42,6 +42,9 @@ const reducer = ( oldState = userInitialState, action) => {
 	
 			break;
 
+		default:
+			break;
+
 	}
 
 	return state;

@@ -50,6 +50,21 @@ export const getUserTypes = (resolve, reject) => {
 
 };
 
+export const getForms = (resolve, reject) => {
+
+	axios.get(
+				'formEditor/',
+				{ headers: { 'Authorization': 'Bearer' + getToken() } } 
+		)
+		.then( ( res ) => {
+			resolve(res.data.records);
+		})
+		.catch( (res) => {
+			reject();
+		});
+
+}
+
 export const getForm = (id, resolve, reject) => {
 		
 	axios.get(

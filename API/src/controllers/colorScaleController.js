@@ -1,4 +1,4 @@
-const moongose = require('mongoose');
+const mongoose = require('mongoose');
 
 const ColorScale = require('../models/colorScale');
 

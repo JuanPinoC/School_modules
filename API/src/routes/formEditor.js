@@ -13,4 +13,6 @@ router.post('/update', checkAuth, accessRules, FormEditor.update);
 router.get('/delete', checkAuth, accessRules, FormEditor.delete);
 */
 
+router.get('/', FormEditor.list);
+
 module.exports = router;

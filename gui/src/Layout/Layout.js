@@ -5,8 +5,7 @@ import styles from './Styles.css';
 import {
 	BrowserRouter as Router,
 	Switch,
-	Route,
-	Redirect
+	Route
 } from "react-router-dom";
 
 import { connect } from 'react-redux';
@@ -25,6 +24,9 @@ import UserForm from '../Components/UserForm/UserForm';
 /* Records */
 import FillableForm from '../Components/FillableForm/FillableForm';
 import RecordsTable from '../Components/RecordsTable/RecordsTable';
+
+/* Evaluation Plan */
+import EvaluationPlanForm from '../Components/EvaluationPlanForm/EvaluationPlanForm';
 
 
 class Layout extends Component {
@@ -191,6 +193,9 @@ class Layout extends Component {
 										</Route>
 										<Route path='/recordsTable'>
 											<RecordsTable />
+										</Route>
+										<Route path='/evaluationPlanForm'>
+											<EvaluationPlanForm />
 										</Route>
 									</Switch>
 								</div>

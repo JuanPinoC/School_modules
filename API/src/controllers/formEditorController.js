@@ -13,22 +13,18 @@ const errorHandler = ( res, err ) => {
 
 module.exports = {
 
-	show: (req,res,next) => {
+	list: (req,res,next) => {
 		Form.find()
-			.select('name type weight')
+			.select('_id name type')
 			.exec()
 			.then( docs => {
 				const response = {
 					count: docs.length,
-					forms: docs.map( doc => {
+					records: docs.map( doc => {
 						return {
 							_id: doc._id,
 							name: doc.name,
-							type: doc.type,
-							action: doc.action,
-							description: doc.description,
-							weight: doc.weight,
-							colorScale: doc.colorScale
+							type: doc.type
 						}
 					})
 				};

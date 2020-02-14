@@ -37,7 +37,17 @@ class input extends Component {
 	}
 
 	componentDidMount = () => {
+
+		if( this.props.type === 'select' && this.props.value === ''){
+
+			const options = this.props.options || [];
+			
+			if( options.length > 0)
+				this.props.onChange( this.props.name, { target: { value: options[0]._id } } );
+		}
+
 		this.onBlur();
+
 	}
 
 	onFocus = () => {
@@ -70,6 +80,7 @@ class input extends Component {
 	render() {
 
 		const options = this.props.options || [];
+
 		const optionViews = ( this.props.type === 'select' )?
 							options.map( (e) => (<option className={ styles.SelectOption } key={e._id} value={e._id}>{ e.name }</option>) ) : 
 							options.map( (e) => {
@@ -92,8 +103,9 @@ class input extends Component {
 			case 'select':	
 				return (
 					<div className={ styles.InputContainer }>
-						<select className={ styles.InputSelect } name={ this.props.name } value={ this.props.value } 
-								onChange={ (e) => this.props.onChange( this.props.name, e )}>
+						<select className={ styles.InputSelect } name={ this.props.name } 
+								value={ this.props.value } 
+								onChange={ (e) => this.props.onChange( this.props.name, e ) }>
 							{ optionViews }
 						</select>
 						<span className={ ( this.props.color === 'white' )? DinamicLabelStyles.OnWhiteFocus : DinamicLabelStyles.Focus } >
@@ -101,7 +113,7 @@ class input extends Component {
 						</span>
 					</div>
 				);
-				break;
+
 
 			case 'radiobuttons':
 				return(
@@ -112,7 +124,7 @@ class input extends Component {
 						</div>
 					</div>
 				);
-				break;
+
 
 			case 'checkbox':
 				return(
@@ -125,7 +137,7 @@ class input extends Component {
 						</div>
 					</div>
 				);	
-				break;
+
 
 			case 'textarea':
 				return (
@@ -139,7 +151,22 @@ class input extends Component {
 						<span className={ this.state.labelStyle } >{ this.props.label }</span>
 					</div>
 				);
-				break;
+
+
+			case 'date':
+				return(
+					<div className={ styles.InputContainer }>
+						<input className={ styles.Input } type={ this.props.type } name={ this.props.name } value={ this.props.value }
+								max={ this.props.max } min={ this.props.min }
+								onChange={ (e) => this.props.onChange( this.props.name, e ) }
+								onFocus={ this.onFocus }
+								onBlur={ this.onBlur } />
+						<span className={ ( this.props.color === 'white' )? DinamicLabelStyles.OnWhiteFocus : DinamicLabelStyles.Focus }>
+							{ this.props.label }
+						</span>
+					</div>
+				);
+				
 
 			default:
 				return(
@@ -152,7 +179,7 @@ class input extends Component {
 						<span className={ this.state.labelStyle } >{ this.props.label }</span>
 					</div>
 				);
-				break;
+
 		}
 
 	}

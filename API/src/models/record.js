@@ -1,9 +1,11 @@
 const mongoose = require('mongoose');
 
+
 const ItemSchema = mongoose.Schema({ 
 					input: { type: mongoose.Schema.Types.ObjectId, ref: 'Input', required: true },
 					answerString: { type: String, required: false },
-					answerNumber: { type: Number, required: false }
+					answerNumber: { type: Number, required: false },
+					answerId: { type: mongoose.Schema.Types.ObjectId, ref: 'Input.options', required: false }
 				});
 
 const recordSchema = mongoose.Schema({
