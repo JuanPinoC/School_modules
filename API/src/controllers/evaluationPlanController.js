@@ -12,8 +12,8 @@ module.exports = {
 
 	list: (req,res,next) => {
 
-		ColorScale.find()
-			.select('_id name userType')
+		EvaluationPlan.find()
+			.select('_id name userType startDate endDate')
 			.populate('userType','name')
 			.exec()
 			.then( docs => {
@@ -23,7 +23,9 @@ module.exports = {
 						return {
 							_id: doc._id,
 							name: doc.name,
-							userType: userType
+							userType: doc.userType,
+							startDate: doc.startDate,
+							endDate: doc.endDate
 						}
 					})
 				};
@@ -34,8 +36,6 @@ module.exports = {
 
 	},
 	create: (req,res,next) => {
-
-try{
 
 		const evaluationPlan = new EvaluationPlan({
 			_id: new mongoose.Types.ObjectId(),
@@ -56,10 +56,7 @@ try{
 
 			})
 			.catch( err => errorHandler(res, err) );
-}
-catch(e){
-	console.log(e);
-}
+
 	},
 	find: (req,res,next) => {
 

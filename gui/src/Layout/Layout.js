@@ -23,10 +23,11 @@ import UserForm from '../Components/UserForm/UserForm';
 
 /* Records */
 import FillableForm from '../Components/FillableForm/FillableForm';
-import RecordsTable from '../Components/RecordsTable/RecordsTable';
+
 
 /* Evaluation Plan */
 import EvaluationPlanForm from '../Components/EvaluationPlanForm/EvaluationPlanForm';
+import EvaluationPlanList from '../Components/EvaluationPlanList/EvaluationPlanList';
 
 
 class Layout extends Component {
@@ -191,8 +192,8 @@ class Layout extends Component {
 										<Route path='/fillableForm'>
 											<FillableForm />
 										</Route>
-										<Route path='/recordsTable'>
-											<RecordsTable />
+										<Route path='/evaluationPlanList'>
+											<EvaluationPlanList />
 										</Route>
 										<Route path='/evaluationPlanForm'>
 											<EvaluationPlanForm />

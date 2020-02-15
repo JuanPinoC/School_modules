@@ -24,7 +24,7 @@ class toolbar extends Component {
 								<Link className={ styles.Link } to='/fillableForm'>Llenar Evaluación</Link>
 							</li>
 							<li>
-								<Link className={ styles.Link } to='/recordsTable'>Registros</Link>
+								<Link className={ styles.Link } to='/evaluationPlanList'>Lista de Planes de Evaluación</Link>
 							</li>
 							<li>
 								<Link className={ styles.Link } to='/evaluationPlanForm'>Planes de Evaluación</Link>
