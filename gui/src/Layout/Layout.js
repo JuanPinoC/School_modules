@@ -19,15 +19,19 @@ import FormEditor from '../Components/FormEditor/FormEditor';
 
 /* User */
 import Login from '../Components/Login/Login';
-import UserForm from '../Components/UserForm/UserForm';
+import UserForm from '../Components/Forms/UserForm';
+import UserList from '../Components/Lists/UserList';
 
 /* Records */
 import FillableForm from '../Components/FillableForm/FillableForm';
 
-
 /* Evaluation Plan */
-import EvaluationPlanForm from '../Components/EvaluationPlanForm/EvaluationPlanForm';
-import EvaluationPlanList from '../Components/EvaluationPlanList/EvaluationPlanList';
+import EvaluationPlanForm from '../Components/Forms/EvaluationPlanForm';
+import EvaluationPlanList from '../Components/Lists/EvaluationPlanList';
+
+/* Color Scales */
+import ColorScaleForm from '../Components/Forms/ColorScaleForm';
+import ColorScaleList from '../Components/Lists/ColorScaleList';
 
 
 class Layout extends Component {
@@ -186,18 +190,31 @@ class Layout extends Component {
 										<Route path='/formEditor'>
 											<FormEditor />
 										</Route>
-										<Route path='/userForm'>
-											<UserForm />
-										</Route>
 										<Route path='/fillableForm'>
 											<FillableForm />
 										</Route>
+
+										<Route path='/userList'>
+											<UserList />
+										</Route>
+										<Route path='/userForm:id?'>
+											<UserForm />
+										</Route>
+
+										<Route path='/colorScaleList'>
+											<ColorScaleList />
+										</Route>
+										<Route path='/colorScaleForm:id?'>
+											<ColorScaleForm />
+										</Route>
+
 										<Route path='/evaluationPlanList'>
 											<EvaluationPlanList />
 										</Route>
-										<Route path='/evaluationPlanForm'>
+										<Route path='/evaluationPlanForm:id?'>
 											<EvaluationPlanForm />
 										</Route>
+
 									</Switch>
 								</div>
 

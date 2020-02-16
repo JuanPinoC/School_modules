@@ -237,3 +237,8 @@
 	display: inline-block;
 	color: var( --bg-color );
 }
+
+input[type="color"] {
+	background-color: white;
+	height: 1.1em;
+}

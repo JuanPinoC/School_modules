@@ -72,7 +72,7 @@ class sectionEditor extends Component {
 		
 		let inputViews = this.state.inputViews;
 
-		const index = inputViews.findIndex( (e) => e.key === key );
+		const index = inputViews.findIndex( (e) => e.key === key || e._id === key || e.id === key );
 
 		inputViews.splice(index, 1);
 

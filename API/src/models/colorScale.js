@@ -2,8 +2,8 @@ const mongoose = require('mongoose');
 
 const ItemSchema = mongoose.Schema({
 						label: { type: String, required: true },
-						Max: { type: Number, required: true },
-						Min: { type: Number, required: true },
+						max: { type: Number, required: true },
+						min: { type: Number, required: true },
 						color: { type: String, required: true }
 					});
 

@@ -86,17 +86,16 @@ module.exports = {
 	
 	find: (req,res,next) => {
 
-		const id = req.userData.userId;
+		const id = req.query.id;
 
 		User.findById(id)
 			.select('email name type')
 			.populate('type','name')
 			.exec()
 			.then(doc => {
+				console.log( doc );
 				if (doc) {
-					res.status(200).json({
-						user: doc,
-					});
+					res.status(200).json( doc );
 				}else{
 					res.status(404).json({message:'No valid entry found for provided ID'});
 				}
@@ -109,30 +108,80 @@ module.exports = {
 	},
 	update: (req,res,next) => {
 
-		const id = req.body.userId;
-		const obj = req.body;
-		
-		delete obj.userId;
-		delete obj.password;
-		
-		User.update( { _id: id }, { $set: obj } )
-			.exec()
-			.then(result => {
-				res.status(200).json({
-					message: 'User updated'
-				});
-			})
-			.catch(err => {
-				console.log(err);
-				res.status(500).json({
-					error:err
-				});
+		if( req.body.password !== null && req.body.password !== '' ){
+
+			bcrypt.hash(req.body.password, 10, (err, hash) => {
+
+				if( err ) {
+					return res.status(500).json({
+						error: err
+					});
+				}
+				else{
+
+					const filter = { _id: req.body.id };
+
+					const update = {
+						name: req.body.name,
+						type: req.body.type,
+						email: req.body.email,
+						password: hash
+					};
+
+					User.findOneAndUpdate(filter, update, { new: true })
+						.then( (doc) => {
+							
+							const response = {
+											_id: doc._id,
+											name: doc.name,
+											type: doc.type,
+											email: doc.email
+										};
+
+							res.status(200).json({
+								message: 'User updated.'
+							});
+
+						})
+						.catch( err => errorHandler(res, err) );
+
+				}
+
 			});
+
+		}else{
+
+			const filter = { _id: req.body.id };
+
+			const update = {
+				name: req.body.name,
+				type: req.body.type,
+				email: req.body.email
+			};
+
+			User.findOneAndUpdate(filter, update, { new: true })
+				.then( (doc) => {
+					
+					const response = {
+									_id: doc._id,
+									name: doc.name,
+									type: doc.type,
+									email: doc.email
+								};
+
+					res.status(200).json({
+						message: 'User updated.'
+					});
+
+				})
+				.catch( err => errorHandler(res, err) );
+
+		}
 
 	},
 	delete: (req,res,next) => {
 
-		const id = req.query.userId;
+		const id = req.query.id;
 			
 		User.findById(id)
 			.select('_id')

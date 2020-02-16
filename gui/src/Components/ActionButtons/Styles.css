@@ -5,6 +5,15 @@
 	margin: 0.5em;
 }
 
+@media only screen and (max-width: 768px) {
+	.ActionButtonsContainer {
+		float: none;
+		position: static;
+
+		margin: 0.5em;
+	}
+}
+
 .Button {
 	width: 1em;
 	height: 1em;
@@ -13,26 +22,13 @@
 	cursor: pointer;
 	padding: 0.5em;
 	margin: 0.2em;
+	background-color: var( --aqua-green );
+	border: solid var( --aqua-green ) 0.2em;
 	transition-duration: 0.3s;
+
 }
 
-.bgYellow {
-	background-color: var(--dark-yellow);
-	border: solid var(--dark-yellow) 0.2em;
-}
-
-.bgYellow:hover {
-	background-color: var(--yellow);
-	border: solid white 0.2em;
-}
-
-.bgRed {
-	background-color: var(--dark-red);
-	border: solid var(--dark-red) 0.2em;
-}
-
-.bgRed:hover {
-	background-color: var(--red);
+.Button:hover {
 	border: solid white 0.2em;
 }
 

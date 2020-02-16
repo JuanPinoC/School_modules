@@ -74,7 +74,7 @@ class formEditor extends Component {
 	deleteSection = ( key ) => {
 		let sectionViews = this.state.sectionViews;
 
-		const index = sectionViews.findIndex( (e) => e.key === key );
+		const index = sectionViews.findIndex( (e) => e.key === key || e._id === key || e.id === key );
 
 		sectionViews.splice(index, 1);
 

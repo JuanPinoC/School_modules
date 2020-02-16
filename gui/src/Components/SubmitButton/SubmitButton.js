@@ -16,7 +16,7 @@ class submitButton extends Component {
 	render () {
 		return (
 				<div className={ this.state.buttonStyles } onClick={ this.props.onClick } >
-					<h3 className={ styles.ButtonText }>{ this.props.text }</h3>
+					<h1 className={ styles.ButtonText }>{ this.props.text }</h1>
 				</div>
 			);
 	}

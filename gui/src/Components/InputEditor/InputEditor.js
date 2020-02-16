@@ -49,7 +49,7 @@ class inputEditor extends Component {
 
 		let options = this.props.options;
 
-		const index = options.findIndex( (e) => e.key === key );
+		const index = options.findIndex( (e) => e.key === key || e._id === key || e.id === key );
 
 		options[ index ] = {...options[ index ], [field]: value};
 
@@ -106,7 +106,7 @@ class inputEditor extends Component {
 
 		let optionViews = this.state.optionViews;
 
-		const index = optionViews.findIndex( (e) => e.key === key );
+		const index = optionViews.findIndex( (e) => e.key === key || e._id === key || e.id === key );
 
 		optionViews.splice(index, 1);
 

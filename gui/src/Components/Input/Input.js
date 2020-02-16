@@ -46,6 +46,7 @@ class input extends Component {
 				this.props.onChange( this.props.name, { target: { value: options[0]._id } } );
 		}
 
+		this.onFocus();
 		this.onBlur();
 
 	}
@@ -166,7 +167,20 @@ class input extends Component {
 						</span>
 					</div>
 				);
-				
+			
+			case 'color':
+				return(
+					<div className={ styles.InputContainer }>
+						<input className={ styles.Input } type={ this.props.type } name={ this.props.name } value={ this.props.value }
+								max={ this.props.max } min={ this.props.min }
+								onChange={ (e) => this.props.onChange( this.props.name, e ) }
+								onFocus={ this.onFocus }
+								onBlur={ this.onBlur } />
+						<span className={ ( this.props.color === 'white' )? DinamicLabelStyles.OnWhiteFocus : DinamicLabelStyles.Focus } >
+							{ this.props.label }
+						</span>
+					</div>
+				);
 
 			default:
 				return(

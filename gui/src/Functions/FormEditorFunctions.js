@@ -1,9 +1,32 @@
 
 import axios from '../Axios/Axios';
 
-const getToken = () => {
+
+export const getToken = () => {
 	return localStorage.getItem('jwtToken');
-}
+};
+
+export const getUrlParams = () => {
+
+	let url = window.location.href;
+
+	let paramsString = url.slice( url.indexOf('?') + 1 );
+
+	const paramsStringArray = paramsString.split('&');
+
+	let params = {};
+
+	paramsStringArray.map( (string) => {
+
+		const stringParts = string.split('=');
+
+		params[ stringParts[0] ] = stringParts[1];
+
+	});
+
+	return params;
+
+};
 
 export const getColorScales = (resolve, reject) => {
 		
@@ -15,6 +38,36 @@ export const getColorScales = (resolve, reject) => {
 			resolve(res.data.records);
 		})
 		.catch( (err) => {
+			reject();
+		});
+
+};
+
+export const getColorScale = (id, resolve, reject) => {
+
+	axios.get(
+				'colorScale/find?id=' + id,
+				{ headers: { 'Authorization': 'Bearer ' + getToken() } } 
+		)
+		.then( ( res ) => {
+			resolve(res.data);
+		})
+		.catch( (res) => {
+			reject();
+		});
+
+};
+
+export const removeColorScale = (id, resolve, reject) => {
+
+	axios.get(
+				'colorScale/delete?id=' + id,
+				{ headers: { 'Authorization': 'Bearer ' + getToken() } } 
+		)
+		.then( ( res ) => {
+			resolve(res.data);
+		})
+		.catch( (res) => {
 			reject();
 		});
 
@@ -35,11 +88,41 @@ export const getUsers = (resolve, reject) => {
 
 };
 
+export const getUser = (id, resolve, reject) => {
+
+	axios.get(
+				'user/find?id=' + id,
+				{ headers: { 'Authorization': 'Bearer ' + getToken() } } 
+		)
+		.then( ( res ) => {
+			resolve(res.data);
+		})
+		.catch( (res) => {
+			reject();
+		});
+
+};
+
+export const removeUser = (id, resolve, reject) => {
+
+	axios.get(
+			'user/delete?id=' + id,
+			{ headers: { 'Authorization': 'Bearer ' + getToken() } } 
+	)
+	.then( ( res ) => {
+		resolve(res.data);
+	})
+	.catch( (res) => {
+		reject();
+	});
+
+};
+
 export const getUserTypes = (resolve, reject) => {
 		
 	axios.get(
 				'userType/',
-				{ headers: { 'Authorization': 'Bearer' + getToken() } } 
+				{ headers: { 'Authorization': 'Bearer ' + getToken() } } 
 		)
 		.then( ( res ) => {
 			resolve(res.data.records);
@@ -54,10 +137,40 @@ export const getEvaluationPlans = (resolve, reject) => {
 
 	axios.get(
 				'evaluationPlan/',
-				{ headers: { 'Authorization': 'Bearer' + getToken() } } 
+				{ headers: { 'Authorization': 'Bearer ' + getToken() } } 
 		)
 		.then( ( res ) => {
 			resolve(res.data.records);
+		})
+		.catch( (res) => {
+			reject();
+		});
+
+};
+
+export const getEvaluationPlan = (id, resolve, reject) => {
+
+	axios.get(
+				'evaluationPlan/find?id=' + id,
+				{ headers: { 'Authorization': 'Bearer ' + getToken() } } 
+		)
+		.then( ( res ) => {
+			resolve(res.data);
+		})
+		.catch( (res) => {
+			reject();
+		});
+
+};
+
+export const removeEvaluationPlan = (id, resolve, reject) => {
+
+	axios.get(
+				'evaluationPlan/delete?id=' + id,
+				{ headers: { 'Authorization': 'Bearer ' + getToken() } } 
+		)
+		.then( ( res ) => {
+			resolve(res.data);
 		})
 		.catch( (res) => {
 			reject();
@@ -69,7 +182,7 @@ export const getForms = (resolve, reject) => {
 
 	axios.get(
 				'formEditor/',
-				{ headers: { 'Authorization': 'Bearer' + getToken() } } 
+				{ headers: { 'Authorization': 'Bearer ' + getToken() } } 
 		)
 		.then( ( res ) => {
 			resolve(res.data.records);
@@ -78,7 +191,7 @@ export const getForms = (resolve, reject) => {
 			reject();
 		});
 
-}
+};
 
 export const getForm = (id, resolve, reject) => {
 		
@@ -150,9 +263,15 @@ export const InputTypes = [
 			}
 ];
 
+export const dateToYearMonthDay = ( date ) => {
+
+	return date.split('T')[0];
+	
+};
+
 export const moveElementInArray = ( array, key, direction ) => {
 
-	const index = array.findIndex( (e) => e.key === key );
+	let index = array.findIndex( (e) => e.key === key || e._id === key || e.id === key );
 
 	if(direction === 'up' && index !== 0){
 		const x = array[ index - 1];
@@ -172,4 +291,7 @@ export const moveElementInArray = ( array, key, direction ) => {
 	return array;
 };
 
+export const randomNumber = () => {
+	return Math.round(Math.random() * 1000 ) + Math.round(Math.random() * 1000 ) + Math.round(Math.random() * 1000 );
+};
 

@@ -3,6 +3,9 @@ import styles from './Styles.css';
 
 import { Link } from "react-router-dom";
 
+import { randomNumber } from '../../Functions/FormEditorFunctions';
+
+
 class recordsTable extends Component {
 
 	constructor (props) {
@@ -32,12 +35,14 @@ class recordsTable extends Component {
 
 		recordViews.splice(index, 1);
 
+		this.setState({ recordViews: recordViews });
+
 	}
 
 	setHeaderViews = ( headers ) => {
 
 		const headerViews = headers.map( ( e ) => {
-			return (<th>{ e.label }</th>);
+			return (<th key={ 'th' + randomNumber() }>{ e.label }</th>);
 		});
 
 		this.setState({
@@ -59,21 +64,37 @@ class recordsTable extends Component {
 					const subrecord = record[ header.name ];
 					const subheaderFields = subheaders[ subheaderId ].fields;
 
+					if( typeof subrecord.length !== 'undefined' ){
+						let subrecordData = subrecord.map( ( subrecordItem ) => {
+
+								let subrecordItemData = subheaderFields.map( ( subheaderField ) => {
+									return (<li key={ 'itd' + randomNumber() }>{ subrecordItem[ subheaderField ] }</li>);
+								});
+
+								return (<ul key={ 'itr' + randomNumber() }>{ subrecordItemData }</ul>);
+
+							});
+
+						return (<td key={ 'p' + randomNumber() }>{ subrecordData }</td>);
+					}
+
 					let subrecordData = subheaderFields.map( ( subheaderField ) => {
-
-						return (<p>{ subrecord[ subheaderField ] }</p>);
-
+						return (<p key={ 'p' + randomNumber() }>{ subrecord[ subheaderField ] }</p>);
 					});
 
-					return (<td>{ subrecordData }</td>);
+					return (<td key={ 'td' + randomNumber() }>{ subrecordData }</td>);
 
 				}else{
-					return (<td>{ record[ header.name ] }</td>);
+					return (<td key={ 'td' + randomNumber() }>{ record[ header.name ] }</td>);
 				}
 			});
 
-			fields.push( <td> <Link className={ styles.TableOption } to={ this.props.updateRoute + record._id }>Editar</Link> </td> );
-			fields.push( <td> <a className={ styles.TableOption } onClick={ () => { this.deleteRecord( record._id ) } }>Eliminar</a> </td>);
+			fields.push(<td key={ 'tdl1' + randomNumber() }> 
+							<Link className={ styles.TableOption } to={ this.props.updateRoute + record._id }>Editar</Link>
+						</td>);
+			fields.push(<td key={ 'tdl2' + randomNumber() }>
+							<a className={ styles.TableOption } onClick={ () => { this.deleteRecord( record._id ) } }>Eliminar</a>
+						</td>);
 
 
 			return (

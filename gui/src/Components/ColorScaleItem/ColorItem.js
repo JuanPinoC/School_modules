@@ -13,11 +13,10 @@ class formItem extends Component {
 		const data = props.data;
 
 		this.state = {
-						form: data.form || '',
-						weight: data.weight || 0,
-						requiredAmount: data.requiredAmount || 0,
-
-						formsData: this.props.formsData
+							label: data.label || '',
+							max: data.max || 0,
+							min: data.min || 0,
+							color: data.color || ''
 		};
 
 		this.onChangeHandler = this.onChangeHandler.bind(this);
@@ -33,16 +32,13 @@ class formItem extends Component {
 	render(){
 
 		return(
-			<div className={ styles.FormItemContainer }>
+			<div className={ styles.ColorItemContainer }>
 				<ActionButtons move={ this.props.move } delete={ this.props.delete } />
 				<div className={ styles.FieldsGrid }>
-					<Input label='Formulario' type='select' name='form' 
-							options={ this.state.formsData } value={ this.state.form } 
-							onChange={ this.onChangeHandler } />
-
-					<Input label='Peso(%)' type='number' name='weight' value={ this.state.weight } onChange={ this.onChangeHandler } />
-			
-					<Input label='Nro de veces' type='number' name='requiredAmount' value={ this.state.requiredAmount } onChange={ this.onChangeHandler } />
+					<Input label='Nombre' type='text' name='label' value={ this.state.label } onChange={ this.onChangeHandler } />
+					<Input label='Color' type='color' name='color' value={ this.state.color } onChange={ this.onChangeHandler } />
+					<Input label='Máx' type='number' name='max' value={ this.state.max } onChange={ this.onChangeHandler } />
+					<Input label='Min' type='number' name='min' value={ this.state.min } onChange={ this.onChangeHandler } />
 				</div>
 			</div>
 		);

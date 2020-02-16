@@ -3,7 +3,7 @@ import styles from './Styles.css';
 
 import RecordsTable from '../RecordsTable/RecordsTable';
 
-import { getEvaluationPlans } from '../../Functions/FormEditorFunctions';
+import { getEvaluationPlans, removeEvaluationPlan } from '../../Functions/FormEditorFunctions';
 
 class evaluationPlanList extends Component {
 
@@ -15,7 +15,6 @@ class evaluationPlanList extends Component {
 
 			createRoute: '/evaluationPlanForm',
 			updateRoute: '/evaluationPlanForm?id=',
-			deleteFunction: () => {},
 
 			headers: [
 						{ name: '_id', label: 'ID' }, 
@@ -32,8 +31,15 @@ class evaluationPlanList extends Component {
 
 	componentDidMount () {
 
-		let evaluationPlansPromise = new Promise( ( resolve, reject ) => { getEvaluationPlans(resolve, reject); });
-			evaluationPlansPromise.then( ( res ) => { this.setState({ records: res }); } );
+		let getRecordsPromise = new Promise( ( resolve, reject ) => { getEvaluationPlans(resolve, reject); });
+			getRecordsPromise.then( ( res ) => { this.setState({ records: res }); } );
+
+	}
+
+	deleteFunction = ( id ) => {
+
+		let removeRecordsPromise = new Promise( ( resolve, reject ) => { removeEvaluationPlan(id, resolve, reject); });
+			removeRecordsPromise.then( ( res ) => { alert('Plan eliminado.') } );
 
 	}
 
@@ -44,7 +50,7 @@ class evaluationPlanList extends Component {
 					( this.state.records.length > 0 )? 
 						(<RecordsTable	title={ this.state.title }
 										headers={ this.state.headers } subheaders={ this.state.subheaders } records={ this.state.records }
-										createRoute={ this.state.createRoute } updateRoute={ this.state.updateRoute } delete={ this.state.deleteFunction } />)
+										createRoute={ this.state.createRoute } updateRoute={ this.state.updateRoute } delete={ this.deleteFunction } />)
 						:(<div>No hay registros para mostrar.</div>)
 				}
 			</div>

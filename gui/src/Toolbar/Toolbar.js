@@ -18,16 +18,16 @@ class toolbar extends Component {
 								<Link className={ styles.Link } to='/formEditor'>Editor de Formularios</Link>
 							</li>
 							<li>
-								<Link className={ styles.Link } to='/userForm'>Formulario de Usuarios</Link>
-							</li>
-							<li>
 								<Link className={ styles.Link } to='/fillableForm'>Llenar Evaluación</Link>
 							</li>
 							<li>
 								<Link className={ styles.Link } to='/evaluationPlanList'>Lista de Planes de Evaluación</Link>
 							</li>
 							<li>
-								<Link className={ styles.Link } to='/evaluationPlanForm'>Planes de Evaluación</Link>
+								<Link className={ styles.Link } to='/userList'>Lista de Usuarios</Link>
+							</li>
+							<li>
+								<Link className={ styles.Link } to='/colorScaleList'>Lista de Escalas de Color</Link>
 							</li>
 							<li onClick={ this.props.onSignOut }>
 								<a>Salir</a>
