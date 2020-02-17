@@ -10,3 +10,5 @@ export const CREATE_INPUT = 'CREATE_INPUT';
 export const UPDATE_INPUT = 'UPDATE_INPUT';
 export const DELETE_INPUT = 'DELETE_INPUT';
 export const MOVE_INPUT = 'MOVE_INPUT';
+
+export const REMOVE_FORM_EDITOR_DATA = 'REMOVE_FORM_EDITOR_DATA';

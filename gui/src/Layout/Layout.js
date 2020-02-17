@@ -26,109 +26,18 @@ import UserList from '../Components/Lists/UserList';
 import FillableForm from '../Components/FillableForm/FillableForm';
 
 /* Evaluation Plan */
-import EvaluationPlanForm from '../Components/Forms/EvaluationPlanForm';
 import EvaluationPlanList from '../Components/Lists/EvaluationPlanList';
+import EvaluationPlanForm from '../Components/Forms/EvaluationPlanForm';
 
 /* Color Scales */
-import ColorScaleForm from '../Components/Forms/ColorScaleForm';
 import ColorScaleList from '../Components/Lists/ColorScaleList';
+import ColorScaleForm from '../Components/Forms/ColorScaleForm';
+
+/* Form */
+import FormList from '../Components/Lists/FormList';
 
 
 class Layout extends Component {
-/*
-	const formEditorData = {
-		name: 'Formulario 1',
-		type: 'Soft Abilities',
-		action: 'avg',
-		description: '',
-		weight: 100,
-		sections: [
-			{
-				name: 'Seccion 1',
-				action: 'sum',
-				weight: 40,
-				inputs: [
-					{
-						label:	'Pregunta Númerica',
-						type:	'Number',
-						weight: 100,
-						options: [],
-						maxValue: 20,
-						minValue: 0
-					},
-					{
-						label:	'Pregunta Textual',
-						type:	'Text',
-						weight: 0,
-						options: [],
-						maxValue: 250,
-						minValue: 50
-					}
-				]
-			},
-			{
-				name: 'Seccion 2',
-				action: 'avg',
-				weight: 60,
-				inputs: [
-					{
-						label:	'Pregunta de Opción Múltiple Númerica',
-						type:	'Number Options',
-						weight: 100,
-						options: [ 
-							{
-								label: "Siempre", 
-								numberValue: 20,
-								stringValue: ''
-							},
-							{
-								label: "Casi siempre",
-								numberValue: 15,
-								stringValue: '' 
-							},
-							{
-								label: "Normalmente",
-								numberValue: 10,
-								stringValue: '' 
-							},
-							{
-								label: "A veces",
-								numberValue: 5,
-								stringValue: ''
-							},
-							{
-								label: "Nunca",
-								numberValue: 0,
-								stringValue: '' 
-							}
-						],
-						maxValue: null,
-						minValue: null
-					},
-					{
-						label:	'Pregunta de Opción Múltiple Textual',
-						type:	'Text Options',
-						weight: 0,
-						options: [ 
-							{
-								label: "Sí",
-								numberValue: 0,
-								stringValue: "Sí"
-							},
-							{
-								label: "No",
-								numberValue: 0,
-								stringValue: "No"
-							}
-						],
-						maxValue: null,
-						minValue: null
-					}
-				]
-			}
-		],
-	};
-*/
 
 	constructor (props) {
 		super(props);
@@ -187,25 +96,9 @@ class Layout extends Component {
 								
 								<div className={ ( this.state.toolbarOpen )? styles.MainContent : styles.MainContentNoToolbar }>
 									<Switch>
-										<Route path='/formEditor'>
-											<FormEditor />
-										</Route>
+
 										<Route path='/fillableForm'>
 											<FillableForm />
-										</Route>
-
-										<Route path='/userList'>
-											<UserList />
-										</Route>
-										<Route path='/userForm:id?'>
-											<UserForm />
-										</Route>
-
-										<Route path='/colorScaleList'>
-											<ColorScaleList />
-										</Route>
-										<Route path='/colorScaleForm:id?'>
-											<ColorScaleForm />
 										</Route>
 
 										<Route path='/evaluationPlanList'>
@@ -213,6 +106,25 @@ class Layout extends Component {
 										</Route>
 										<Route path='/evaluationPlanForm:id?'>
 											<EvaluationPlanForm />
+										</Route>
+										<Route path='/colorScaleList'>
+											<ColorScaleList />
+										</Route>
+										<Route path='/colorScaleForm:id?'>
+											<ColorScaleForm />
+										</Route>
+										<Route path='/formList'>
+											<FormList />
+										</Route>
+										<Route path='/formEditor:id?'>
+											<FormEditor />
+										</Route>
+
+										<Route path='/userList'>
+											<UserList />
+										</Route>
+										<Route path='/userForm:id?'>
+											<UserForm />
 										</Route>
 
 									</Switch>

@@ -28,50 +28,6 @@ export const getUrlParams = () => {
 
 };
 
-export const getColorScales = (resolve, reject) => {
-		
-	axios.get(
-				'colorScale/',
-				{ headers: { 'Authorization': 'Bearer ' + getToken() } } 
-		)
-		.then( (res) => {
-			resolve(res.data.records);
-		})
-		.catch( (err) => {
-			reject();
-		});
-
-};
-
-export const getColorScale = (id, resolve, reject) => {
-
-	axios.get(
-				'colorScale/find?id=' + id,
-				{ headers: { 'Authorization': 'Bearer ' + getToken() } } 
-		)
-		.then( ( res ) => {
-			resolve(res.data);
-		})
-		.catch( (res) => {
-			reject();
-		});
-
-};
-
-export const removeColorScale = (id, resolve, reject) => {
-
-	axios.get(
-				'colorScale/delete?id=' + id,
-				{ headers: { 'Authorization': 'Bearer ' + getToken() } } 
-		)
-		.then( ( res ) => {
-			resolve(res.data);
-		})
-		.catch( (res) => {
-			reject();
-		});
-
-};
 
 export const getUsers = (resolve, reject) => {
 		
@@ -178,6 +134,51 @@ export const removeEvaluationPlan = (id, resolve, reject) => {
 
 };
 
+export const getColorScales = (resolve, reject) => {
+		
+	axios.get(
+				'colorScale/',
+				{ headers: { 'Authorization': 'Bearer ' + getToken() } } 
+		)
+		.then( (res) => {
+			resolve(res.data.records);
+		})
+		.catch( (err) => {
+			reject();
+		});
+
+};
+
+export const getColorScale = (id, resolve, reject) => {
+
+	axios.get(
+				'colorScale/find?id=' + id,
+				{ headers: { 'Authorization': 'Bearer ' + getToken() } } 
+		)
+		.then( ( res ) => {
+			resolve(res.data);
+		})
+		.catch( (res) => {
+			reject();
+		});
+
+};
+
+export const removeColorScale = (id, resolve, reject) => {
+
+	axios.get(
+				'colorScale/delete?id=' + id,
+				{ headers: { 'Authorization': 'Bearer ' + getToken() } } 
+		)
+		.then( ( res ) => {
+			resolve(res.data);
+		})
+		.catch( (res) => {
+			reject();
+		});
+
+};
+
 export const getForms = (resolve, reject) => {
 
 	axios.get(
@@ -208,6 +209,21 @@ export const getForm = (id, resolve, reject) => {
 
 };
 
+export const removeForm = (id, resolve, reject) => {
+
+	axios.get(
+				'formEditor/delete?id=' + id,
+				{ headers: { 'Authorization': 'Bearer ' + getToken() } } 
+		)
+		.then( ( res ) => {
+			resolve(res.data);
+		})
+		.catch( (res) => {
+			reject();
+		});
+		
+};
+
 export const FormTypes = [
 			{ _id:'Soft Abilities' , name:'Habilidades blandas' },
 			{ _id:'Hard Abilities' , name:'Observación en clase' },
@@ -225,7 +241,6 @@ export const InputTypes = [
 				value: 'Number',
 				label: 'Númerica',
 				config: {
-						showWeight: true,
 						showOptions: false,
 						showMaxValue: true,
 						showMinValue: true
@@ -235,7 +250,6 @@ export const InputTypes = [
 				value: 'Text',
 				label: 'Textual',
 				config: {
-						showWeight: false,
 						showOptions: false,
 						showMaxValue: true,
 						showMinValue: true
@@ -245,7 +259,6 @@ export const InputTypes = [
 				value: 'Number Options',
 				label: 'Opción Múltiple Númerica',
 				config: {
-						showWeight: true,
 						showOptions: true,
 						showMaxValue: false,
 						showMinValue: false
@@ -255,7 +268,6 @@ export const InputTypes = [
 				value: 'Text Options',
 				label: 'Opción Múltiple Textual',
 				config: {
-						showWeight: false,
 						showOptions: true,
 						showMaxValue: false,
 						showMinValue: false
@@ -269,9 +281,10 @@ export const dateToYearMonthDay = ( date ) => {
 	
 };
 
-export const moveElementInArray = ( array, key, direction ) => {
+export const moveElementInArray = ( array, key, direction, givenIndex = null ) => {
 
-	let index = array.findIndex( (e) => e.key === key || e._id === key || e.id === key );
+	let index = ( givenIndex !== null )?
+					givenIndex : array.findIndex( (e) => e.key === key || e._id === key || e.id === key );
 
 	if(direction === 'up' && index !== 0){
 		const x = array[ index - 1];
@@ -292,6 +305,14 @@ export const moveElementInArray = ( array, key, direction ) => {
 };
 
 export const randomNumber = () => {
-	return Math.round(Math.random() * 1000 ) + Math.round(Math.random() * 1000 ) + Math.round(Math.random() * 1000 );
+
+	let result = '';
+	const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+	const charactersLength = characters.length;
+	for ( let i = 0; i < 10; i++ ) {
+		result += characters.charAt( Math.floor( Math.random() * charactersLength ) );
+	}
+	return result;
+
 };
 

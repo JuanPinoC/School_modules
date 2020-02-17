@@ -2,6 +2,7 @@ const mongoose = require('mongoose');
 
 const Form = require('../models/form');
 const Section = require('../models/section');
+const Input = require('../models/input');
 
 const SectionController = require('../controllers/sectionController');
 
@@ -16,6 +17,7 @@ module.exports = {
 	list: (req,res,next) => {
 		Form.find()
 			.select('_id name type')
+			.populate('colorScale', 'name')
 			.exec()
 			.then( docs => {
 				const response = {
@@ -24,7 +26,8 @@ module.exports = {
 						return {
 							_id: doc._id,
 							name: doc.name,
-							type: doc.type
+							type: doc.type,
+							colorScale: doc.colorScale
 						}
 					})
 				};
@@ -41,7 +44,6 @@ module.exports = {
 			type: req.body.type,
 			action: req.body.action,
 			description: req.body.description,
-			weight: req.body.weight,
 			colorScale: req.body.colorScale
 		});
 
@@ -116,7 +118,6 @@ module.exports = {
 						type:	form.type,
 						action: form.action,
 						description: form.description,
-						weight: form.weight,
 						colorScale: form.colorScale,
 						sections: sections
 					});
@@ -132,6 +133,20 @@ module.exports = {
 		
 	},
 	delete: (req,res,next) => {
+
+		let promise = new Promise( ( resolve, reject ) => {
+										SectionController.delete( req.query.id, resolve, reject );
+									} );
+
+		promise.then( () => {
+
+				Form.deleteOne({ _id: req.query.id })
+							.then( (result) => {
+								res.status(200).json(result);
+							})
+							.catch( err => errorHandler(res, err) );
+
+			}).catch( err => errorHandler(res, err) );
 
 	}
 

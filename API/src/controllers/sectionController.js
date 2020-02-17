@@ -19,7 +19,6 @@ module.exports = {
 			name: element.name,
 			form: formId,
 			action: element.action,
-			weight: element.weight,
 			order: order
 		});
 
@@ -58,7 +57,46 @@ module.exports = {
 	update: (req,res,next) => {
 
 	},
-	delete: (req,res,next) => {
+	delete: ( formId, resolve, reject ) => {
+
+		Section.find({ form: formId })
+				.select('_id')		
+				.exec()
+				.then( (docs) => {
+
+					let promises = docs.map( (item) => {
+
+						let itemPromise = new Promise(
+														( resolve1, reject1 ) => {
+															InputController.delete( item._id, resolve1, reject1 );
+														});
+
+						return itemPromise.then( () => { return true } ).catch( () => { return false } );
+					
+					});
+
+					Promise.all(promises).then( arrayOfResponses => {
+						
+						if( arrayOfResponses.every( (e) => e ) ){
+
+							Section.deleteMany({ form: formId })
+								.then( (result) => {
+									resolve();
+								})
+								.catch( (err) => {
+									reject();
+								});
+
+						}else{
+							reject();
+						}
+
+					}).catch( err => errorHandler(res, err) );
+
+				})
+				.catch( (err) => {
+					reject();
+				});
 
 	}
 

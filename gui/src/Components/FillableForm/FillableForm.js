@@ -5,7 +5,7 @@ import axios from '../../Axios/Axios';
 
 import { connect } from 'react-redux';
 
-import { FormTypes, FormActions, getColorScales, getUsers, getForm, moveElementInArray } from '../../Functions/FormEditorFunctions';
+import { FormTypes, FormActions, getColorScale, getUsers, getForm, moveElementInArray, randomNumber } from '../../Functions/FormEditorFunctions';
 
 import Input from '../Input/Input';
 import SubmitButton from '../SubmitButton/SubmitButton';
@@ -29,7 +29,7 @@ class FillableForm extends Component {
 
 			formTypes: FormTypes,
 			users: [],
-			colorScales: [],
+			colorScale: {},
 			evaluatedUserFields: []
 		};
 
@@ -40,14 +40,17 @@ class FillableForm extends Component {
 		let usersPromise = new Promise( ( resolve, reject ) => { getUsers(resolve, reject); });
 		usersPromise.then( ( res ) => { this.setState({ users: res }); } );
 
-		let colorScalesPromise = new Promise( ( resolve, reject ) => { getColorScales(resolve, reject); });
-		colorScalesPromise.then( ( res ) => { this.setState({ colorScales: res }); } );
+		let formPromise = new Promise( ( resolve, reject ) => { getForm( this.state.formId, resolve, reject ); });
+		formPromise.then( ( res ) => {
 
-		let formPromise = new Promise( ( resolve, reject ) => { getForm( this.state.formId, resolve, reject); });
-		formPromise.then( ( res ) => { 
 			this.setState({ form: res });
 			this.getSectionViews();
+
+			let colorScalePromise = new Promise( ( resolve, reject ) => { getColorScale( res.colorScale, resolve, reject ); });
+			colorScalePromise.then( ( res1 ) => { this.setState({ colorScale: res1 }); } );
+		
 		} );
+
 	}
 
 	onChangeHandler = ( inputId, e ) => {
@@ -84,8 +87,6 @@ class FillableForm extends Component {
 			return (
 				<div className={ styles.Section } key={ section._id }>
 					<h3 className={ styles.SectionName }>{ section.name }</h3>
-					<h5 className={ styles.SectionWeight }>{ section.weight }</h5>
-					<h5>{ section.order }</h5>
 					<div className={ styles.InputsList }>
 						{ this.getInputViews(section.inputs) }
 					</div>
@@ -103,7 +104,7 @@ class FillableForm extends Component {
 
 			if( input.evaluatedUserField ) this.setState({ evaluatedUserFields: [ ...this.state.evaluatedUserFields, input._id ] });
 
-			const key = 'i' + Math.round(Math.random() * 1000);
+			const key = 'i' + randomNumber();
 
 			switch(input.type){
 				case 'Number':
@@ -149,6 +150,34 @@ class FillableForm extends Component {
 		return inputViews;
 	}
 
+	getColorScaleView = () => {
+
+		const colorScale = this.state.colorScale;
+
+		if( typeof colorScale.items !== 'undefined' ){
+
+			const colorItems = colorScale.items.map( (e) => {
+				return (<div className={ styles.colorScaleItem } key={ randomNumber() }>
+							<label className={ styles.colorScaleItemLabel }><div>{ e.label }</div></label>
+							<div className={ styles.colorScaleItemColor }>
+								<div style={{ backgroundColor: e.color}}>{ e.max + "-" + e.min }</div>
+							</div>
+						</div>);
+			});
+
+			return (<div className={ styles.ColorScaleContainer }>
+						<h3>{ colorScale.name }</h3>
+						<div className={ styles.ColorScaleItems }>
+							{ colorItems }
+						</div>
+					</div>);
+
+		}else{
+			return (<div></div>);
+		}
+
+	}
+
 	submitForm = () => {
 
 		const data = {
@@ -181,20 +210,23 @@ class FillableForm extends Component {
 
 		const form = { ...this.state.form, sections: [] };
 
+		const colorScaleView = this.getColorScaleView();
+
 		return (
 			<div className={ styles.FillableFormContainer }>
 				<div className={ styles.FormFields}>
 					<h1 className={ styles.FormTitle }>{ form.name }</h1>
 					<h2 className={ styles.FormField }>Tipo: { form.type }</h2>
-					<h2 className={ styles.FormField }>Peso: { form.weight }</h2>
-					<Input label='Usuario Evaluado:' type='select' name='evaluated' value={ this.state.evaluated } 
-								onChange={ this.onChangeHandler } options={ this.state.users } />
 					<p>Descripción: { form.description }</p>
-					<h5> ColorScale </h5>
-					<SubmitButton onClick={ this.submitForm } text={'Guardar Evaluación'}/>
+					{ colorScaleView }
 				</div>
+				<Input label='Usuario Evaluado:' type='select' name='evaluated' value={ this.state.evaluated } 
+							onChange={ this.onChangeHandler } options={ this.state.users } />
 				<div className={ styles.SectionsList }>
 					{ this.state.sectionViews }
+				</div>
+				<div className={ styles.ButtonContainer }>
+					<SubmitButton onClick={ this.submitForm } text={'Guardar Evaluación'}/>
 				</div>
 			</div>
 		);

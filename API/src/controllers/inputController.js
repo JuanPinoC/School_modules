@@ -11,7 +11,6 @@ module.exports = {
 			label: element.label,
 			type: element.type,
 			section: sectionId,
-			weight: element.weight,
 			options: element.options,
 			maxValue: element.maxValue,
 			minValue: element.minValue,
@@ -31,7 +30,15 @@ module.exports = {
 	update: (req,res,next) => {
 
 	},
-	delete: (req,res,next) => {
+	delete: ( sectionId, resolve, reject ) => {
+
+		Input.deleteMany({ section: sectionId })
+				.then( (result) => {
+					resolve();
+				})
+				.catch( (err) => {
+					reject();
+				});
 
 	}
 

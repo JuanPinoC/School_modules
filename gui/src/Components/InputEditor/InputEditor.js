@@ -14,8 +14,7 @@ import { moveElementInArray } from '../../Functions/FormEditorFunctions';
 const optionBaseForm = {	
 							key: '',
 							label: '', 
-							numberValue: 0,
-							stringValue: ''
+							value: 0
 						};
 
 class inputEditor extends Component {
@@ -33,6 +32,16 @@ class inputEditor extends Component {
 
 		this.onChangeHandler = this.onChangeHandler.bind(this);
 		this.optionFieldChangeHandler = this.optionFieldChangeHandler.bind(this);
+	}
+
+	componentDidMount () {
+
+		let options = this.props.options;
+
+		options.forEach( (e) => {
+			this.addOption( e );
+		});
+		
 	}
 
 	onChangeHandler = (fieldName, e) => {
@@ -63,16 +72,6 @@ class inputEditor extends Component {
 		const element = inputTypes.find( e => e.value === value );
 		return element.config;
 
-	}
-
-	componentDidMount () {
-
-		let options = this.props.options;
-
-		options.forEach( (e) => {
-			this.addOption( e );
-		});
-		
 	}
 
 	addOption = ( data = null ) => {
@@ -148,13 +147,7 @@ class inputEditor extends Component {
 						<Input label='Tipo' type='select' name='type' value={ this.props.type } 
 							options={ inputTypes.map( ( e ) => { return { _id: e.value, name: e.label}; } ) } onChange={ this.onChangeHandler } />
 					</div>
-					
-					{	( showItemsConfig.showWeight )?(
-						<div className={ styles.InputEditorItem}>
-							<Input label='Peso' type='number' name='weight' value={ this.props.weight } 
-									onChange={ this.onChangeHandler } />
-						</div>
-						):('')	}
+
 					
 					{	( showItemsConfig.showMaxValue )?(
 						<div className={ styles.InputEditorItem }>
@@ -169,6 +162,7 @@ class inputEditor extends Component {
 									onChange={ this.onChangeHandler } />
 						</div>
 						):('')	}
+
 				</div>
 
 				<div  className={ styles.OptionsList }>
@@ -182,8 +176,8 @@ class inputEditor extends Component {
 					):('')	}
 
 					{	( showItemsConfig.showOptions )?(
-						<div className={ styles.AddOptionButton } onClick={ this.addOption }>
-							<h4 className={ styles.HorizontalAlign}>Agregar Opción +</h4>
+						<div className={ styles.AddItemButton } onClick={ this.addOption }>
+							<h4>Agregar Opción +</h4>
 						</div>
 					):('')	}
 				</div>
@@ -197,15 +191,14 @@ class inputEditor extends Component {
 const mapStateToProps = (state, ownProps) => {
 
 	const sections = state.formEditor.sections;
-	const sectionId = sections.findIndex( (e) => e.key === ownProps.parent );
+	const sectionId = sections.findIndex( (e) => e.key === ownProps.parent || e._id === ownProps.parent || e.id === ownProps.parent );
 	const parentInputs = sections[ sectionId ].inputs;
-	const id = parentInputs.findIndex( (e) => e.key === ownProps.id );
+	const id = parentInputs.findIndex( (e) => e.key === ownProps.id || e._id === ownProps.id || e.id === ownProps.id );
 
 	return ( id >= 0 )?
 	{
 		label: parentInputs[ id ].label,
 		type: parentInputs[ id ].type,
-		weight: parentInputs[ id ].weight,
 		options: parentInputs[ id ].options,
 		maxValue: parentInputs[ id ].maxValue,
 		minValue: parentInputs[ id ].minValue,

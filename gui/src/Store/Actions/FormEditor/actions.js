@@ -5,7 +5,10 @@ import {
 		//SECTION
 		CREATE_SECTION, UPDATE_SECTION, DELETE_SECTION, MOVE_SECTION,
 		//INPUT
-		CREATE_INPUT, UPDATE_INPUT, DELETE_INPUT, MOVE_INPUT
+		CREATE_INPUT, UPDATE_INPUT, DELETE_INPUT, MOVE_INPUT,
+
+		//REMOVE DATA
+		REMOVE_FORM_EDITOR_DATA
 
 } from './actionTypes';
 
@@ -91,5 +94,12 @@ export const moveInput = ( parent, key, direction ) => {
 		parent: parent,
 		key: key,
 		direction: direction
+	}
+};
+
+
+export const removeFormEditorData = () => {
+	return {
+		type: REMOVE_FORM_EDITOR_DATA
 	}
 };

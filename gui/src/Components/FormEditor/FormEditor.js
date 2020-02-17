@@ -3,13 +3,16 @@ import styles from './Styles.css';
 
 import axios from '../../Axios/Axios';
 
+import { Redirect } from "react-router-dom";
+
 import { connect } from 'react-redux';
-import { updateForm, createSection, moveSection, deleteSection } from '../../Store/Actions/FormEditor/index';
+import { setForm, updateForm, createSection, moveSection, deleteSection, removeFormEditorData } from '../../Store/Actions/FormEditor/index';
 
 import SectionEditor from '../SectionEditor/SectionEditor';
 import Input from '../Input/Input';
+import SubmitButton from '../SubmitButton/SubmitButton';
 
-import { FormTypes, FormActions, getColorScales, moveElementInArray } from '../../Functions/FormEditorFunctions';
+import { getToken, getUrlParams, getForm, FormTypes, FormActions, getColorScales, moveElementInArray, randomNumber } from '../../Functions/FormEditorFunctions';
 
 class formEditor extends Component {
 
@@ -18,10 +21,17 @@ class formEditor extends Component {
 		super(props);
 
 		this.state = {
+			id: '',
+
 			sectionViews: [],
 			types: FormTypes,
 			actions: FormActions,
-			colorScales: []
+			colorScales: [],
+
+			disableSubmit: false,
+			disableMoveItem: false,
+			loading: true,
+			redirect: ''
 		};
 
 		this.moveSection = this.moveSection.bind(this);
@@ -31,14 +41,43 @@ class formEditor extends Component {
 	componentDidMount () {
 
 		let colorScalesPromise = new Promise( ( resolve, reject ) => { getColorScales(resolve, reject); });
-
 		colorScalesPromise.then( ( res ) => { this.setState({ colorScales: res }); } );
 
-		const sections = this.props.sections;
+		const params = getUrlParams();
 
-		sections.forEach( (e) => {
-			this.addSection( e );
-		});
+		if( params.id !== null && typeof params.id !== 'undefined' ){
+
+			let formPromise = new Promise( ( resolve, reject ) => { getForm( params.id, resolve, reject); });
+			formPromise.then( ( res ) => {
+
+				this.props.onSetForm({
+					name: res.name,
+					type: res.type,
+					action: res.action,
+					description: res.description,
+					sections: res.sections,
+					colorScale: res.colorScale
+				});
+
+				const sections = res.sections;
+
+				sections.forEach( (e) => {
+					this.addSection( e );
+				});
+
+				this.setState({
+					id: params.id,
+					loading: false
+				});
+
+			});
+
+		}else{
+
+			this.props.onRemoveFormEditorData();
+
+			this.setState({ loading: false });
+		}
 
 	}
 
@@ -50,7 +89,7 @@ class formEditor extends Component {
 
 	addSection = ( data = null ) => {
 
-		const key = data._id || 's' + Math.round(Math.random() * 1000);
+		const key = data._id || 's' + randomNumber();
 
 		this.setState( (state, props) => ({ 
 			sectionViews: [	...state.sectionViews, 
@@ -59,7 +98,12 @@ class formEditor extends Component {
 								delete={ () => { this.deleteSection( key ); } } />)	]
 		}));
 
-		this.props.onAddSection( key );
+
+		if( typeof data._id === 'undefined' ){
+			
+			this.props.onAddSection( key );
+
+		}
 
 	}
 
@@ -83,11 +127,12 @@ class formEditor extends Component {
 		this.props.onDeleteSection( key );
 	}
 
-	saveForm = (e) => {
+	onSubmitHandler = (e) => {
+
+		this.setState({ disableSubmit: true });
 
 		const data = {
 					name: this.props.name,
-					weight: this.props.weight,
 					type: this.props.type,
 					action: this.props.action,
 					description: this.props.description,
@@ -101,78 +146,86 @@ class formEditor extends Component {
 			data: data,
 			headers: {
 				'Content-Type': 'application/json',
-				'Authorization': 'Bearer ' + localStorage.getItem('jwtToken')
+				'Authorization': 'Bearer ' + getToken()
 			}
 		};
 
 		axios(params)
 		.then( (res) => {
 			alert('Formulario guardado.');
+			this.setState({ redirect: '/formList' });
 		})
 		.catch( (err) => {
-			console.log(err);
+			alert('Error al guardar. Intente de nuevo.');
+			this.setState({ disableSubmit: false });
 		});
 
 	}
 
 	render () {
 
+		if( this.state.redirect !== '' )
+			return ( <Redirect to={this.state.redirect} /> );
+
 		const sectionViews = this.state.sectionViews || (<div>Vacío</div>); 
 
-		return (
-			<div className={ styles.FormEditorContainer }>
-				
-				<div className={ styles.TitleContainer }>
-					<h1>Editor de Formularios</h1>
-					<div className={ styles.AddElementButton } onClick={ this.saveForm }>
-						<h2 className={ styles.HorizontalAlign}>Guardar Formulario</h2>
-					</div>
-				</div>
-				
-				<div className={ styles.FormEditorHeaders}>
+		return ( this.state.loading )?
+					(
+						<div className={ styles.FormContainer }>
+							<h1>Loading</h1>
+						</div>
+					):(
+						<div className={ styles.FormEditorContainer }>
+							
+							<div className={ styles.TitleContainer }>
+								<h1>{ ( this.state.id !== '' )? 'Copia Editada del' : 'Crear' } Formulario</h1>
+							</div>
+							
+							<div className={ styles.FormEditorHeaders}>
 
-					<div className={ styles.FormEditorItem}>
-						<Input label='Nombre' type='text' name='name' value={ this.props.name } onChange={ this.onChangeHandler } />
-					</div>
-					<div className={ styles.FormEditorItem}>
-						<Input label='Peso' type='number' name='weight' value={ this.props.weight } onChange={ this.onChangeHandler } />
-					</div>
-					<div className={ styles.FormEditorItem}>
-						<Input label='Tipo' type='select' options={ this.state.types } name='type' 
-							value={ this.props.type } onChange={ this.onChangeHandler } />
-					</div>
-					<div className={ styles.FormEditorItem}>
-						<Input label='Acción' type='select' options={ this.state.actions } name='action'
-							value={ this.props.action } onChange={ this.onChangeHandler } />
-					</div>
-					<div className={ styles.FormEditorItem}>
-						<Input label='Escala de colores' type='select' options={ this.state.colorScales } name='colorScale'
-						value={ this.props.colorScale }	 onChange={ this.onChangeHandler } />
-					</div>
-					<div className={ styles.FormEditorItem}>
-						<Input label='Descripción' type='textarea' name='description' value={ this.props.description } onChange={ this.onChangeHandler } />
-					</div>
-				</div>
-				<div className={ styles.TitleContainer}>
-					<h1>Secciones del Formulario</h1>
-				</div>
-				<div className={ styles.SectionsList }>
-					{ sectionViews }
-				</div>
-				<div className={ styles.TitleContainer}>
-					<div className={ styles.AddElementButton } onClick={ this.addSection }>
-						<h3 className={ styles.HorizontalAlign}>Agregar Sección +</h3>
-					</div>
-				</div>
-			</div>
-		);
+								<div className={ styles.FormEditorItem}>
+									<Input label='Nombre' type='text' name='name' value={ this.props.name } onChange={ this.onChangeHandler } />
+								</div>
+								<div className={ styles.FormEditorItem}>
+									<Input label='Tipo' type='select' options={ this.state.types } name='type' 
+										value={ this.props.type } onChange={ this.onChangeHandler } />
+								</div>
+								<div className={ styles.FormEditorItem}>
+									<Input label='Acción' type='select' options={ this.state.actions } name='action'
+										value={ this.props.action } onChange={ this.onChangeHandler } />
+								</div>
+								<div className={ styles.FormEditorItem}>
+									<Input label='Escala de colores' type='select' options={ this.state.colorScales } name='colorScale'
+									value={ this.props.colorScale }	 onChange={ this.onChangeHandler } />
+								</div>
+								<div className={ styles.FormEditorItem}>
+									<Input label='Descripción' type='textarea' name='description' value={ this.props.description } onChange={ this.onChangeHandler } />
+								</div>
+							</div>
+							<div className={ styles.TitleContainer}>
+								<h1>Secciones del Formulario</h1>
+							</div>
+							<div className={ styles.SectionsList }>
+								{ sectionViews }
+							</div>
+							<div className={ styles.TitleContainer}>
+								<div className={ styles.AddItemButton } onClick={ this.addSection }>
+									<h3 className={ styles.HorizontalAlign}>Agregar Sección +</h3>
+								</div>
+							</div>
+
+							<div className={ styles.ButtonContainer }>
+								<SubmitButton text={ ( this.state.id !== '' )?'Guardar Copia Editada':'Crear Formulario' } type='primary' 
+												onClick={ this.onSubmitHandler } disabled={ this.state.disableSubmit } />
+							</div>
+						</div>
+					);
 	}
 }
 
 const mapStateToProps = state => {
 	return {
 		name: state.formEditor.name,
-		weight: state.formEditor.weight,
 		type: state.formEditor.type,
 		action: state.formEditor.action,
 		description: state.formEditor.description,
@@ -183,10 +236,13 @@ const mapStateToProps = state => {
 
 const mapDispatchProps = dispatch => {
 	return {
+		onSetForm: ( form ) => { dispatch( setForm( form ) ) },
 		onUpdateForm: ( field, value ) => { dispatch( updateForm( field, value ) ) },
 		onAddSection: ( key ) => { dispatch( createSection( key ) ) },
 		onMoveSection: ( key, direction ) => { dispatch( moveSection( key, direction ) ) },
-		onDeleteSection: ( key ) => { dispatch( deleteSection( key ) ) }
+		onDeleteSection: ( key ) => { dispatch( deleteSection( key ) ) },
+
+		onRemoveFormEditorData: () => { dispatch( removeFormEditorData() ) }
 	};
 };
 

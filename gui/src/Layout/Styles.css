@@ -16,6 +16,10 @@
 	box-shadow: 10px 0px 10px rgba(0, 0, 0, 0.2);
 }
 
+.ToolbarHidden {
+	width: 0%;
+}
+
 @media only screen and (max-width: 768px) {
 	.Toolbar {
 		position: absolute;
@@ -25,10 +29,6 @@
 	.ToolbarHidden {
 		display: none
 	}
-}
-
-.ToolbarHidden {
-	width: 0%;
 }
 
 .ToolbarButton {
@@ -68,9 +68,18 @@
 	transition-duration: 0.3s;
 }
 
+@media only screen and (max-width: 768px) {
+
+	.MainContentNoToolbar {
+		padding: 1em;
+	}
+
+}
+
 .Footer {
 	
 }
+
 
 /* For Mobile */
 @media screen and (max-width: 540px) {

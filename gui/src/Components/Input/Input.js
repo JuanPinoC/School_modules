@@ -46,6 +46,10 @@ class input extends Component {
 				this.props.onChange( this.props.name, { target: { value: options[0]._id } } );
 		}
 
+		if( this.props.type === 'color' && this.props.value === ''){
+				this.props.onChange( this.props.name, { target: { value: '#000000' } } );
+		}
+
 		this.onFocus();
 		this.onBlur();
 

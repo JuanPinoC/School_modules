@@ -9,7 +9,6 @@ const formSchema = mongoose.Schema({
 	type:	{ type: String, enum: FormTypes, default: 'Soft Abilities' },
 	action: { type: String, enum: FormActions, default: 'none' },
 	description: { type: String, required: true },
-	weight: { type: Number, required: true },
 	colorScale: { type: mongoose.Schema.Types.ObjectId, ref: 'ColorScale', required: true }
 	// fecha ( forma de limitar a un intento )
 });

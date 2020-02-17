@@ -28,23 +28,30 @@ class sectionEditor extends Component {
 		this.onChangeHandler = this.onChangeHandler.bind(this);
 	}
 
+	componentDidMount () {
+
+		const data = this.props.data;
+
+		if( data.inputs !== null && typeof data.inputs !== 'undefined' ){
+			
+			const inputs = data.inputs;
+
+			inputs.forEach( (e) => {
+				this.addInput( e );
+			});
+		}
+
+	}
+
 	onChangeHandler = (fieldName, e) => {
 
 		this.props.onUpdateSection( this.props.id, fieldName, e.target.value);
 
 	}
 
-	componentDidMount () {
-
-		let inputs = this.props.inputs;
-
-		inputs.forEach( (e) => {
-			this.addInput( e );			
-		});
-
-	}
-
 	addInput = ( data = null ) => {
+
+
 
 		const key = data._id || 'i' + Math.round(Math.random() * 1000);
 		
@@ -56,7 +63,11 @@ class sectionEditor extends Component {
 								delete={ () => { this.deleteInput( key ); } } />)	]
 		}));
 
-		this.props.onAddInput( this.props.id, key );
+		if( typeof data._id === 'undefined' ){
+			
+			this.props.onAddInput( this.props.id, key );
+
+		}
 
 	}
 
@@ -98,9 +109,6 @@ class sectionEditor extends Component {
 						<Input label='Nombre' type='text' name='name' value={ this.props.name } onChange={ this.onChangeHandler } color='white' />
 					</div>
 					<div className={ styles.SectionEditorItem}>
-						<Input label='Peso' type='number' name='weight' value={ this.props.weight } onChange={ this.onChangeHandler } color='white' />
-					</div>
-					<div className={ styles.SectionEditorItem}>
 						<Input label='Acción' type='select' name='action' options={ FormActions }
 								value={ this.props.action } onChange={ this.onChangeHandler } color='white' />
 					</div>
@@ -108,7 +116,7 @@ class sectionEditor extends Component {
 				<div className={ styles.InputsList }>
 					{ inputViews }
 				</div>
-				<div className={ styles.AddInputButton } onClick={ this.addInput }>
+				<div className={ styles.AddItemButton } onClick={ this.addInput }>
 					<h3 className={ styles.HorizontalAlign}>Agregar Pregunta +</h3>
 				</div>
 				
@@ -120,12 +128,11 @@ class sectionEditor extends Component {
 const mapStateToProps = (state, ownProps) => {
 
 	const sections = state.formEditor.sections;
-	const id = sections.findIndex( (e) => e.key === ownProps.id );
+	const id = sections.findIndex( (e) => e.key === ownProps.id || e._id === ownProps.id || e.id === ownProps.id );
 
 	return ( id >= 0 )?
 	{
 		name: sections[ id ].name,
-		weight: sections[ id ].weight,
 		action: sections[ id ].action,
 		inputs: sections[ id ].inputs,
 		order: id

@@ -192,7 +192,7 @@ class colorScaleForm extends Component {
 					):(
 						<div className={ styles.FormContainer }>
 							<div className={ styles.TitleContainer }>
-								<h1 className={ styles.Title }>{ ( this.state.id !== '' )? 'Editar' : 'Crear' } Plan de Evaluación</h1>
+								<h1 className={ styles.Title }>{ ( this.state.id !== '' )? 'Editar' : 'Crear' } Escala de Color</h1>
 							</div>
 							<div className={ styles.Form }>
 								<div className={ styles.Grid5050 }>

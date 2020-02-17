@@ -15,7 +15,7 @@ class submitButton extends Component {
 
 	render () {
 		return (
-				<div className={ this.state.buttonStyles } onClick={ this.props.onClick } >
+				<div className={ this.state.buttonStyles } onClick={ ( !this.props.disabled )? this.props.onClick : () => {} } >
 					<h1 className={ styles.ButtonText }>{ this.props.text }</h1>
 				</div>
 			);

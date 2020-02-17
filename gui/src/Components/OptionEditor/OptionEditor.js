@@ -14,8 +14,7 @@ class optionEditor extends Component {
 
 		this.state = {
 			label: data.label || '',
-			numberValue: data.numberValue || 0,
-			stringValue: data.stringValue || ''
+			value: data.value || 0,
 		};
 
 		this.onChangeHandler = this.onChangeHandler.bind(this);
@@ -32,23 +31,13 @@ class optionEditor extends Component {
 
 		return(
 			<div className={ styles.OptionEditorContainer }>
+				<ActionButtons move={ this.props.move } delete={ this.props.delete } />
 				<div className={ styles.OptionEditorItem }>				
 					<Input label='Nombre' type='text' name='label' value={ this.state.label } onChange={ this.onChangeHandler } />
 				</div>
 				<div className={ styles.OptionEditorItem }>
-					
-					{
-						( true )?
-							(
-								<Input label='Valor' type='number' name='numberValue' value={ this.state.numberValue } onChange={ this.onChangeHandler } />
-							):
-							(
-								<Input label='Valor' type='text' name='stringValue' value={ this.state.stringValue } onChange={ this.onChangeHandler } />
-							)
-					}
-					
+					<Input label='Valor' type='number' name='value' value={ this.state.value } onChange={ this.onChangeHandler } />
 				</div>
-				<ActionButtons move={ this.props.move } delete={ this.props.delete } />
 			</div>
 		);
 

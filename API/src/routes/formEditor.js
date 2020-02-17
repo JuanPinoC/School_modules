@@ -8,10 +8,8 @@ const accessRules = require('../middlewares/access-rules');
 
 router.post('/create', checkAuth, accessRules, FormEditor.create);
 router.get('/find', checkAuth, accessRules, FormEditor.find);
-/*
-router.post('/update', checkAuth, accessRules, FormEditor.update);
 router.get('/delete', checkAuth, accessRules, FormEditor.delete);
-*/
+
 
 router.get('/', FormEditor.list);
 

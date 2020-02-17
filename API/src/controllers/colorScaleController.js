@@ -2,6 +2,15 @@ const mongoose = require('mongoose');
 
 const ColorScale = require('../models/colorScale');
 
+const errorHandler = ( res, err ) => {
+
+	console.log( err );
+
+	res.status(500).json({
+		error:err
+	});
+};
+
 module.exports = {
 
 	list: (req,res,next) => {
@@ -30,6 +39,8 @@ module.exports = {
 			});
 	},
 	create: (req,res,next) => {
+
+		console.log( req.body );
 
 		const colorScale = new ColorScale({
 			_id: new mongoose.Types.ObjectId(),
