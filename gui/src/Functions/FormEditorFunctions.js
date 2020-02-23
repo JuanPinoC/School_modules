@@ -29,6 +29,22 @@ export const getUrlParams = () => {
 };
 
 
+export const isEvaluatedUser = (evaluatedUserId, resolve, reject) => {
+
+	axios.get(
+				'user/isEvaluatedUser?id=' + evaluatedUserId,
+				{ headers: { 'Authorization': 'Bearer ' + getToken() } } 
+		)
+		.then( ( res ) => {
+			resolve(res.data);
+		})
+		.catch( (err) => {
+			reject(err);
+		});
+
+};
+
+
 export const getUsers = (resolve, reject) => {
 		
 	axios.get(
@@ -39,7 +55,7 @@ export const getUsers = (resolve, reject) => {
 			resolve(res.data.records);
 		})
 		.catch( (err) => {
-			reject();
+			reject(err);
 		});
 
 };
@@ -53,8 +69,8 @@ export const getUser = (id, resolve, reject) => {
 		.then( ( res ) => {
 			resolve(res.data);
 		})
-		.catch( (res) => {
-			reject();
+		.catch( (err) => {
+			reject(err);
 		});
 
 };
@@ -62,15 +78,30 @@ export const getUser = (id, resolve, reject) => {
 export const removeUser = (id, resolve, reject) => {
 
 	axios.get(
-			'user/delete?id=' + id,
-			{ headers: { 'Authorization': 'Bearer ' + getToken() } } 
-	)
-	.then( ( res ) => {
-		resolve(res.data);
-	})
-	.catch( (res) => {
-		reject();
-	});
+				'user/delete?id=' + id,
+				{ headers: { 'Authorization': 'Bearer ' + getToken() } } 
+		)
+		.then( ( res ) => {
+			resolve(res.data);
+		})
+		.catch( (err) => {
+			reject(err);
+		});
+
+};
+
+export const getUserPlanForms = (id, resolve, reject) => {
+
+	axios.get(
+				'user/userPlanForms?id=' + id,
+				{ headers: { 'Authorization': 'Bearer ' + getToken() } } 
+		)
+		.then( ( res ) => {
+			resolve(res.data);
+		})
+		.catch( (err) => {
+			reject(err);
+		});
 
 };
 
@@ -83,8 +114,8 @@ export const getUserTypes = (resolve, reject) => {
 		.then( ( res ) => {
 			resolve(res.data.records);
 		})
-		.catch( (res) => {
-			reject();
+		.catch( (err) => {
+			reject(err);
 		});
 
 };
@@ -98,8 +129,8 @@ export const getEvaluationPlans = (resolve, reject) => {
 		.then( ( res ) => {
 			resolve(res.data.records);
 		})
-		.catch( (res) => {
-			reject();
+		.catch( (err) => {
+			reject(err);
 		});
 
 };
@@ -113,8 +144,8 @@ export const getEvaluationPlan = (id, resolve, reject) => {
 		.then( ( res ) => {
 			resolve(res.data);
 		})
-		.catch( (res) => {
-			reject();
+		.catch( (err) => {
+			reject(err);
 		});
 
 };
@@ -128,8 +159,23 @@ export const removeEvaluationPlan = (id, resolve, reject) => {
 		.then( ( res ) => {
 			resolve(res.data);
 		})
-		.catch( (res) => {
-			reject();
+		.catch( (err) => {
+			reject(err);
+		});
+
+};
+
+export const getPlansAndForms = (resolve, reject) => {
+
+	axios.get(
+				'evaluationPlan/getPlansAndForms',
+				{ headers: { 'Authorization': 'Bearer ' + getToken() } } 
+		)
+		.then( ( res ) => {
+			resolve(res.data);
+		})
+		.catch( (err) => {
+			reject(err);
 		});
 
 };
@@ -144,7 +190,7 @@ export const getColorScales = (resolve, reject) => {
 			resolve(res.data.records);
 		})
 		.catch( (err) => {
-			reject();
+			reject(err);
 		});
 
 };
@@ -158,8 +204,8 @@ export const getColorScale = (id, resolve, reject) => {
 		.then( ( res ) => {
 			resolve(res.data);
 		})
-		.catch( (res) => {
-			reject();
+		.catch( (err) => {
+			reject(err);
 		});
 
 };
@@ -173,8 +219,8 @@ export const removeColorScale = (id, resolve, reject) => {
 		.then( ( res ) => {
 			resolve(res.data);
 		})
-		.catch( (res) => {
-			reject();
+		.catch( (err) => {
+			reject(err);
 		});
 
 };
@@ -188,8 +234,8 @@ export const getForms = (resolve, reject) => {
 		.then( ( res ) => {
 			resolve(res.data.records);
 		})
-		.catch( (res) => {
-			reject();
+		.catch( (err) => {
+			reject(err);
 		});
 
 };
@@ -197,17 +243,17 @@ export const getForms = (resolve, reject) => {
 export const getForm = (id, resolve, reject) => {
 		
 	axios.get(
-			'formEditor/find?id=' + id,
-			{ headers: { 'Authorization': 'Bearer ' + getToken() } } 
-	)
-	.then( (res) => {
-		resolve(res.data);
-	})
-	.catch( (err) => {
-		reject();		
-	});
+				'formEditor/find?id=' + id,
+				{ headers: { 'Authorization': 'Bearer ' + getToken() } } 
+		)
+		.then( (res) => {
+			resolve(res.data);
+		})
+		.catch( (err) => {
+			reject(err);
+		});
 
-};
+	};
 
 export const removeForm = (id, resolve, reject) => {
 
@@ -218,11 +264,85 @@ export const removeForm = (id, resolve, reject) => {
 		.then( ( res ) => {
 			resolve(res.data);
 		})
-		.catch( (res) => {
-			reject();
+		.catch( (err) => {
+			reject(err);
 		});
 		
 };
+
+export const getRecord = (id, resolve, reject) => {
+
+	axios.get(
+				'record/find?id=' + id,
+				{ headers: { 'Authorization': 'Bearer ' + getToken() } } 
+		)
+		.then( ( res ) => {
+			resolve(res.data);
+		})
+		.catch( (err) => {
+			reject(err);
+		});
+
+};
+
+export const getRecordsByEvaluator = (resolve, reject) => {
+
+	axios.get(
+				'record/getRecordsByEvaluator',
+				{ headers: { 'Authorization': 'Bearer ' + getToken() } } 
+		)
+		.then( ( res ) => {
+			resolve(res.data.records);
+		})
+		.catch( (err) => {
+			reject(err);
+		});
+
+};
+
+export const getRecordsByEvaluated = (resolve, reject) => {
+
+	axios.get(
+				'record/getRecordsByEvaluated',
+				{ headers: { 'Authorization': 'Bearer ' + getToken() } } 
+		)
+		.then( ( res ) => {
+			resolve(res.data.records);
+		})
+		.catch( (err) => {
+			reject(err);
+		});
+
+};
+
+export const getFormRecords = ( plan, planItemId, form, resolve, reject ) => {
+
+		const data = {
+			plan: plan,
+			planItemId: planItemId,
+			form: form
+		};
+
+		const params = {
+			method: 'post',
+			url: 'record/getFormRecords',
+			data: data,
+			headers: {
+				'Content-Type': 'application/json',
+				'Authorization': 'Bearer ' + getToken()
+			}
+		};
+
+		axios(params)
+		.then( (res) => {
+			resolve(res.data);
+		})
+		.catch( (err) => {
+			reject(err);
+		});
+
+};
+
 
 export const FormTypes = [
 			{ _id:'Soft Abilities' , name:'Habilidades blandas' },

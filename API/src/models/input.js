@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 
 const OptionSchema = mongoose.Schema({
 						label: { type: String, required: true },
-						value: { type: String, required: true }
+						value: { type: Number, required: true }
 					});
 
 const InputTypes = ['Number','Text','Number Options','Text Options'];

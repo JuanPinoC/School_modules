@@ -11,5 +11,10 @@ router.get('/find', checkAuth, accessRules, Record.find);
 router.post('/update', checkAuth, accessRules, Record.update);
 router.get('/delete', checkAuth, accessRules, Record.delete);
 
+router.post('/getFormRecords', checkAuth, accessRules, Record.getFormRecords);
+
+router.get('/getRecordsByEvaluator', checkAuth, accessRules, Record.getRecordsByEvaluator);
+router.get('/getRecordsByEvaluated', checkAuth, accessRules, Record.getRecordsByEvaluated);
+
 
 module.exports = router;

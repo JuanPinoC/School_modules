@@ -30,13 +30,17 @@ class input extends Component {
 		this.state = {
 			name: this.props.name,
 			value: '',
-			booleanValue: false,
+			booleanValue: this.props.value,
 			labelStyle: styles.FloatingLabel
 		};
 
 	}
 
 	componentDidMount = () => {
+
+		if(this.props.type === 'radiobuttons' && this.props.value !== ''){
+			this.setState({ value: this.props.value });
+		}
 
 		if( this.props.type === 'select' && this.props.value === ''){
 
@@ -71,13 +75,15 @@ class input extends Component {
 	}
 
 	onOptionSelected = ( value ) => {
-		this.props.onChange( this.state.name, { target: { value: value } } );
-		this.setState({ value: value });
+		if( !this.props.disabled ){
+			this.props.onChange( this.state.name, { target: { value: value } } );
+			this.setState({ value: value });			
+		}
 	}
 
 	onCheckBoxChange = () => {
 
-		this.props.onChange( this.state.name, { target: { booleanValue: !this.state.booleanValue } } );
+		this.props.onChange( this.state.name, { target: { value: !this.state.booleanValue } } );
 		this.setState({ booleanValue: !this.state.booleanValue });
 
 	}
@@ -90,7 +96,7 @@ class input extends Component {
 							options.map( (e) => (<option className={ styles.SelectOption } key={e._id} value={e._id}>{ e.name }</option>) ) : 
 							options.map( (e) => {
 
-								const checked = this.state.value === e._id;
+								const checked = this.state.value + '' === e._id + '';
 
 								return (
 										<div key={e._id} 
@@ -151,7 +157,8 @@ class input extends Component {
 							value={ this.props.value } onChange={ (e) => this.props.onChange( this.props.name, e )}
 							maxLength={ this.props.max } minLength={ this.props.min }
 							onFocus={ this.onFocus }
-							onBlur={ this.onBlur }>
+							onBlur={ this.onBlur }
+							disabled={( this.props.disabled )? 'disabled' : '' }>
 						</textarea>
 						<span className={ this.state.labelStyle } >{ this.props.label }</span>
 					</div>
@@ -193,7 +200,8 @@ class input extends Component {
 								max={ this.props.max } min={ this.props.min }
 								onChange={ (e) => this.props.onChange( this.props.name, e ) }
 								onFocus={ this.onFocus }
-								onBlur={ this.onBlur } />
+								onBlur={ this.onBlur } 
+								disabled={( this.props.disabled )? 'disabled' : '' } />
 						<span className={ this.state.labelStyle } >{ this.props.label }</span>
 					</div>
 				);

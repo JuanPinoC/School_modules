@@ -1,0 +1,124 @@
+.ProfileContainer {
+	font-family: 'Arial', Arial, serif;
+	background: var( --form-bg-color );
+	border-radius: 0.5em;
+	padding: 1em;
+	box-shadow: 0px 10px 10px rgba(0, 0, 0, 0.4);
+}
+
+.TitleContainer, .SubtitleContainer {
+	font-weight: bold;
+	padding: 1em;
+	border-bottom: solid #f5f5f5 0.4em;
+}
+
+.Content {
+	padding: 1em;
+}
+
+.PlansList {
+	margin-top: 1em;
+	margin-bottom: 1em;
+}
+
+.PlanListItem {
+	margin-bottom: 1em;
+	padding-bottom: 0.2em;
+}
+
+.PlanInfo {
+	background-color: var( --bg-color);
+	color: white;
+	padding: 1em;
+	font-weight: bold;
+	border-bottom: solid white 0.2em;
+	margin: 0;
+}
+
+.PlanInfo .SectionTitle {
+	display: inline-block;
+}
+
+.PlanInfo .PlanPeriod {
+	display: inline-block;
+	float: right;
+}
+
+.ListTitle {
+	color: var( --bg-color );
+	font-weight: bolder;
+}
+
+.ListTitle h3 {
+	margin: 1em;
+}
+
+.FormsList {
+	margin: 0.5em;
+	padding: 0.5em;
+	padding-top: 0;
+}
+
+.FormListItem {
+	display: inline-block;
+	width: 20em;
+	border: solid var( --bg-color) 0.1em;
+	border-radius: 0.2em;
+	margin: 1em;
+	box-shadow: 0px 3px 3px rgba(0, 0, 0, 0.4);
+	transition-duration: 0.3s;
+}
+
+.FormListItem:hover {
+	box-shadow: 0px 6px 6px rgba(0, 0, 0, 0.4);
+	transition-duration: 0.3s;
+}
+
+.FormTitle {
+	padding: 1em;
+	background-color: var(--bg-color);
+	color: white;
+	margin-bottom: 0.5em;
+	border-radius: 0.2em;
+}
+
+.FormInfo {
+	padding: 0.5em;
+}
+
+.InfoItem {
+	margin: 0.5em;
+	font-weight: bold;
+}
+
+.FormInfo .InfoItem label {
+	font-size: 0.8em;
+}
+
+.InfoItem label {
+	color: var( --bg-color );
+	display: inline-block;
+}
+
+.InfoItem h5 {
+	margin: 0em;
+	margin-left: 0.5em;
+	padding: 0em;
+	display: inline-block;
+}
+
+.FormSelectButton {
+	cursor: pointer;
+	font-weight: bold;
+	color: var( --aqua-green );
+	text-align: center;
+	margin-top: 1em;
+	border: solid var( --aqua-green ) 0.2em;
+	border-radius: 0.2em;
+	transition-duration: 0.3s;
+}
+
+.FormSelectButton:hover {
+	background-color: var( --aqua-green );
+	color: white;
+}

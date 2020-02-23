@@ -14,4 +14,6 @@ router.get('/delete', checkAuth, accessRules, EvaluationPlan.delete);
 
 router.get('/', EvaluationPlan.list);
 
+router.get('/getPlansAndForms', EvaluationPlan.getPlansAndForms);
+
 module.exports = router;

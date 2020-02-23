@@ -3,6 +3,14 @@ const bcrypt = require('bcrypt');
 const User = require('../models/user');
 const jwt = require('jsonwebtoken');
 
+const EvaluationPlanController = require('../controllers/evaluationPlanController');
+
+const errorHandler = ( res, err ) => {
+	res.status(500).json({
+		error:err
+	});
+};
+
 module.exports = {
 
 	list: (req,res,next) => {
@@ -26,12 +34,7 @@ module.exports = {
 
 				res.status(200).json(response);
 			})
-			.catch(err => {
-				console.log(err);
-				res.status(500).json({
-					error:err
-				});
-			});
+			.catch( err => errorHandler(res, err) );
 
 	},
 	create: (req,res,next) => {
@@ -71,12 +74,7 @@ module.exports = {
 										}
 									});
 								})
-								.catch( err => {
-									console.log(err);
-									res.status(500).json({
-										error: err
-									});
-								});
+								.catch( err => errorHandler(res, err) );
 						}
 					})
 				}
@@ -100,10 +98,7 @@ module.exports = {
 					res.status(404).json({message:'No valid entry found for provided ID'});
 				}
 			})
-			.catch(err => {
-				console.log(err);
-				res.status(500).json({error: err});
-			});
+			.catch( err => errorHandler(res, err) );
 
 	},
 	update: (req,res,next) => {
@@ -199,20 +194,10 @@ module.exports = {
 								message: 'User deleted',
 							});
 						})
-						.catch(err => {
-							console.log(err);
-							res.status(500).json({
-								error: err
-							});
-						});			
+						.catch( err => errorHandler(res, err) );		
 				}
 			})
-			.catch(err => {
-				console.log(err);
-				res.status(500).json({
-					error: err
-				});
-			});
+			.catch( err => errorHandler(res, err) );
 
 	},
 	login: (req,res,next) => {
@@ -258,13 +243,37 @@ module.exports = {
 				}
 
 			})
-			.catch(err => {
-				console.log(err);
-				res.status(500).json({
-					error: err
-				});
-			});
+			.catch( err => errorHandler(res, err) );
 	
+	},
+
+	userPlanForms: (req,res,next) => {
+
+		let itemPromise = new Promise(( resolve, reject ) => {
+											EvaluationPlanController.findByUserType( req.query.id, resolve, reject );
+										});
+
+		return itemPromise.then( ( result ) => {
+
+								return res.status(200).json( result );
+
+							}).catch( err => errorHandler(res, err) );
+
+	},
+
+	isEvaluatedUser: (req,res,next) => {
+
+		try{
+
+			const evaluatedUserId = req.query.id + '';
+			const signedUserId = req.userData._id + '';
+
+			return res.status(200).json( { isEvaluatedUser: evaluatedUserId === signedUserId } );
+
+		}catch( err ){
+			errorHandler(res, err);
+		}
+
 	}
 
 };

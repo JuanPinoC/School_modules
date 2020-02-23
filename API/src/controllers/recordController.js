@@ -4,6 +4,8 @@ const Record = require('../models/record');
 
 const Input = require('../models/input');
 
+const FormEditorController = require('../controllers/FormEditorController');
+
 
 const errorHandler = ( res, err ) => {
 	console.log( err );
@@ -11,6 +13,15 @@ const errorHandler = ( res, err ) => {
 		error:err
 	});
 };
+
+
+const sumValues = (array) => {
+	return array.reduce((a,b) => a + b, 0);
+};
+
+const avgValues = (array) => {
+	return sumValues(array)/array.length;
+}
 
 module.exports = {
 
@@ -21,54 +32,53 @@ module.exports = {
 
 		let completedArr = [];
 
+		const evaluatedUserId = req.body.evaluated + '';
+		const signedUserId = req.userData._id + '';
+
+		isEvaluatedUser = evaluatedUserId === signedUserId;
+
 		const requestItems = req.body.items;
 
-		let recordItemPromises = requestItems.map( ( item ) => {
-		
-			let itemPromise = new Promise(
-											( resolve, reject ) => {
+		let formInputsPromise = new Promise( ( resolve, reject ) => FormEditorController.getInputs( req.body.form, resolve, reject ) );
 
-												Input.findById( item.input )
-														.exec()
-														.then( ( input ) => {
+		formInputsPromise.then( (formInputsArray) => {
 
-															completedArr.push( ( input.evaluatedUserField && ( item.answer === null || typeof item.answer === 'undefined' || item.answer === 0 ) )? false : true );
+				const recordItems = requestItems.map( ( item ) => {
 
-															switch( input.type ){
-																case 'Text':
-																	resolve( { input: item.input, answerString: item.answer } );
-																case 'Number':
-																	resolve( { input: item.input, answerNumber: item.answer } );
-																case 'Number Options':
-																case 'Text Options':
-																	resolve( { input: item.input, answerId: item.answer } );
-															}
+					const id = formInputsArray.findIndex( (e) => e._id + '' === item.input + '' );
 
-														})
-														.catch( ( err ) => reject( err ) );
+					if( formInputsArray[id].evaluatedUserField !== isEvaluatedUser ){
+						return {};
+					}
 
-											});
+					switch( formInputsArray[id].type ){
+						case 'Text':
+							return { input: item.input, answerString: item.answer };
+						case 'Number':
+							return { input: item.input, answerNumber: item.answer };
+						case 'Number Options':
+						case 'Text Options':
+							return { input: item.input, answerId: item.answer };
+					}
 
-			return itemPromise.then( ( obj ) => { return obj } ).catch( ( err ) => { return err } );
-		
-		});
+				});
 
-		Promise.all(recordItemPromises).then( arrayOfResponses => {
+				let completedForm = formInputsArray.map( ( formInput ) => {
+					return ( recordItems.findIndex( (e) => e.input + '' === formInput._id + '' ) >= 0 );
+				});
 
-			if( arrayOfResponses.every( (e) => typeof e.input !== 'undefined' ) ){
-
-				console.log( req.body.evaluated );
-
-				const form = new Record({
+				const record = new Record({
 					_id: new mongoose.Types.ObjectId(),
 					evaluator: req.userData._id,
 					evaluated: req.body.evaluated,
-					form:	req.body.form,
-					items: arrayOfResponses,
-					Completed: completedArr.every( ( item ) => item )
+					plan: req.body.plan,
+					planItemId: req.body.planItemId,
+					form: req.body.form,
+					items: recordItems,
+					completed: completedForm.every( (e) => e )
 				});
 
-				form.save()
+				record.save()
 					.then( (result) => {
 
 						res.status(201).json({
@@ -79,20 +89,277 @@ module.exports = {
 					})
 					.catch( err => errorHandler(res, err) );
 
-			}else{
-				errorHandler(res, 'Error at input mapping.');
-			}
-
 		}).catch( err => errorHandler(res, err) );
 
 	},
 	find: (req,res,next) => {
 
+		Record.findById(req.query.id)
+			.populate('evaluated','_id name')
+			.exec()
+			.then( (record) => {
+
+				res.status(200).json({
+					_id: record._id,
+					evaluator: record.evaluator,
+					evaluated: record.evaluated,
+					plan: record.plan,
+					planItemId: record.planItemId,
+					form: record.form,
+					items: record.items,
+					completed: record.completed
+				});
+
+			}).catch( err => errorHandler(res, err) );
+
 	},
 	update: (req,res,next) => {
-		
+
+		Record.findById(req.body.id)
+			.exec()
+			.then( (record) => {
+
+				let completedArr = [];
+
+				const evaluatedUserId = record.evaluated + '';
+				const signedUserId = req.userData._id + '';
+
+				isEvaluatedUser = evaluatedUserId === signedUserId;
+
+				const requestItems = req.body.items;
+
+				let formInputsPromise = new Promise( ( resolve, reject ) => FormEditorController.getInputs( req.body.form, resolve, reject ) );
+
+				formInputsPromise.then( (formInputsArray) => {
+
+						const recordItems = requestItems.map( ( item ) => {
+
+							const id = formInputsArray.findIndex( (e) => e._id + '' === item.input + '' );
+
+							if( formInputsArray[id].evaluatedUserField !== isEvaluatedUser ){
+								return {};
+							}
+
+							switch( formInputsArray[id].type ){
+								case 'Text':
+									return { input: item.input, answerString: item.answer };
+								case 'Number':
+									return { input: item.input, answerNumber: item.answer };
+								case 'Number Options':
+								case 'Text Options':
+									return { input: item.input, answerId: item.answer };
+							}
+
+						});
+
+						let completedForm = formInputsArray.map( ( formInput ) => {
+							return ( recordItems.findIndex( (e) => e.input + '' === formInput._id + '' ) >= 0 );
+						});
+
+						const filter = { _id: req.body.id };
+						const update = {
+							items: [ ...record.items, ...recordItems ],
+							completed: completedForm.every( (e) => e )
+						};
+
+						Record.findOneAndUpdate(filter, update, { new: true })
+									.then( (doc) => {
+										
+										const response = {
+														message: 'Updated'
+													};
+
+										res.status(200).json(response);
+
+									})
+									.catch( err => errorHandler(res, err) );
+
+				}).catch( err => errorHandler(res, err) );
+
+			}).catch( err => errorHandler(res, err) );
+
 	},
 	delete: (req,res,next) => {
+
+	},
+	getFormRecords: (req,res,next) => {
+
+		let formPromise = new Promise(( resolve, reject ) => {
+										FormEditorController.getForm( req.body.form, resolve, reject );
+									});
+
+		formPromise.then( (form) => {
+
+			Record.find({ 'plan': req.body.plan, 'planItemId': planItemId, 'form': req.body.form })
+				.populate('evaluated','_id name')
+				.sort('evaluated.name')
+				.exec()
+				.then( (records) => {
+
+					const sections = forms.sections;
+
+					const recordsArray = records.map( (record) => {
+
+						let sectionsItems = {};
+						let sectionsTotals = {};
+						let sectionsTotalsArray = [];
+						let total = 0;
+
+						const itemsToShow = record.items.forEach( (item) => {
+
+							let inputIndex = -1;
+							let sectionIndex = sections.length;
+
+							while( sectionIndex >= 0 && inputIndex < 0 ){
+								sectionIndex--;
+								inputIndex = sections[sectionIndex].inputs.findIndex( (e) => e._id + '' === item.input + '' );
+							}
+
+							const options = sections[sectionIndex].inputs[inputIndex].options;
+							const optionIndex = -1;
+
+							switch( sections[sectionIndex].inputs[inputIndex].type ){
+								case 'Text':
+									//item.answerString
+									return { section: sections[sectionIndex]._id , input: item.input, answer: item.answerString };
+									break;
+								case 'Number':
+									sectionsItems[ sections[sectionIndex]._id ] = [ ...sectionsItems[ sections[sectionIndex]._id ], item.answerNumber ];
+									//item.answerNumber
+									return { section: sections[sectionIndex]._id , input: item.input, answer: item.answerNumber };
+									break;
+								case 'Number Options':
+									optionIndex = options.findIndex( (e) => e._id + '' === item.answerId + '' );
+
+									sectionsItems[ sections[sectionIndex]._id ] = [ ...sectionsItems[ sections[sectionIndex]._id ], options[optionIndex].value ];
+
+									//item.answerId
+									return { section: sections[sectionIndex]._id , input: item.input, answer: options[optionIndex].label };
+									break;
+								case 'Text Options':
+									optionIndex = options.findIndex( (e) => e._id + '' === item.answerId + '' );
+
+									//item.answerId
+									return { section: sections[sectionIndex]._id , input: item.input, answer: options[optionIndex].label };
+									break;
+							}
+
+						});
+
+						sections.forEach( (section) => {
+
+							switch(section.action){
+								case 'sum':
+									sectionsTotals[section._id] = sumValues(sectionsItems[section._id]);
+									sectionsTotalsArray.push( sectionsTotals[section._id] );
+									break;
+								case 'avg':
+									sectionsTotals[section._id] = avgValues(sectionsItems[section._id]);
+									sectionsTotalsArray.push( sectionsTotals[section._id] );
+									break;
+								case 'none':
+									break;
+							}
+						
+						});
+
+						switch(form.action){
+							case 'sum':
+								total = sumValues( sectionsTotalsArray );
+								break;
+							case 'avg':
+								total = avgValues( sectionsTotalsArray );
+								break;
+							case 'none':
+								total = '';
+								break;
+						}
+
+						return {
+							_id: record._id,
+							evaluator: record.evaluator,
+							evaluated: record.evaluated,
+							plan: record.plan,
+							planItemId: record.planItemId,
+							form: record.form,
+							items: record.items,
+							completed: record.completed,
+
+							itemsToShow: itemsToShow,
+							sectionsTotals: sectionsTotals,
+							total: total
+						};
+					});
+
+					res.status(200).json({
+						form: form,
+						records: recordsArray
+					});
+
+				}).catch( err => errorHandler(res, err) );
+
+
+		}).catch( err => errorHandler(res, err) );
+
+	},
+
+	getRecordsByEvaluator: (req,res,next) => {
+
+		Record.find({ evaluator: req.userData._id })
+			.select('_id evaluated plan planItemId form completed')
+			.populate('evaluated','_id name')
+			.populate('plan','_id name')
+			.populate('form','_id name')
+			.exec()
+			.then( (records) => {
+
+				const response = {
+					count: records.length,
+					records: records.map( record => {
+						return {
+							_id: record._id,
+							evaluated: record.evaluated,
+							plan: record.plan,
+							planItemId: record.planItemId,
+							form: record.form,
+							completed: record.completed
+						}
+					})
+				};
+
+				res.status(200).json(response);
+
+			}).catch( err => errorHandler(res, err) );
+
+	},
+
+	getRecordsByEvaluated: (req,res,next) => {
+
+		Record.find({ evaluated: req.userData._id })
+			.select('_id evaluator plan planItemId form completed')
+			.populate('evaluator','_id name')
+			.populate('plan','_id name')
+			.populate('form','_id name')
+			.exec()
+			.then( (records) => {
+
+				const response = {
+					count: records.length,
+					records: records.map( record => {
+						return {
+							_id: record._id,
+							evaluator: record.evaluator,
+							plan: record.plan,
+							planItemId: record.planItemId,
+							form: record.form,
+							completed: record.completed
+						}
+					})
+				};
+
+				res.status(200).json(response);
+
+			}).catch( err => errorHandler(res, err) );
 
 	}
 

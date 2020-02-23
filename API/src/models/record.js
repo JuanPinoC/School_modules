@@ -13,9 +13,11 @@ const recordSchema = mongoose.Schema({
 	date: { type: Date, default: Date.now },
 	evaluator: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
 	evaluated: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
+	plan: { type: mongoose.Schema.Types.ObjectId, ref: 'EvaluationPlan', required: true },
+	planItemId: { type: mongoose.Schema.Types.ObjectId, ref: 'EvaluationPlan.forms', required: true },
 	form:	{ type: mongoose.Schema.Types.ObjectId, ref: 'Form', required: true },
 	items: [ ItemSchema ],
-	Completed: { type: Boolean, required: true}
+	completed: { type: Boolean, required: true }
 });
 
 module.exports = mongoose.model('Record', recordSchema, 'records');

@@ -3,9 +3,11 @@ import styles from './Styles.css';
 
 import axios from '../../Axios/Axios';
 
+import { Redirect } from "react-router-dom";
+
 import { connect } from 'react-redux';
 
-import { FormTypes, FormActions, getColorScale, getUsers, getForm, moveElementInArray, randomNumber } from '../../Functions/FormEditorFunctions';
+import { getToken, getUrlParams, isEvaluatedUser, FormTypes, FormActions, getColorScale, getUser, getForm, getRecord, moveElementInArray, randomNumber } from '../../Functions/FormEditorFunctions';
 
 import Input from '../Input/Input';
 import SubmitButton from '../SubmitButton/SubmitButton';
@@ -22,44 +24,139 @@ class FillableForm extends Component {
 		super(props);
 
 		this.state = {
-			formId: '5e3cdab9d6364d2f6cf4da17',
+			id: '',
+			plan: '',
+			planItemId: '',
 			evaluated: '',
 			form: {},
 			items: [],
 
 			formTypes: FormTypes,
-			users: [],
 			colorScale: {},
-			evaluatedUserFields: []
+			evaluatedUserFields: [],
+			isEvaluatedUser: true,
+
+			disableSubmit: false,
+			loading: true,
+			redirect: ''
 		};
 
 	}
 
 	componentDidMount () {
 
-		let usersPromise = new Promise( ( resolve, reject ) => { getUsers(resolve, reject); });
-		usersPromise.then( ( res ) => { this.setState({ users: res }); } );
+		const params = getUrlParams();
 
-		let formPromise = new Promise( ( resolve, reject ) => { getForm( this.state.formId, resolve, reject ); });
-		formPromise.then( ( res ) => {
+		if( params.planId !== null && typeof params.planId !== 'undefined' && 
+			params.planFormItemId !== null && typeof params.planFormItemId !== 'undefined' &&
+			params.formId !== null && typeof params.formId !== 'undefined' &&
+			params.userId !== null && typeof params.userId !== 'undefined' &&
+			params.userName !== null && typeof params.userName !== 'undefined' ){
 
-			this.setState({ form: res });
-			this.getSectionViews();
+			let evaluatedUserPromise = new Promise( ( resolve, reject ) => { isEvaluatedUser( params.userId, resolve, reject ); });
+			evaluatedUserPromise.then( ( resEvaluatedUser ) => {
 
-			let colorScalePromise = new Promise( ( resolve, reject ) => { getColorScale( res.colorScale, resolve, reject ); });
-			colorScalePromise.then( ( res1 ) => { this.setState({ colorScale: res1 }); } );
-		
-		} );
+				let formPromise = new Promise( ( resolve, reject ) => { getForm( params.formId, resolve, reject ); });
+				formPromise.then( ( resForm ) => {
+
+					let colorScalePromise = new Promise( ( resolve, reject ) => { getColorScale( resForm.colorScale, resolve, reject ); });
+					colorScalePromise.then( ( resColorScale ) => { 
+
+						this.setState({ 
+							plan: params.planId,
+							planItemId: params.planFormItemId,
+							evaluated: params.userId,
+							evaluatedName: decodeURIComponent(params.userName),
+							form: resForm,
+							colorScale: resColorScale,
+							isEvaluatedUser: resEvaluatedUser.isEvaluatedUser
+						});
+
+						this.getSectionViews();
+
+					});
+				
+				});
+
+			});
+
+		}else if( params.id !== null && typeof params.id !== 'undefined'){
+
+			let recordPromise = new Promise( ( resolve, reject ) => { getRecord( params.id, resolve, reject ); });
+			recordPromise.then( ( record ) => {
+
+				let evaluatedUserPromise = new Promise( ( resolve, reject ) => { isEvaluatedUser( record.evaluated._id, resolve, reject ); });
+				evaluatedUserPromise.then( ( resEvaluatedUser ) => {
+
+					let formPromise = new Promise( ( resolve, reject ) => { getForm( record.form, resolve, reject ); });
+					formPromise.then( ( resForm ) => {
+
+						let colorScalePromise = new Promise( ( resolve, reject ) => { getColorScale( resForm.colorScale, resolve, reject ); });
+						colorScalePromise.then( ( resColorScale ) => { 
+
+							let formInputs = [];
+							resForm.sections.forEach( (section) => {
+								formInputs = [ ...formInputs, ...section.inputs ];
+							});
+
+							let items = [];
+
+							record.items.forEach( (e) => {
+
+								const inputIndex = formInputs.findIndex( (input) => input._id + '' === e.input + '');
+
+								switch( formInputs[inputIndex].type ){
+									case 'Text':
+										items.push({
+											input: e.input + '',
+											answer: e.answerString
+										});
+										break;
+									case 'Number':
+										items.push({
+											input: e.input + '',
+											answer: e.answerNumber
+										});
+										break;
+									case 'Number Options':
+									case 'Text Options':
+										items.push({
+											input: e.input + '',
+											answer: e.answerId
+										});
+										break;
+								}
+
+							});
+
+
+							this.setState({ 
+								plan: record.plan,
+								planItemId: record.planItemId,
+								evaluated: record.evaluated._id,
+								evaluatedName: record.evaluated.name,
+								form: resForm,
+								colorScale: resColorScale,
+								isEvaluatedUser: resEvaluatedUser.isEvaluatedUser,
+								items: items
+							});
+
+							this.getSectionViews();
+
+						});
+					
+					});
+
+				});
+
+			});
+			
+		}
 
 	}
 
 	onChangeHandler = ( inputId, e ) => {
 
-		if( inputId === 'evaluated' ){
-			this.setState({ evaluated: e.target.value });
-			return;
-		}
-		
 		let items = this.state.items;
 		
 		const id = items.findIndex( (e) => e.input === inputId );
@@ -94,7 +191,7 @@ class FillableForm extends Component {
 			);
 		});
 
-		this.setState({ sectionViews: sectionViews });
+		this.setState({ sectionViews: sectionViews, loading: false });
 
 	}
 
@@ -106,44 +203,59 @@ class FillableForm extends Component {
 
 			const key = 'i' + randomNumber();
 
+			let inputItemView = (<div></div>);
+
+			let inputValueIndex = this.state.items.findIndex( (stateItem) => stateItem.input + '' === input._id + '' );
+
+			let inputValue = ( inputValueIndex >= 0 )? this.state.items[inputValueIndex].answer : ( input.type === 'Number' )? 0 : '' ;
+
 			switch(input.type){
 				case 'Number':
-					return(
-						<Input key={ key } label={ input.label } type='number' name={ input._id } value={ this.state.items[input._id] } 
+					inputItemView = (
+						<Input label={''} type='number' name={ input._id } value={ inputValue } 
 								onChange={ this.onChangeHandler } 
 								max={ input.maxValue }
-								min={ input.minValue } />
+								min={ input.minValue }
+								disabled={ !( this.state.isEvaluatedUser === input.evaluatedUserField ) } />
 
 					);
 					break;
 
 				case 'Text':
-					return(
-						<Input key={ key } label={ input.label } type='textarea' name={ input._id } value={ this.state.items[input._id] } 
+					inputItemView = (
+						<Input label={''} type='textarea' name={ input._id } value={ inputValue } 
 								onChange={ this.onChangeHandler } 
 								max={ input.maxValue }
-								min={ input.minValue } />
+								min={ input.minValue }
+								disabled={ !( this.state.isEvaluatedUser === input.evaluatedUserField ) } />
 					);
 					break;
 
 				case 'Number Options':
 
-					return(
-						<Input key={ key } label={ input.label } type='radiobuttons' name={ input._id } value={ this.state.items[input._id] } 
+					inputItemView = (
+						<Input label={''} type='radiobuttons' name={ input._id } value={ inputValue } 
 								onChange={ this.onChangeHandler } 
-								options={ input.options } />
+								options={ input.options }
+								disabled={ !( this.state.isEvaluatedUser === input.evaluatedUserField ) } />
 					);
 					break;
 
 				case 'Text Options':
-					return(
-							<Input key={ key } label={ input.label } type='radiobuttons' name={ input._id } value={ this.state.items[input._id] } 
+					inputItemView = (
+							<Input label={''} type='radiobuttons' name={ input._id } value={ inputValue } 
 									onChange={ this.onChangeHandler } 
-									options={ input.options } />
+									options={ input.options }
+									disabled={ !( this.state.isEvaluatedUser === input.evaluatedUserField ) } />
 					);
 					break;
 
 			}
+
+			return (<div className={ styles.InputItemContainer } key={ key }>
+						<label className={ styles.InputItemLabel }>{ input.label }<span>{( input.evaluatedUserField )? ' (Campo del evaluado)' : ' (Campo del evaluador)' }</span></label>
+						{ inputItemView }
+					</div>);
 
 		});
 
@@ -157,19 +269,23 @@ class FillableForm extends Component {
 		if( typeof colorScale.items !== 'undefined' ){
 
 			const colorItems = colorScale.items.map( (e) => {
-				return (<div className={ styles.colorScaleItem } key={ randomNumber() }>
-							<label className={ styles.colorScaleItemLabel }><div>{ e.label }</div></label>
-							<div className={ styles.colorScaleItemColor }>
-								<div style={{ backgroundColor: e.color}}>{ e.max + "-" + e.min }</div>
-							</div>
-						</div>);
+				return (<tr key={ randomNumber() }>
+							<td>{ e.label }</td>
+							<td className={ styles.ColorScaleItemColor }>
+								<div style={{ backgroundColor: e.color}}>{ e.max + ' - ' + e.min }</div>
+							</td>
+						</tr>);
 			});
 
 			return (<div className={ styles.ColorScaleContainer }>
-						<h3>{ colorScale.name }</h3>
-						<div className={ styles.ColorScaleItems }>
-							{ colorItems }
-						</div>
+						<table>	
+							<thead>
+								<tr><th colSpan="2">{ colorScale.name }</th></tr>
+							</thead>
+							<tbody>
+								{ colorItems }
+							</tbody>
+						</table>
 					</div>);
 
 		}else{
@@ -180,33 +296,50 @@ class FillableForm extends Component {
 
 	submitForm = () => {
 
+		this.setState({ disableSubmit: true });
+
+		const state = this.state;
+
 		const data = {
-			evaluated: this.state.evaluated,
-			form: this.state.formId,
-			items: this.state.items
+			id: state.id,
+			plan: state.plan,
+			planItemId: state.planItemId,
+			form: state.form._id,
+			evaluated: state.evaluated,
+			items: state.items
 		};
+
+		const url = ( data.id === '' )? 'record/create' : 'record/update';
 
 		const params = {
 			method: 'post',
-			url: 'record/create',
+			url: url,
 			data: data,
 			headers: {
 				'Content-Type': 'application/json',
-				'Authorization': 'Bearer ' + localStorage.getItem('jwtToken')
+				'Authorization': 'Bearer ' + getToken()
 			}
 		};
-			
+
 		axios(params)
-		.then( (res) => {
-			console.log( res );
+		.then( (resForm) => {
+			alert('Evaluación guardada.');
+			this.setState({ redirect: '/' });
 		})
-		.catch( (res) => {
-			console.log( res );
+		.catch( (resForm) => {
+			alert('Error al guardar. Intente de nuevo.');
+			this.setState({ disableSubmit: false });
 		});
 
 	}
 
 	render () {
+
+		if( this.state.redirect !== '' )
+			return ( <Redirect to={this.state.redirect} /> );
+
+		if( this.state.loading )
+			return (<div className={ styles.FillableFormContainer }><h1 className={ styles.SectionsList }>Loading</h1></div>);
 
 		const form = { ...this.state.form, sections: [] };
 
@@ -215,18 +348,17 @@ class FillableForm extends Component {
 		return (
 			<div className={ styles.FillableFormContainer }>
 				<div className={ styles.FormFields}>
-					<h1 className={ styles.FormTitle }>{ form.name }</h1>
-					<h2 className={ styles.FormField }>Tipo: { form.type }</h2>
-					<p>Descripción: { form.description }</p>
-					{ colorScaleView }
+					<div className={ styles.div1 }><h1>{ form.name }</h1></div>
+					<div className={ styles.div2 }><h2>Tipo: { form.type }</h2></div>
+					<div className={ styles.div5 }><h2>Evaluado: { this.state.evaluatedName }</h2></div>
+					<div className={ styles.div4 }><p>Descripción: { form.description }</p></div>
+					<div className={ styles.div3 }>{ colorScaleView }</div>
 				</div>
-				<Input label='Usuario Evaluado:' type='select' name='evaluated' value={ this.state.evaluated } 
-							onChange={ this.onChangeHandler } options={ this.state.users } />
 				<div className={ styles.SectionsList }>
 					{ this.state.sectionViews }
 				</div>
 				<div className={ styles.ButtonContainer }>
-					<SubmitButton onClick={ this.submitForm } text={'Guardar Evaluación'}/>
+					<SubmitButton onClick={ this.submitForm } text={'Guardar Evaluación'} disabled={ this.state.disableSubmit }/>
 				</div>
 			</div>
 		);

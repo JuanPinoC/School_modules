@@ -14,7 +14,7 @@ module.exports = {
 			options: element.options,
 			maxValue: element.maxValue,
 			minValue: element.minValue,
-			evaluatedUserField: element.minValue,
+			evaluatedUserField: element.evaluatedUserField,
 			order: order
 		});
 
@@ -23,7 +23,7 @@ module.exports = {
 				resolve();
 			})
 			.catch( (err) => {
-				reject();
+				reject(err);
 			});
 
 	},

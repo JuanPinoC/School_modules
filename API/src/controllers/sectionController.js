@@ -34,7 +34,7 @@ module.exports = {
 														InputController.create( result._id, index, item, resolve1, reject1 );
 													});
 
-					return itemPromise.then( () => { return true } ).catch( () => { return false } );
+					return itemPromise.then( () => { return true } ).catch( (err) => { console.log(err); return false; } );
 				
 				});
 
@@ -46,11 +46,11 @@ module.exports = {
 						reject();
 					}
 
-				}).catch( err => errorHandler(res, err) );
+				}).catch( (err) => { reject(err); } );
 
 			})
 			.catch( (err) => {
-				reject();
+				reject(err);
 			});
 
 	},
@@ -71,7 +71,7 @@ module.exports = {
 															InputController.delete( item._id, resolve1, reject1 );
 														});
 
-						return itemPromise.then( () => { return true } ).catch( () => { return false } );
+						return itemPromise.then( () => { return true } ).catch( (err) => { console.log(err); return false; } );
 					
 					});
 
@@ -84,18 +84,18 @@ module.exports = {
 									resolve();
 								})
 								.catch( (err) => {
-									reject();
+									reject(err);
 								});
 
 						}else{
-							reject();
+							reject(err);
 						}
 
 					}).catch( err => errorHandler(res, err) );
 
 				})
 				.catch( (err) => {
-					reject();
+					reject(err);
 				});
 
 	}

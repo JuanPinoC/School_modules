@@ -16,7 +16,7 @@ class toolbar extends Component {
 							</li>
 							
 							<li>
-								<Link className={ styles.Link } to='/fillableForm'>Llenar Evaluación</Link>
+								<Link className={ styles.Link } to='/records'>Registros</Link>
 							</li>
 							
 							<li>
@@ -32,6 +32,16 @@ class toolbar extends Component {
 							<li>
 								<Link className={ styles.Link } to='/userList'>Lista de Usuarios</Link>
 							</li>
+							<li>
+								<Link className={ styles.Link } to='/userEvaluationList'>Evaluar Usuarios</Link>
+							</li>
+							<li>
+								<Link className={ styles.Link } to='/performedEvaluations'>Evaluaciones Realizadas</Link>
+							</li>
+							<li>
+								<Link className={ styles.Link } to='/performedEvaluationsAsEvaluated'>Evaluaciones como evaluado</Link>
+							</li>
+
 							<li onClick={ this.props.onSignOut }>
 								<a>Salir</a>
 							</li>

@@ -2,6 +2,8 @@ const mongoose = require('mongoose');
 
 const EvaluationPlan = require('../models/evaluationPlan');
 
+const FormEditorController = require('../controllers/formEditorController');
+
 const errorHandler = ( res, err ) => {
 	res.status(500).json({
 		error:err
@@ -118,6 +120,135 @@ module.exports = {
 
 					})
 					.catch( err => errorHandler(res, err) );
+
+	},
+
+	findByUserType: ( userType , resolve, reject ) => {
+
+		EvaluationPlan.find({ userType: userType })
+			.select('_id name userType startDate endDate forms')
+			.populate('userType','name')
+			.exec()
+			.then( (plans) => {
+
+				const recordsPromise = plans.map( (plan) => {
+
+					const formIds = plan.forms.map( (e) => {
+						return e.form;
+					});
+
+					let itemPromise = new Promise( ( resolve, reject ) => {
+											FormEditorController.findByIdArray( formIds, resolve, reject );
+										});
+
+					return itemPromise.then( ( formsArray ) => { 
+
+								let forms = plan.forms.map( (form) => {
+
+									const id = formsArray.findIndex( (e) => e._id + '' === form.form + '' );
+
+									return {
+										_id: form._id,
+										form: form.form,
+										weight: form.weight,
+										requiredAmount: form.requiredAmount,
+										name: formsArray[ id ].name,
+										type: formsArray[ id ].type
+									};
+
+								});
+
+								return {	
+									_id: plan._id,
+									name: plan.name, 
+									userType: plan.userType,
+									startDate: plan.startDate,
+									endDate: plan.endDate, 
+									forms: forms
+								};
+
+
+							}).catch( (err) => {
+								reject(err);
+							});
+
+				});
+
+				Promise.all(recordsPromise).then( arrayOfResponses => {
+
+					if( arrayOfResponses.every( (e) => e._id !== null ) ){
+						resolve(arrayOfResponses);
+					}else{
+						reject('Error');
+					}
+
+				}).catch( err => reject(err) );
+				
+			})
+			.catch( (err) => reject(err) );
+
+	},
+
+	getPlansAndForms: ( req, res, next ) => {
+
+		EvaluationPlan.find()
+			.select('_id name userType startDate endDate forms')
+			.populate('userType','name')
+			.exec()
+			.then( (plans) => {
+
+				const recordsPromise = plans.map( (plan) => {
+
+					const formIds = plan.forms.map( (e) => {
+						return e.form;
+					});
+
+					let itemPromise = new Promise( ( resolve, reject ) => {
+											FormEditorController.findByIdArray( formIds, resolve, reject );
+										});
+
+					return itemPromise.then( ( formsArray ) => { 
+
+								let forms = plan.forms.map( (form) => {
+
+									const id = formsArray.findIndex( (e) => e._id + '' === form.form + '' );
+
+									return {
+										_id: form._id,
+										form: form.form,
+										weight: form.weight,
+										requiredAmount: form.requiredAmount,
+										name: formsArray[ id ].name,
+										type: formsArray[ id ].type
+									};
+
+								});
+
+								return {	
+									_id: plan._id,
+									name: plan.name, 
+									userType: plan.userType,
+									startDate: plan.startDate,
+									endDate: plan.endDate, 
+									forms: forms
+								};
+
+
+							}).catch( err => errorHandler(res, err) );
+
+				});
+
+				Promise.all(recordsPromise).then( arrayOfResponses => {
+
+					if( arrayOfResponses.every( (e) => e._id !== null ) ){
+						res.status(200).json(arrayOfResponses);
+					}else{
+						errorHandler(res, 'Error at arrayOfResponses.')
+					}
+
+				}).catch( err => errorHandler(res, err) );
+				
+			}).catch( err => errorHandler(res, err) );
 
 	}
 

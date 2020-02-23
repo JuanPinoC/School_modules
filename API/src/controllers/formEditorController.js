@@ -7,6 +7,7 @@ const Input = require('../models/input');
 const SectionController = require('../controllers/sectionController');
 
 const errorHandler = ( res, err ) => {
+	console.log( err );
 	res.status(500).json({
 		error:err
 	});
@@ -59,7 +60,7 @@ module.exports = {
 														SectionController.create( result._id, index, item, resolve, reject );
 													});
 
-					return itemPromise.then( () => { return true } ).catch( () => { return false } );
+					return itemPromise.then( () => { return true } ).catch( (err) => { console.log(err); return false; } );
 				
 				});
 
@@ -148,6 +149,109 @@ module.exports = {
 
 			}).catch( err => errorHandler(res, err) );
 
+	},
+	findByIdArray: ( ids, resolve, reject ) => {
+
+		Form.find({ '_id': { '$in': ids } })
+			.select('_id name type')
+			.exec()
+			.then( (forms) => {
+
+				const formsArray = forms.map( form => {
+										return {
+											_id: form._id,
+											name: form.name,
+											type: form.type
+										}
+									});
+
+				resolve(formsArray);
+
+			})
+			.catch( (err) => reject(err) );
+
+	},
+	getInputs: ( id, resolve, reject ) => {
+
+		Section.aggregate([
+			{	$match: {
+					form: mongoose.Types.ObjectId(id)
+				}
+			},
+			{
+				$lookup: {
+					from: 'inputs',
+					localField: '_id',
+					foreignField: 'section',
+					as: 'inputs'
+				}
+			}
+		]).then( ( records ) => {
+
+			const inputArrays = records.map( (section) => {
+				return section.inputs;
+			});
+
+			let inputs = [];
+
+			for (let i = inputArrays.length - 1; i >= 0; i--) {
+				inputs = [ ...inputArrays[i], ...inputs ];
+			}
+
+			resolve(inputs);
+
+		}).catch( ( err ) => {
+
+			reject(err);
+
+		});
+
+	},
+	getForm: ( id, resolve, reject ) => {
+
+		Form.findById(id)
+			.exec()
+			.then( (form) => {
+
+				Section.aggregate([
+					{	
+						$match: {
+							form: mongoose.Types.ObjectId(id),
+						}
+					},
+					{
+						$lookup: {
+							from: 'inputs',
+							localField: '_id',
+							foreignField: 'section',
+							as: 'inputs'
+						}
+					},
+					{
+						$project: {
+							__v: 0,
+							'inputs.__v': 0
+						}
+					}
+				])
+				.exec()
+				.then( (sections) => {
+
+					resolve({
+						_id:	form._id,
+						name:	form.name,
+						type:	form.type,
+						action: form.action,
+						description: form.description,
+						colorScale: form.colorScale,
+						sections: sections
+					});
+
+				})
+				.catch( err => reject(err) );
+
+			})
+			.catch( err => reject(err) );
 	}
 
 };

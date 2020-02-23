@@ -21,9 +21,14 @@ import FormEditor from '../Components/FormEditor/FormEditor';
 import Login from '../Components/Login/Login';
 import UserForm from '../Components/Forms/UserForm';
 import UserList from '../Components/Lists/UserList';
+import UserEvaluationList from '../Components/Lists/UserEvaluationList';
+import UserEvaluationProfile from '../Components/UserEvaluationProfile/UserProfile';
 
 /* Records */
 import FillableForm from '../Components/FillableForm/FillableForm';
+import PerformedEvaluationsList from '../Components/Lists/PerformedEvaluationsList';
+import PerformedEvaluationsAsEvaluatedList from '../Components/Lists/PerformedEvaluationsAsEvaluatedList';
+import EvaluationPlanCardsList from '../Components/EvaluationPlanCardsList/EvaluationPlanCardsList';
 
 /* Evaluation Plan */
 import EvaluationPlanList from '../Components/Lists/EvaluationPlanList';
@@ -44,7 +49,7 @@ class Layout extends Component {
 
 		this.state = {
 			signedIn: props.token !== null,
-			toolbarOpen: true
+			toolbarOpen: false
 		};
 
 		this.onSignIn = this.onSignIn.bind(this);
@@ -97,8 +102,17 @@ class Layout extends Component {
 								<div className={ ( this.state.toolbarOpen )? styles.MainContent : styles.MainContentNoToolbar }>
 									<Switch>
 
-										<Route path='/fillableForm'>
+										<Route path='/fillableForm:planId?:planFormItemId?:formId?:userId?:userName?'>
 											<FillableForm />
+										</Route>
+										<Route path='/records'>
+											<EvaluationPlanCardsList />
+										</Route>
+										<Route path='/performedEvaluations'>
+											<PerformedEvaluationsList />
+										</Route>
+										<Route path='/performedEvaluationsAsEvaluated'>
+											<PerformedEvaluationsAsEvaluatedList />
 										</Route>
 
 										<Route path='/evaluationPlanList'>
@@ -125,6 +139,12 @@ class Layout extends Component {
 										</Route>
 										<Route path='/userForm:id?'>
 											<UserForm />
+										</Route>
+										<Route path='/userEvaluationList'>
+											<UserEvaluationList />
+										</Route>
+										<Route path='/userEvaluationProfile:id?'>
+											<UserEvaluationProfile />
 										</Route>
 
 									</Switch>
