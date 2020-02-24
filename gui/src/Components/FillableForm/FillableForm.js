@@ -17,6 +17,89 @@ const item = {
 	answer: null
 };
 
+
+class InputView extends Component {
+
+	constructor( props ){
+		
+		super(props);
+
+		this.state = {
+			input: this.props.input,
+			value: this.props.value,
+			disabled: this.props.disabled
+		}
+
+		this.onChangeHandler = this.onChangeHandler.bind(this);
+
+	}
+
+	onChangeHandler = ( name, e ) => {
+		this.props.onChange( this.state.input._id, e );
+		this.setState({ value: e.target.value });
+	}
+
+	render(){
+
+		const disabled = this.state.disabled;
+		const inputValue = this.state.value;
+		const input = this.state.input;
+		let inputItemView = (<div></div>);
+
+		switch(input.type){
+			case 'Number':
+				inputItemView = (
+					<Input label={''} type='number' name={ input._id } value={ inputValue } 
+							onChange={ this.onChangeHandler } 
+							max={ input.maxValue }
+							min={ input.minValue }
+							disabled={ disabled } />
+
+				);
+				break;
+
+			case 'Text':
+				inputItemView = (
+					<Input label={''} type='textarea' name={ input._id } value={ inputValue } 
+							onChange={ this.onChangeHandler } 
+							max={ input.maxValue }
+							min={ input.minValue }
+							disabled={ disabled } />
+				);
+				break;
+
+			case 'Number Options':
+
+				inputItemView = (
+					<Input label={''} type='radiobuttons' name={ input._id } value={ inputValue } 
+							onChange={ this.onChangeHandler } 
+							options={ input.options }
+							disabled={ disabled } />
+				);
+				break;
+
+			case 'Text Options':
+				inputItemView = (
+						<Input label={''} type='radiobuttons' name={ input._id } value={ inputValue } 
+								onChange={ this.onChangeHandler } 
+								options={ input.options }
+								disabled={ disabled } />
+				);
+				break;
+
+		}
+
+		return (<div className={ styles.InputItemContainer }>
+					<label className={ styles.InputItemLabel }>{ input.label }<span>{( input.evaluatedUserField )? ' (Campo del evaluado)' : ' (Campo del evaluador)' }</span></label>
+					{ inputItemView }
+				</div>);
+
+	}
+
+};
+
+
+
 class FillableForm extends Component {
 
 	constructor( props ){
@@ -41,6 +124,7 @@ class FillableForm extends Component {
 			redirect: ''
 		};
 
+		this.onChangeHandler = this.onChangeHandler.bind(this);
 	}
 
 	componentDidMount () {
@@ -130,7 +214,8 @@ class FillableForm extends Component {
 							});
 
 
-							this.setState({ 
+							this.setState({
+								id: params.id,
 								plan: record.plan,
 								planItemId: record.planItemId,
 								evaluated: record.evaluated._id,
@@ -209,6 +294,13 @@ class FillableForm extends Component {
 
 			let inputValue = ( inputValueIndex >= 0 )? this.state.items[inputValueIndex].answer : ( input.type === 'Number' )? 0 : '' ;
 
+
+
+
+			return(<InputView key={ key } input={ input } value={ inputValue } onChange={ this.onChangeHandler } 
+								disabled={ !( this.state.isEvaluatedUser === input.evaluatedUserField ) }/>);
+
+/*
 			switch(input.type){
 				case 'Number':
 					inputItemView = (
@@ -256,7 +348,7 @@ class FillableForm extends Component {
 						<label className={ styles.InputItemLabel }>{ input.label }<span>{( input.evaluatedUserField )? ' (Campo del evaluado)' : ' (Campo del evaluador)' }</span></label>
 						{ inputItemView }
 					</div>);
-
+*/
 		});
 
 		return inputViews;
@@ -322,11 +414,16 @@ class FillableForm extends Component {
 		};
 
 		axios(params)
-		.then( (resForm) => {
-			alert('Evaluación guardada.');
+		.then( (res) => {
+			if(res.data.message === 'Already completed'){
+				alert('El registro ya ha sido completado con anterioridad.');	
+			}else {
+				alert('Evaluación guardada.');
+			}
+
 			this.setState({ redirect: '/' });
 		})
-		.catch( (resForm) => {
+		.catch( (err) => {
 			alert('Error al guardar. Intente de nuevo.');
 			this.setState({ disableSubmit: false });
 		});

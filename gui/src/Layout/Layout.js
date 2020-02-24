@@ -29,6 +29,7 @@ import FillableForm from '../Components/FillableForm/FillableForm';
 import PerformedEvaluationsList from '../Components/Lists/PerformedEvaluationsList';
 import PerformedEvaluationsAsEvaluatedList from '../Components/Lists/PerformedEvaluationsAsEvaluatedList';
 import EvaluationPlanCardsList from '../Components/EvaluationPlanCardsList/EvaluationPlanCardsList';
+import FormRecordsList from '../Components/Lists/FormRecordsList';
 
 /* Evaluation Plan */
 import EvaluationPlanList from '../Components/Lists/EvaluationPlanList';
@@ -105,9 +106,14 @@ class Layout extends Component {
 										<Route path='/fillableForm:planId?:planFormItemId?:formId?:userId?:userName?'>
 											<FillableForm />
 										</Route>
+										
 										<Route path='/records'>
 											<EvaluationPlanCardsList />
 										</Route>
+										<Route path='/formRecords'>
+											<FormRecordsList />
+										</Route>
+										
 										<Route path='/performedEvaluations'>
 											<PerformedEvaluationsList />
 										</Route>

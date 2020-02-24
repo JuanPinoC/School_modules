@@ -43,22 +43,29 @@ module.exports = {
 
 		formInputsPromise.then( (formInputsArray) => {
 
-				const recordItems = requestItems.map( ( item ) => {
+				let recordItems = [];
+
+				requestItems.forEach( ( item ) => {
 
 					const id = formInputsArray.findIndex( (e) => e._id + '' === item.input + '' );
 
 					if( formInputsArray[id].evaluatedUserField !== isEvaluatedUser ){
-						return {};
-					}
+						
+					}else{
 
-					switch( formInputsArray[id].type ){
-						case 'Text':
-							return { input: item.input, answerString: item.answer };
-						case 'Number':
-							return { input: item.input, answerNumber: item.answer };
-						case 'Number Options':
-						case 'Text Options':
-							return { input: item.input, answerId: item.answer };
+						switch( formInputsArray[id].type ){
+							case 'Text':
+								recordItems.push( { input: item.input, answerString: item.answer } );
+								break;
+							case 'Number':
+								recordItems.push( { input: item.input, answerNumber: item.answer } );
+								break;
+							case 'Number Options':
+							case 'Text Options':
+								recordItems.push( { input: item.input, answerId: item.answer } );
+								break;
+						}
+
 					}
 
 				});
@@ -119,62 +126,83 @@ module.exports = {
 			.exec()
 			.then( (record) => {
 
-				let completedArr = [];
+				if( true ){ // !record.completed
 
-				const evaluatedUserId = record.evaluated + '';
-				const signedUserId = req.userData._id + '';
+					const evaluatedUserId = record.evaluated + '';
+					const signedUserId = req.userData._id + '';
 
-				isEvaluatedUser = evaluatedUserId === signedUserId;
+					isEvaluatedUser = evaluatedUserId === signedUserId;
 
-				const requestItems = req.body.items;
+					const requestItems = req.body.items;
 
-				let formInputsPromise = new Promise( ( resolve, reject ) => FormEditorController.getInputs( req.body.form, resolve, reject ) );
+					let formInputsPromise = new Promise( ( resolve, reject ) => FormEditorController.getInputs( req.body.form, resolve, reject ) );
 
-				formInputsPromise.then( (formInputsArray) => {
+					formInputsPromise.then( (formInputsArray) => {
 
-						const recordItems = requestItems.map( ( item ) => {
+							let recordItems = [];
 
-							const id = formInputsArray.findIndex( (e) => e._id + '' === item.input + '' );
+							requestItems.forEach( ( item ) => {
 
-							if( formInputsArray[id].evaluatedUserField !== isEvaluatedUser ){
-								return {};
-							}
+								const id = formInputsArray.findIndex( (e) => e._id + '' === item.input + '' );
 
-							switch( formInputsArray[id].type ){
-								case 'Text':
-									return { input: item.input, answerString: item.answer };
-								case 'Number':
-									return { input: item.input, answerNumber: item.answer };
-								case 'Number Options':
-								case 'Text Options':
-									return { input: item.input, answerId: item.answer };
-							}
+								if( formInputsArray[id].evaluatedUserField !== isEvaluatedUser ){
+									
+								} else {
 
-						});
+									switch( formInputsArray[id].type ){
+										case 'Text':
+											recordItems.push( { input: item.input, answerString: item.answer } );
+											break;
+										case 'Number':
+											recordItems.push( { input: item.input, answerNumber: item.answer } );
+											break;
+										case 'Number Options':
+										case 'Text Options':
+											recordItems.push( { input: item.input, answerId: item.answer } );
+											break;
+									}
 
-						let completedForm = formInputsArray.map( ( formInput ) => {
-							return ( recordItems.findIndex( (e) => e.input + '' === formInput._id + '' ) >= 0 );
-						});
+								}
 
-						const filter = { _id: req.body.id };
-						const update = {
-							items: [ ...record.items, ...recordItems ],
-							completed: completedForm.every( (e) => e )
-						};
+							});
 
-						Record.findOneAndUpdate(filter, update, { new: true })
-									.then( (doc) => {
-										
-										const response = {
-														message: 'Updated'
-													};
+							let oldRecordItems = [];
 
-										res.status(200).json(response);
+							record.items.forEach( (oldRecordItem) => {
 
-									})
-									.catch( err => errorHandler(res, err) );
+								if( recordItems.findIndex( (newRecordItem) => oldRecordItem.input + '' === newRecordItem.input + '') === -1 ){
 
-				}).catch( err => errorHandler(res, err) );
+									oldRecordItems.push(oldRecordItem);
+
+								}
+
+							});
+
+							const filter = { _id: req.body.id };
+							const update = {
+								items: [ ...oldRecordItems, ...recordItems ],
+								completed: oldRecordItems.length + recordItems.length === formInputsArray.length
+							};
+
+							Record.findOneAndUpdate(filter, update, { new: true })
+										.then( (doc) => {
+											
+											const response = {
+															message: 'Updated'
+														};
+
+											res.status(200).json(response);
+
+										})
+										.catch( err => errorHandler(res, err) );
+
+					}).catch( err => errorHandler(res, err) );
+
+				}else{
+
+					res.status(200).json({ message: 'Already completed' });
+
+				}
 
 			}).catch( err => errorHandler(res, err) );
 
@@ -190,13 +218,13 @@ module.exports = {
 
 		formPromise.then( (form) => {
 
-			Record.find({ 'plan': req.body.plan, 'planItemId': planItemId, 'form': req.body.form })
+			Record.find({ 'plan': req.body.plan, 'planItemId': req.body.planItemId, 'form': req.body.form })
 				.populate('evaluated','_id name')
 				.sort('evaluated.name')
 				.exec()
 				.then( (records) => {
 
-					const sections = forms.sections;
+					const sections = form.sections;
 
 					const recordsArray = records.map( (record) => {
 
@@ -205,7 +233,7 @@ module.exports = {
 						let sectionsTotalsArray = [];
 						let total = 0;
 
-						const itemsToShow = record.items.forEach( (item) => {
+						const itemsToShow = record.items.map( (item) => {
 
 							let inputIndex = -1;
 							let sectionIndex = sections.length;
@@ -216,7 +244,7 @@ module.exports = {
 							}
 
 							const options = sections[sectionIndex].inputs[inputIndex].options;
-							const optionIndex = -1;
+							let optionIndex = -1;
 
 							switch( sections[sectionIndex].inputs[inputIndex].type ){
 								case 'Text':
@@ -224,14 +252,16 @@ module.exports = {
 									return { section: sections[sectionIndex]._id , input: item.input, answer: item.answerString };
 									break;
 								case 'Number':
-									sectionsItems[ sections[sectionIndex]._id ] = [ ...sectionsItems[ sections[sectionIndex]._id ], item.answerNumber ];
+									sectionsItems[ sections[sectionIndex]._id ] = (typeof sectionsItems[ sections[sectionIndex]._id ] !== 'undefined' )? 
+																					[ ...sectionsItems[ sections[sectionIndex]._id ], item.answerNumber ] : [ item.answerNumber ];
 									//item.answerNumber
 									return { section: sections[sectionIndex]._id , input: item.input, answer: item.answerNumber };
 									break;
 								case 'Number Options':
 									optionIndex = options.findIndex( (e) => e._id + '' === item.answerId + '' );
 
-									sectionsItems[ sections[sectionIndex]._id ] = [ ...sectionsItems[ sections[sectionIndex]._id ], options[optionIndex].value ];
+									sectionsItems[ sections[sectionIndex]._id ] = (typeof sectionsItems[ sections[sectionIndex]._id ] !== 'undefined' )? 
+																					[ ...sectionsItems[ sections[sectionIndex]._id ], options[optionIndex].value ] : [ options[optionIndex].value ];
 
 									//item.answerId
 									return { section: sections[sectionIndex]._id , input: item.input, answer: options[optionIndex].label };

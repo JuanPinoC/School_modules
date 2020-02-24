@@ -232,6 +232,9 @@ module.exports = {
 							__v: 0,
 							'inputs.__v': 0
 						}
+					},
+					{
+						$sort : { order: 1, 'inputs.order': 1 }
 					}
 				])
 				.exec()

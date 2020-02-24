@@ -7,17 +7,22 @@ import { randomNumber } from '../../Functions/FormEditorFunctions';
 
 const SectionHeaders = (props) => {
 
-	let inputNames = props.inputs.map( (input) => {
+	let inputs = props.inputs;
+
+	let inputNames = inputs.map( (input) => {
 		return(
-				<td key={ input._id }>{ input.label + ' ' + ( input.evaluatedUserField )? '(Evaluado)' : '' }</td>
+				<th key={ input._id }>{ input.label + ' ' + (( input.evaluatedUserField )? '(Evaluado)' : '') }</th>
 			);
 	});
 
-	inputNames.push(<td key={ randomNumber() }>Total (Sección)</td>);
+	inputNames.push(<th key={ randomNumber() }>Total (Sección)</th>);
 
 	return(
-			<tr>{ inputNames }</tr>
+			<>
+				{ inputNames }
+			</>
 		);
+
 };
 
 class recordsTable extends Component {
@@ -34,22 +39,53 @@ class recordsTable extends Component {
 
 	componentDidMount () {
 
-		this.setHeaderViews( this.props.form );
+		let form = this.props.form;
+
+		form.sections = form.sections.map( (section) => {
+			section.inputs.sort( (a, b) => {
+							return a.order - b.order;
+						});
+
+			return section;
+		});
+
+		form.sections.sort( (a, b) => {
+							return a.order - b.order;
+						});
+
+		this.setHeaderViews( form );
 
 	}
 
 	setHeaderViews = ( form ) => {
 
-		let headerViews = form.sections.map( (section) => {
-			return (<th key={ section._id }>
-						<td>{ section.name }</td>
-						<SectionHeaders inputs={ section.inputs } />
-					</th>);
-		});
+		let headersFirstRow = (
+								<tr key={ 'r1' + randomNumber() }>
+									<th key={ 'e' + randomNumber() } rowSpan='2'>Evaluado</th>
+									{ 
+										form.sections.map( (section) => 
+											(<th key={ randomNumber() } colSpan={ section.inputs.length + 1 }>{ section.name }</th>)
+										)
+									}
+									<th key={ 't' + randomNumber() } rowSpan='2'>Total</th>
+								</tr>
+							);
+
+		let headersSecondRow = (
+			<tr key={ 'r2' + randomNumber() }>
+				{
+					form.sections.map( (section) => 
+						(<SectionHeaders key={ 'r2ths' + randomNumber() } sectionName={ section.name } inputs={ section.inputs } />)
+					)
+				}
+			</tr>
+		);
 
 		this.setState({
-			headerViews: [ (<th key={ randomNumber() }>Evaluado</th>), ...headerViews, (<th key={ randomNumber() }>Total</th>) ]
+			headerViews: [ headersFirstRow, headersSecondRow ]
 		});
+
+
 
 		this.setRecordViews( form.sections, this.props.records );
 
@@ -59,14 +95,34 @@ class recordsTable extends Component {
 
 		let recordViews = records.map( ( record ) => {
 
-			answers = [(<td>{ record.evaluated }</td>)];
+			let answers = [(<td key={ record.evaluated._id + randomNumber() }>{ record.evaluated.name }</td>)];
 
-			for(let s = 0; s < formSections.length - 1; s++){
 
-				const sectionIndex = sections.findIndex( (e) => e.order === s);
-				const section = sections[s];
 
-				for(let i = 0; section.inputs.length - 1; i++){
+
+			formSections.forEach( ( section ) => {
+
+				section.inputs.forEach( ( input ) => {
+
+					const recordItemIndex = record.itemsToShow.findIndex( (e) => e.section + '' === section._id + '' && e.input + '' === input._id + '' );
+					const item = record.itemsToShow[recordItemIndex];
+
+					answers.push(<td key={ item.input + randomNumber() }>{ item.answer }</td>);
+
+				});
+
+				answers.push(<td key={ 'st' + record._id + randomNumber() }>{ record.sectionsTotals[section._id] }</td>);
+
+			});
+
+
+/*
+			for(let s = 0; s < formSections.length; s++){
+
+				const sectionIndex = formSections.findIndex( (e) => e.order === s);
+				const section = formSections[sectionIndex];
+
+				for(let i = 0; i < section.inputs.length; i++){
 
 					const inputIndex = section.inputs.findIndex( (e) => e.order === i );
 					const input = section.inputs[inputIndex];
@@ -74,15 +130,17 @@ class recordsTable extends Component {
 					const recordItemIndex = record.itemsToShow.findIndex( (e) => e.section + '' === section._id + '' && e.input + '' === input._id + '' );
 					const item = record.itemsToShow[recordItemIndex];
 
-					answers.push(<td>{ item.answer }</td>);
+					answers.push(<td key={ item.input + randomNumber() }>{ item.answer }</td>);
 
 				}
 
-				answers.push(<td>{ record.sectionsTotals[section._id] }</td>);
+				answers.push(<td key={ 'st' + record._id + randomNumber() }>{ record.sectionsTotals[section._id] }</td>);
 
 			}
+*/
 
-			answers.push(<td>{ record.total }</td>);
+
+			answers.push(<td key={'t' + record._id + randomNumber()}>{ record.total }</td>);
 
 			return (
 					<tr key={ record._id }>
@@ -107,9 +165,9 @@ class recordsTable extends Component {
 				<div className={ styles.OverflowContainer }>
 					<table>
 						<thead>
-							<tr>
+
 								{ this.state.headerViews }
-							</tr>
+
 						</thead>
 						<tbody>
 							{ this.state.recordViews }
