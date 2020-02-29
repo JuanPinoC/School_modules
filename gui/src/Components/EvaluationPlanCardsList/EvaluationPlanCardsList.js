@@ -8,7 +8,9 @@ import { Redirect } from "react-router-dom";
 import Input from '../Input/Input';
 import SubmitButton from '../SubmitButton/SubmitButton';
 
-import { getToken, getUrlParams, getPlansAndForms, dateToYearMonthDay, randomNumber } from '../../Functions/FormEditorFunctions';
+import RecordsTable from '../RecordsTable/PlanRecordsTable';
+
+import { getToken, getUrlParams, getPlansAndForms, getPlanRecords, dateToYearMonthDay, randomNumber } from '../../Functions/FormEditorFunctions';
 
 
 class planCardsList extends Component {
@@ -20,7 +22,8 @@ class planCardsList extends Component {
 		this.state = {
 			planViews: [],
 			loading: true,
-			redirect: ''
+			redirect: '',
+			planRecords: [],
 		};
 	
 	}
@@ -30,7 +33,23 @@ class planCardsList extends Component {
 		let formsPromise = new Promise( ( resolve, reject ) => { getPlansAndForms(resolve, reject); });
 		formsPromise.then( ( res ) => {
 
-			this.setPlanViews( res );
+			let recordsPromises = res.map( (plan) => {
+
+				let recordPromises = new Promise( (resolve, reject) => { getPlanRecords(plan._id, resolve, reject)} );
+				return recordPromises.then( (records) => {
+					
+					return { _id: plan._id, records: records };
+
+				});
+
+			});
+
+			Promise.all(recordsPromises).then( arrayOfResponses => {
+
+				this.setState({ planRecords: arrayOfResponses });
+				this.setPlanViews( res );
+
+			});
 
 		});
 
@@ -38,7 +57,7 @@ class planCardsList extends Component {
 
 	setPlanViews = ( data ) => {
 
-		const planViews = data.map( ( plan ) => {
+		const planViews = data.map( ( plan, index ) => {
 
 			const formViews = this.getFormViews( plan._id, plan.forms );
 
@@ -49,11 +68,16 @@ class planCardsList extends Component {
 								{ 'Periodo: ' + dateToYearMonthDay(plan.startDate).replace(/-/g, '/') + ' - ' + dateToYearMonthDay(plan.endDate).replace(/-/g, '/')}
 							</h3>
 						</div>
-						<div className={ styles.ListTitle }>
-							<h3>Formularios</h3>
-						</div>
-						<div className={ styles.FormsList }>
-							{ formViews }
+
+						{ this.getRecords( plan._id, plan.forms ) }
+
+						<div className={ styles.FormsListContainer }>
+							<div className={ styles.ListTitle }>
+								<h3>Formularios</h3>
+							</div>
+							<div className={ styles.FormsList }>
+								{ formViews }
+							</div>
 						</div>
 					</div>);
 
@@ -102,6 +126,29 @@ class planCardsList extends Component {
 		this.setState({
 			redirect: '/formRecords?planId=' + planId + '&planFormItemId=' + planFormItemId + '&formId=' + formId
 		});
+
+	}
+
+
+	getRecords = ( planId, data ) => {
+
+		const formsRecordsArray = data.map( (form) => {
+
+			return {
+				_id: form.form,
+				name: form.name,
+				weight: form.weight + '%',
+				colorScale: form.colorScale
+			}
+		});
+
+		const planRecords = this.state.planRecords;
+
+		const recordsIndex = planRecords.findIndex( (e) => e._id + '' === planId + '');
+
+		return ( planRecords[recordsIndex].records.length > 0 )? 
+					(<RecordsTable key={ planId + randomNumber() } title={ 'Registros' } forms={ formsRecordsArray } records={ planRecords[recordsIndex].records }/>)
+					:(<div className={ styles.FormsListContainer }><div className={ styles.NoRecordsMessage}>No hay registros para mostrar.</div></div>);
 
 	}
 

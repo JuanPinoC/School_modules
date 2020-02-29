@@ -153,7 +153,8 @@ module.exports = {
 										weight: form.weight,
 										requiredAmount: form.requiredAmount,
 										name: formsArray[ id ].name,
-										type: formsArray[ id ].type
+										type: formsArray[ id ].type,
+										colorScale: formsArray[ id ].colorScale
 									};
 
 								});
@@ -219,7 +220,8 @@ module.exports = {
 										weight: form.weight,
 										requiredAmount: form.requiredAmount,
 										name: formsArray[ id ].name,
-										type: formsArray[ id ].type
+										type: formsArray[ id ].type,
+										colorScale: formsArray[ id ].colorScale
 									};
 
 								});

@@ -2,6 +2,8 @@ const mongoose = require('mongoose');
 
 const ColorScale = require('../models/colorScale');
 
+const Form = require('../models/form');
+
 const errorHandler = ( res, err ) => {
 
 	console.log( err );
@@ -111,6 +113,76 @@ module.exports = {
 
 					})
 					.catch( err => errorHandler(res, err) );
+
+	},
+	findByForm: (req,res,next) => {
+
+		Form.aggregate([
+							{
+								$lookup:{
+									from: 'colorScales',
+									localField: 'colorScale',
+									foreignField: '_id',
+									as: 'colorScale'
+								}
+							},
+							{ $match : { '_id' : mongoose.Types.ObjectId(req.query.id) } },
+							{
+								$project: {
+									colorScale: 1
+								}
+							},
+							{
+								$unwind: '$colorScale'
+							}
+		])
+		.exec()
+		.then( (docs) => {
+
+			if(docs[0] !== 'undefined'){
+				res.status(200).json( docs[0].colorScale );
+			}else{
+				errorHandler(res, 'No records');
+			}
+
+		})
+		.catch( err => errorHandler(res, err) );
+
+	},
+	findByFormsArray: (req,res,next) => {
+
+		const formIds = req.body.forms.map( (id) => {
+							return mongoose.Types.ObjectId(id)
+						});
+
+		Form.aggregate([
+							{
+								$lookup: {
+									from: 'colorScales',
+									localField: 'colorScale',
+									foreignField: '_id',
+									as: 'colorScale'
+								}
+							},
+							{ $match : { '_id' : { '$in': formIds } } },
+							{
+								$group : {
+									'_id':'$colorScale'
+								}
+							}
+						])
+			.exec()
+			.then( (records) => {
+
+				const response = records.map( (record) => {
+					return record._id[0];
+				});
+
+				res.status(200).json(response);
+
+			})
+			.catch( err => errorHandler(res, err) );
+
 
 	}
 

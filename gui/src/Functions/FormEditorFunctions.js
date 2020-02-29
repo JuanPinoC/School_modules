@@ -210,6 +210,47 @@ export const getColorScale = (id, resolve, reject) => {
 
 };
 
+export const getColorScaleByForm = (id, resolve, reject) => {
+
+	axios.get(
+				'colorScale/findByForm?id=' + id,
+				{ headers: { 'Authorization': 'Bearer ' + getToken() } } 
+		)
+		.then( ( res ) => {
+			resolve(res.data);
+		})
+		.catch( (err) => {
+			reject(err);
+		});
+
+};
+
+export const getColorScalesByFormsArray = (array, resolve, reject) => {
+
+		const data = {
+			forms: array,
+		};
+
+		const params = {
+			method: 'post',
+			url: 'colorScale/findByFormsArray',
+			data: data,
+			headers: {
+				'Content-Type': 'application/json',
+				'Authorization': 'Bearer ' + getToken()
+			}
+		};
+
+		axios(params)
+		.then( (res) => {
+			resolve(res.data);
+		})
+		.catch( (err) => {
+			reject(err);
+		});
+
+};
+
 export const removeColorScale = (id, resolve, reject) => {
 
 	axios.get(
@@ -340,6 +381,48 @@ export const getFormRecords = ( plan, planItemId, form, resolve, reject ) => {
 		.catch( (err) => {
 			reject(err);
 		});
+
+};
+
+export const getPlanRecords = (id, resolve, reject) => {
+
+	axios.get(
+				'record/getPlanRecords?id=' + id,
+				{ headers: { 'Authorization': 'Bearer ' + getToken() } } 
+		)
+		.then( ( res ) => {
+			resolve(res.data);
+		})
+		.catch( (err) => {
+			reject(err);
+		});
+
+};
+
+export const getPlanRecordsByUser = (userTypeId, userId, resolve, reject) => {
+
+	const data = {
+		userTypeId: userTypeId,
+		userId: userId
+	};
+
+	const params = {
+		method: 'post',
+		url: 'record/getPlanRecordsByUser',
+		data: data,
+		headers: {
+			'Content-Type': 'application/json',
+			'Authorization': 'Bearer ' + getToken()
+		}
+	};
+
+	axios(params)
+	.then( (res) => {
+		resolve(res.data);
+	})
+	.catch( (err) => {
+		reject(err);
+	});
 
 };
 

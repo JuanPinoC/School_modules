@@ -4,6 +4,8 @@ const Record = require('../models/record');
 
 const Input = require('../models/input');
 
+const Plan = require('../models/evaluationPlan');
+
 const FormEditorController = require('../controllers/FormEditorController');
 
 
@@ -218,7 +220,7 @@ module.exports = {
 
 		formPromise.then( (form) => {
 
-			Record.find({ 'plan': req.body.plan, 'planItemId': req.body.planItemId, 'form': req.body.form })
+			Record.find({ 'plan': req.body.plan, 'planItemId': req.body.planItemId, 'form': req.body.form, 'completed': true })
 				.populate('evaluated','_id name')
 				.sort('evaluated.name')
 				.exec()
@@ -332,7 +334,429 @@ module.exports = {
 		}).catch( err => errorHandler(res, err) );
 
 	},
+	getPlanRecords: (req,res,next) => {
 
+		Plan.findById(req.query.id)
+		.exec()
+		.then( (plan) => {
+
+			let idForms = plan.forms.map( (e) => {
+				return e.form;
+			});
+
+			let formsPromise = new Promise(( resolve, reject ) => {
+									FormEditorController.getForms( idForms, resolve, reject );
+								});
+
+			formsPromise.then( (forms) => {
+
+				Record.find({ 'form': { '$in': idForms }, completed: true })
+				.populate('evaluated','_id name')
+				.exec()
+				.then( ( records ) => {
+
+					let formsRecordsArrays = [];
+
+					forms.forEach( (form) => {
+
+						const planFormItemIndex = plan.forms.findIndex( (e) => e.form + '' === form._id + '' );
+
+						const filteredRecords = records.filter( (record) => record.form + '' === form._id + '' );
+						const sections = form.sections;
+						
+						let recordsResult = filteredRecords.map( (record) => {
+
+							let sectionsItems = {};
+							let sectionsTotals = {};
+							let sectionsTotalsArray = [];
+							let total = 0;
+
+							record.items.forEach( (item) => {
+
+								let inputIndex = -1;
+								let sectionIndex = sections.length;
+
+								while( sectionIndex >= 0 && inputIndex < 0 ){
+									sectionIndex--;
+									inputIndex = sections[sectionIndex].inputs.findIndex( (e) => e._id + '' === item.input + '' );
+								}
+
+								const options = sections[sectionIndex].inputs[inputIndex].options;
+								let optionIndex = -1;
+
+								switch( sections[sectionIndex].inputs[inputIndex].type ){
+									case 'Text':
+										break;
+									case 'Number':
+										sectionsItems[ sections[sectionIndex]._id ] = (typeof sectionsItems[ sections[sectionIndex]._id ] !== 'undefined' )? 
+																						[ ...sectionsItems[ sections[sectionIndex]._id ], item.answerNumber ] : [ item.answerNumber ];
+										break;
+									case 'Number Options':
+										optionIndex = options.findIndex( (e) => e._id + '' === item.answerId + '' );
+
+										sectionsItems[ sections[sectionIndex]._id ] = (typeof sectionsItems[ sections[sectionIndex]._id ] !== 'undefined' )? 
+																						[ ...sectionsItems[ sections[sectionIndex]._id ], options[optionIndex].value ] : [ options[optionIndex].value ];
+										break;
+									case 'Text Options':
+										break;
+								}
+
+							});
+
+							sections.forEach( (section) => {
+
+								switch(section.action){
+									case 'sum':
+										sectionsTotals[section._id] = sumValues(sectionsItems[section._id]);
+										sectionsTotalsArray.push( sectionsTotals[section._id] );
+										break;
+									case 'avg':
+										sectionsTotals[section._id] = avgValues(sectionsItems[section._id]);
+										sectionsTotalsArray.push( sectionsTotals[section._id] );
+										break;
+									case 'none':
+										break;
+								}
+							
+							});
+
+							switch(form.action){
+								case 'sum':
+									total = sumValues( sectionsTotalsArray );
+									break;
+								case 'avg':
+									total = avgValues( sectionsTotalsArray );
+									break;
+								case 'none':
+									total = '';
+									break;
+							}
+
+							return {
+									_id: record._id,
+									evaluated: record.evaluated,
+									total: total
+								};
+						
+						});
+
+						formsRecordsArrays.push({
+							_id: form._id,
+							weight: plan.forms[planFormItemIndex].weight,
+							requiredAmount: plan.forms[planFormItemIndex].requiredAmount,
+							records: recordsResult
+						});
+
+					});
+
+					let evaluatedUsersFormRecords = [];
+
+					formsRecordsArrays.forEach( ( formRecords ) => {
+
+						formRecords.records.forEach( (record) => {
+
+							const ArrayIndex = evaluatedUsersFormRecords.findIndex( (e) => e.evaluated._id + '' === record.evaluated._id + '' );
+
+							if(ArrayIndex < 0){
+
+								evaluatedUsersFormRecords.push(
+									{
+										evaluated: record.evaluated,
+										formTotals: [
+														{	formId: formRecords._id,
+															totals: [ record.total ] }
+													]
+									}
+								);
+
+							}else{
+
+								let formTotals = evaluatedUsersFormRecords[ArrayIndex].formTotals;
+
+								const formTotalsItemIndex = formTotals.findIndex( (e) => e.formId + '' === formRecords._id + ''); 
+
+								if( formTotalsItemIndex < 0 ){
+
+									formTotals.push({ formId: formRecords._id,
+															totals: [ record.total ] });
+
+								}else{
+
+									formTotals[formTotalsItemIndex].totals.push(record.total); 
+
+								}
+
+								evaluatedUsersFormRecords[ArrayIndex] = {
+																			...evaluatedUsersFormRecords[ArrayIndex],
+																			formTotals: formTotals
+																		};
+							
+							}
+
+						});
+
+					});
+
+					const response = evaluatedUsersFormRecords.map( ( evaluatedUserRecords  ) => {
+
+						let avgWeightedValues = [];
+
+						const formAvgs = evaluatedUserRecords.formTotals.map( ( formTotalsItem ) => {
+
+							const formsRecordsArraysIndex = formsRecordsArrays.findIndex( (e) => e._id + '' === formTotalsItem.formId + '' );
+
+							avgWeightedValues.push( avgValues( formTotalsItem.totals ) * formsRecordsArrays[formsRecordsArraysIndex].weight / 100);
+
+							return {
+									formId: formTotalsItem.formId,
+									formWeight: formsRecordsArrays[formsRecordsArraysIndex].weight,
+									completed: formTotalsItem.totals.length === formsRecordsArrays[formsRecordsArraysIndex].requiredAmount,
+									total: avgValues( formTotalsItem.totals )
+								};
+
+						});
+
+						return {
+							evaluated: evaluatedUserRecords.evaluated,
+							formAvgs: formAvgs,
+							total: sumValues(avgWeightedValues)
+						};
+
+					});
+
+					res.status(200).json(response);
+
+				}).catch( err => errorHandler(res, err) );
+
+			}).catch( err => errorHandler(res, err) );
+
+		}).catch( err => errorHandler(res, err) );
+
+	},
+	getPlanRecordsByUser: (req,res,next) => {
+
+		Plan.find({ userType: req.body.userTypeId })
+		.exec()
+		.then( (plans) => {
+
+			const plansRecordsPromises = plans.map( (plan) => {
+
+				let idForms = plan.forms.map( (e) => {
+					return e.form;
+				});
+
+				let formsPromise = new Promise(( resolve, reject ) => {
+										FormEditorController.getForms( idForms, resolve, reject );
+									});
+
+				let processPromise = new Promise(( resolve, reject ) => {
+										
+				formsPromise.then( (forms) => {
+
+					Record.find({ evaluated: req.body.userId ,'form': { '$in': idForms }, completed: true })
+						.populate('evaluated','_id name')
+						.exec()
+						.then( ( records ) => {
+
+							let formsRecordsArrays = [];
+
+							forms.forEach( (form) => {
+
+								const planFormItemIndex = plan.forms.findIndex( (e) => e.form + '' === form._id + '' );
+
+								const filteredRecords = records.filter( (record) => record.form + '' === form._id + '' );
+								const sections = form.sections;
+
+								let recordsResult = filteredRecords.map( (record) => {
+
+									let sectionsItems = {};
+									let sectionsTotals = {};
+									let sectionsTotalsArray = [];
+									let total = 0;
+
+									record.items.forEach( (item) => {
+
+										let inputIndex = -1;
+										let sectionIndex = sections.length;
+
+										while( sectionIndex >= 0 && inputIndex < 0 ){
+											sectionIndex--;
+											inputIndex = sections[sectionIndex].inputs.findIndex( (e) => e._id + '' === item.input + '' );
+										}
+
+										const options = sections[sectionIndex].inputs[inputIndex].options;
+										let optionIndex = -1;
+
+										switch( sections[sectionIndex].inputs[inputIndex].type ){
+											case 'Text':
+												break;
+											case 'Number':
+												sectionsItems[ sections[sectionIndex]._id ] = (typeof sectionsItems[ sections[sectionIndex]._id ] !== 'undefined' )? 
+																								[ ...sectionsItems[ sections[sectionIndex]._id ], item.answerNumber ] : [ item.answerNumber ];
+												break;
+											case 'Number Options':
+												optionIndex = options.findIndex( (e) => e._id + '' === item.answerId + '' );
+
+												sectionsItems[ sections[sectionIndex]._id ] = (typeof sectionsItems[ sections[sectionIndex]._id ] !== 'undefined' )? 
+																								[ ...sectionsItems[ sections[sectionIndex]._id ], options[optionIndex].value ] : [ options[optionIndex].value ];
+												break;
+											case 'Text Options':
+												break;
+										}
+
+									});
+
+									sections.forEach( (section) => {
+
+										switch(section.action){
+											case 'sum':
+												sectionsTotals[section._id] = sumValues(sectionsItems[section._id]);
+												sectionsTotalsArray.push( sectionsTotals[section._id] );
+												break;
+											case 'avg':
+												sectionsTotals[section._id] = avgValues(sectionsItems[section._id]);
+												sectionsTotalsArray.push( sectionsTotals[section._id] );
+												break;
+											case 'none':
+												break;
+										}
+									
+									});
+
+									switch(form.action){
+										case 'sum':
+											total = sumValues( sectionsTotalsArray );
+											break;
+										case 'avg':
+											total = avgValues( sectionsTotalsArray );
+											break;
+										case 'none':
+											total = '';
+											break;
+									}
+
+									return {
+											_id: record._id,
+											evaluated: record.evaluated,
+											total: total
+										};
+								
+								});
+
+								formsRecordsArrays.push({
+									_id: form._id,
+									weight: plan.forms[planFormItemIndex].weight,
+									requiredAmount: plan.forms[planFormItemIndex].requiredAmount,
+									records: recordsResult
+								});
+
+							});
+
+							let evaluatedUsersFormRecords = [];
+
+							formsRecordsArrays.forEach( ( formRecords ) => {
+
+								formRecords.records.forEach( (record) => {
+
+									const ArrayIndex = evaluatedUsersFormRecords.findIndex( (e) => e.evaluated._id + '' === record.evaluated._id + '' );
+
+									if(ArrayIndex < 0){
+
+										evaluatedUsersFormRecords.push(
+											{
+												evaluated: record.evaluated,
+												formTotals: [
+																{	formId: formRecords._id,
+																	totals: [ record.total ] }
+															]
+											}
+										);
+
+									}else{
+
+										let formTotals = evaluatedUsersFormRecords[ArrayIndex].formTotals;
+
+										const formTotalsItemIndex = formTotals.findIndex( (e) => e.formId + '' === formRecords._id + ''); 
+
+										if( formTotalsItemIndex < 0 ){
+
+											formTotals.push({ formId: formRecords._id,
+																	totals: [ record.total ] });
+
+										}else{
+
+											formTotals[formTotalsItemIndex].totals.push(record.total); 
+
+										}
+
+										evaluatedUsersFormRecords[ArrayIndex] = {
+																					...evaluatedUsersFormRecords[ArrayIndex],
+																					formTotals: formTotals
+																				};
+									
+									}
+
+								});
+
+							});
+
+							const planRecords = evaluatedUsersFormRecords.map( ( evaluatedUserRecords  ) => {
+
+								let avgWeightedValues = [];
+
+								const formAvgs = evaluatedUserRecords.formTotals.map( ( formTotalsItem ) => {
+
+									const formsRecordsArraysIndex = formsRecordsArrays.findIndex( (e) => e._id + '' === formTotalsItem.formId + '' );
+
+									avgWeightedValues.push( avgValues( formTotalsItem.totals ) * formsRecordsArrays[formsRecordsArraysIndex].weight / 100);
+
+									return {
+											formId: formTotalsItem.formId,
+											formWeight: formsRecordsArrays[formsRecordsArraysIndex].weight,
+											completed: formTotalsItem.totals.length === formsRecordsArrays[formsRecordsArraysIndex].requiredAmount,
+											total: avgValues( formTotalsItem.totals )
+										};
+
+								});
+
+								return {
+									evaluated: evaluatedUserRecords.evaluated,
+									formAvgs: formAvgs,
+									total: sumValues(avgWeightedValues)
+								};
+
+							});
+
+							console.log(planRecords);
+							resolve(planRecords);
+
+						}).catch( err => { reject(err); } );
+
+					}).catch( err => { reject(err); } );
+
+				});
+
+				return processPromise.then( (promiseRes) => { 
+												return {
+															planId: plan._id,
+															records: (typeof promiseRes[0] !== 'undefined')? promiseRes[0] : {}
+														} 
+									})
+									.catch( (err) => { return err; } );
+
+			});
+
+			Promise.all(plansRecordsPromises).then( arrayOfResponses => {
+
+				console.log(arrayOfResponses);
+
+				res.status(200).json(arrayOfResponses);
+
+			}).catch( err => errorHandler(res, err) );
+
+		}).catch( err => errorHandler(res, err) );
+
+	},
 	getRecordsByEvaluator: (req,res,next) => {
 
 		Record.find({ evaluator: req.userData._id })

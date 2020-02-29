@@ -198,7 +198,16 @@ class input extends Component {
 					<div className={ styles.InputContainer }>
 						<input className={ styles.Input } type={ this.props.type } name={ this.props.name } value={ this.props.value }
 								max={ this.props.max } min={ this.props.min }
-								onChange={ (e) => this.props.onChange( this.props.name, e ) }
+								onChange={ (e) => {
+													if( 0 <= this.props.max && this.props.max >= this.props.min ){
+														if( e.target.value <= this.props.max && e.target.value >= this.props.min ) 
+															this.props.onChange( this.props.name, e );
+													}else{
+														this.props.onChange( this.props.name, e );
+													}
+
+												} 
+										}
 								onFocus={ this.onFocus }
 								onBlur={ this.onBlur } 
 								disabled={( this.props.disabled )? 'disabled' : '' } />

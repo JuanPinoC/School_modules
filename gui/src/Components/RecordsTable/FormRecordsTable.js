@@ -93,11 +93,11 @@ class recordsTable extends Component {
 
 	setRecordViews = ( formSections, records ) => {
 
+		const scaleItems = this.props.colorScale.items;
+
 		let recordViews = records.map( ( record ) => {
 
 			let answers = [(<td key={ record.evaluated._id + randomNumber() }>{ record.evaluated.name }</td>)];
-
-
 
 
 			formSections.forEach( ( section ) => {
@@ -116,31 +116,12 @@ class recordsTable extends Component {
 			});
 
 
-/*
-			for(let s = 0; s < formSections.length; s++){
+			const scaleIndex = scaleItems.findIndex( (e) => e.max >= record.total && e.min <= record.total );
 
-				const sectionIndex = formSections.findIndex( (e) => e.order === s);
-				const section = formSections[sectionIndex];
-
-				for(let i = 0; i < section.inputs.length; i++){
-
-					const inputIndex = section.inputs.findIndex( (e) => e.order === i );
-					const input = section.inputs[inputIndex];
-
-					const recordItemIndex = record.itemsToShow.findIndex( (e) => e.section + '' === section._id + '' && e.input + '' === input._id + '' );
-					const item = record.itemsToShow[recordItemIndex];
-
-					answers.push(<td key={ item.input + randomNumber() }>{ item.answer }</td>);
-
-				}
-
-				answers.push(<td key={ 'st' + record._id + randomNumber() }>{ record.sectionsTotals[section._id] }</td>);
-
-			}
-*/
-
-
-			answers.push(<td key={'t' + record._id + randomNumber()}>{ record.total }</td>);
+			answers.push(<td key={'t' + record._id + randomNumber()} 
+							style={{ backgroundColor: scaleItems[scaleIndex].color, textShadow: '-1px 0 black, 0 1px black, 1px 0 black, 0 -1px black', color: 'white'}}>
+								{ record.total }
+						</td>);
 
 			return (
 					<tr key={ record._id }>

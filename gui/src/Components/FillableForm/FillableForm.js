@@ -300,55 +300,6 @@ class FillableForm extends Component {
 			return(<InputView key={ key } input={ input } value={ inputValue } onChange={ this.onChangeHandler } 
 								disabled={ !( this.state.isEvaluatedUser === input.evaluatedUserField ) }/>);
 
-/*
-			switch(input.type){
-				case 'Number':
-					inputItemView = (
-						<Input label={''} type='number' name={ input._id } value={ inputValue } 
-								onChange={ this.onChangeHandler } 
-								max={ input.maxValue }
-								min={ input.minValue }
-								disabled={ !( this.state.isEvaluatedUser === input.evaluatedUserField ) } />
-
-					);
-					break;
-
-				case 'Text':
-					inputItemView = (
-						<Input label={''} type='textarea' name={ input._id } value={ inputValue } 
-								onChange={ this.onChangeHandler } 
-								max={ input.maxValue }
-								min={ input.minValue }
-								disabled={ !( this.state.isEvaluatedUser === input.evaluatedUserField ) } />
-					);
-					break;
-
-				case 'Number Options':
-
-					inputItemView = (
-						<Input label={''} type='radiobuttons' name={ input._id } value={ inputValue } 
-								onChange={ this.onChangeHandler } 
-								options={ input.options }
-								disabled={ !( this.state.isEvaluatedUser === input.evaluatedUserField ) } />
-					);
-					break;
-
-				case 'Text Options':
-					inputItemView = (
-							<Input label={''} type='radiobuttons' name={ input._id } value={ inputValue } 
-									onChange={ this.onChangeHandler } 
-									options={ input.options }
-									disabled={ !( this.state.isEvaluatedUser === input.evaluatedUserField ) } />
-					);
-					break;
-
-			}
-
-			return (<div className={ styles.InputItemContainer } key={ key }>
-						<label className={ styles.InputItemLabel }>{ input.label }<span>{( input.evaluatedUserField )? ' (Campo del evaluado)' : ' (Campo del evaluador)' }</span></label>
-						{ inputItemView }
-					</div>);
-*/
 		});
 
 		return inputViews;

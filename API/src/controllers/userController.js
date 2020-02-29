@@ -88,7 +88,7 @@ module.exports = {
 
 		User.findById(id)
 			.select('email name type')
-			.populate('type','name')
+			.populate('type','_id name')
 			.exec()
 			.then(doc => {
 				console.log( doc );

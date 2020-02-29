@@ -13,6 +13,57 @@ const errorHandler = ( res, err ) => {
 	});
 };
 
+const getForm = ( id, resolve, reject ) => {
+
+	Form.findById(id)
+		.exec()
+		.then( (form) => {
+
+			Section.aggregate([
+				{	
+					$match: {
+						form: mongoose.Types.ObjectId(id),
+					}
+				},
+				{
+					$lookup: {
+						from: 'inputs',
+						localField: '_id',
+						foreignField: 'section',
+						as: 'inputs'
+					}
+				},
+				{
+					$project: {
+						__v: 0,
+						'inputs.__v': 0
+					}
+				},
+				{
+					$sort : { order: 1, 'inputs.order': 1 }
+				}
+			])
+			.exec()
+			.then( (sections) => {
+
+				resolve({
+					_id:	form._id,
+					name:	form.name,
+					type:	form.type,
+					action: form.action,
+					description: form.description,
+					colorScale: form.colorScale,
+					sections: sections
+				});
+
+			})
+			.catch( err => reject(err) );
+
+		})
+		.catch( err => reject(err) );
+
+};
+
 module.exports = {
 
 	list: (req,res,next) => {
@@ -108,6 +159,9 @@ module.exports = {
 							__v: 0,
 							'inputs.__v': 0
 						}
+					},
+					{
+						$sort : { order: 1, 'inputs.order': 1 }
 					}
 				])
 				.exec()
@@ -153,15 +207,17 @@ module.exports = {
 	findByIdArray: ( ids, resolve, reject ) => {
 
 		Form.find({ '_id': { '$in': ids } })
-			.select('_id name type')
+			.select('_id name type colorScale')
 			.exec()
 			.then( (forms) => {
 
 				const formsArray = forms.map( form => {
+
 										return {
 											_id: form._id,
 											name: form.name,
-											type: form.type
+											type: form.type,
+											colorScale: form.colorScale
 										}
 									});
 
@@ -209,97 +265,25 @@ module.exports = {
 	},
 	getForm: ( id, resolve, reject ) => {
 
-		Form.findById(id)
-			.exec()
-			.then( (form) => {
+		getForm(id, resolve, reject);
 
-				Section.aggregate([
-					{	
-						$match: {
-							form: mongoose.Types.ObjectId(id),
-						}
-					},
-					{
-						$lookup: {
-							from: 'inputs',
-							localField: '_id',
-							foreignField: 'section',
-							as: 'inputs'
-						}
-					},
-					{
-						$project: {
-							__v: 0,
-							'inputs.__v': 0
-						}
-					},
-					{
-						$sort : { order: 1, 'inputs.order': 1 }
-					}
-				])
-				.exec()
-				.then( (sections) => {
+	},
+	getForms: ( formsList, resolve, reject ) => {
 
-					resolve({
-						_id:	form._id,
-						name:	form.name,
-						type:	form.type,
-						action: form.action,
-						description: form.description,
-						colorScale: form.colorScale,
-						sections: sections
-					});
+		let formPromises = formsList.map( (id) => {
 
-				})
-				.catch( err => reject(err) );
+			let promise = new Promise( ( resolve1, reject1 ) => { getForm( id, resolve1, reject1 ); });
 
-			})
-			.catch( err => reject(err) );
+			return promise.then( (form) => { return form; } ).catch( (err) => { resolve(err); } );
+
+		});
+
+		Promise.all(formPromises).then( arrayOfResponses => {
+
+			resolve(arrayOfResponses);
+
+		}).catch( err => reject(err) );
+
 	}
 
 };
-
-/*
-
-db.sections.aggregate([
-	{	$match: {
-			form: ObjectId('5e3bc29efeddbb2098651654')
-		}
-	},
-	{
-		$lookup: {
-			from: 'inputs',
-			localField: '_id',
-			foreignField: 'section',
-			as: 'inputs'
-		}
-	}
-]);
-
-db.forms.aggregate([
-	{	$match: {
-			_id: ObjectId('5e3bc29efeddbb2098651654')
-		}
-	},
-	{
-		$lookup: {
-			from: 'sections',
-			localField: '_id',
-			foreignField: 'form',
-			as: 'sections'
-		}
-	},
-	{ $unwind : '$sections' },
-	{
-		$lookup: {
-			from: 'inputs', 
-			localField: 'sections._id', 
-			foreignField: 'section',
-			as: 'sections.inputs'
-		}
-	}
-]);
-
-db.forms.aggregate([ {$match: { _id: ObjectId('5e3bc29efeddbb2098651654') } }, { $lookup: { from: 'sections', localField: '_id', foreignField: 'form', as: 'sections' } } ]).pretty();
-
-*/

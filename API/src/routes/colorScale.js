@@ -11,6 +11,9 @@ router.get('/find', checkAuth, accessRules, ColorScale.find);
 router.post('/update', checkAuth, accessRules, ColorScale.update);
 router.get('/delete', checkAuth, accessRules, ColorScale.delete);
 
+router.get('/findByForm', checkAuth, accessRules, ColorScale.findByForm);
+router.post('/findByFormsArray', checkAuth, accessRules, ColorScale.findByFormsArray);
+
 router.get('/', ColorScale.list);
 
 

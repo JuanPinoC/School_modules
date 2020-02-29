@@ -3,7 +3,7 @@ import styles from './Styles.css';
 
 import RecordsTable from '../RecordsTable/FormRecordsTable';
 
-import { getUrlParams, getFormRecords } from '../../Functions/FormEditorFunctions';
+import { getUrlParams, getFormRecords, getColorScaleByForm } from '../../Functions/FormEditorFunctions';
 
 class formRecordsList extends Component {
 
@@ -13,6 +13,7 @@ class formRecordsList extends Component {
 		this.state = {
 			title: 'Registros del Formulario',
 			form: {},
+			colorScale: {},
 			records: []
 		};
 
@@ -29,9 +30,15 @@ class formRecordsList extends Component {
 			let getRecordsPromise = new Promise( ( resolve, reject ) => { getFormRecords(params.planId, params.planFormItemId, params.formId, resolve, reject); });
 				getRecordsPromise.then( ( data ) => {
 
-					this.setState({
-						form: data.form,
-						records: data.records
+					let getScalePromise = new Promise( ( resolve, reject ) => { getColorScaleByForm(params.formId, resolve, reject); });
+					getScalePromise.then( ( colorScale ) => {
+
+						this.setState({
+							form: data.form,
+							colorScale: colorScale,
+							records: data.records
+						});
+
 					});
 
 			} );
@@ -45,7 +52,7 @@ class formRecordsList extends Component {
 			<div className={ styles.ListContainer }>
 				{	
 					( this.state.records.length > 0 )? 
-						(<RecordsTable title={ this.state.title } form={ this.state.form } records={ this.state.records } />)
+						(<RecordsTable title={ this.state.title } form={ this.state.form } colorScale={ this.state.colorScale } records={ this.state.records } />)
 						:(<div>No hay registros para mostrar.</div>)
 				}
 			</div>

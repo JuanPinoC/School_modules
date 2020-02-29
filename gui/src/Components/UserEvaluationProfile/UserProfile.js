@@ -8,7 +8,9 @@ import { Redirect } from "react-router-dom";
 import Input from '../Input/Input';
 import SubmitButton from '../SubmitButton/SubmitButton';
 
-import { getToken, getUrlParams, getUser, getUserPlanForms, dateToYearMonthDay, randomNumber } from '../../Functions/FormEditorFunctions';
+import RecordsTable from '../RecordsTable/PlanRecordsTable';
+
+import { getToken, getUrlParams, getUser, getUserPlanForms, getPlanRecordsByUser, dateToYearMonthDay, randomNumber } from '../../Functions/FormEditorFunctions';
 
 
 class userProfile extends Component {
@@ -18,6 +20,9 @@ class userProfile extends Component {
 		super(props);
 
 		this.state = {
+
+			planRecords: [],
+
 			id: '',
 			name: '',
 			type: '',
@@ -46,9 +51,16 @@ class userProfile extends Component {
 				});
 
 				let formsPromise = new Promise( ( resolve, reject ) => { getUserPlanForms( res.type._id, resolve, reject); });
-				formsPromise.then( ( res ) => {
+				formsPromise.then( ( formsRes ) => {
 
-					this.setPlanViews( res );
+					let PlanRecordsPromise = new Promise( ( resolve, reject ) => { getPlanRecordsByUser( res.type._id, params.id, resolve, reject); });
+
+					PlanRecordsPromise.then( ( planRecords ) => {
+
+						this.setState({ planRecords: planRecords });
+						this.setPlanViews( formsRes );
+
+					});
 
 				});
 
@@ -71,6 +83,9 @@ class userProfile extends Component {
 								{ 'Periodo: ' + dateToYearMonthDay(plan.startDate).replace(/-/g, '/') + ' - ' + dateToYearMonthDay(plan.endDate).replace(/-/g, '/')}
 							</h3>
 						</div>
+
+						{ this.getRecords( plan._id, plan.forms ) }
+
 						<div className={ styles.ListTitle }>
 							<h3>Formularios</h3>
 						</div>
@@ -85,6 +100,28 @@ class userProfile extends Component {
 			planViews: planViews,
 			loading: false
 		});
+
+	}
+
+	getRecords = ( planId, data ) => {
+
+		const formsRecordsArray = data.map( (form) => {
+
+			return {
+				_id: form.form,
+				name: form.name,
+				weight: form.weight + '%',
+				colorScale: form.colorScale
+			}
+		});
+
+		const planRecords = this.state.planRecords;
+
+		const recordsIndex = planRecords.findIndex( (e) => e.planId + '' === planId + '');
+
+		return ( typeof planRecords[recordsIndex].records.formAvgs !== 'undefined' )? 
+					(<RecordsTable key={ planId + randomNumber() } title={ 'Registros' } forms={ formsRecordsArray } records={ [planRecords[recordsIndex].records] }/>)
+					:(<div className={ styles.FormsListContainer }><div className={ styles.NoRecordsMessage}>No hay registros para mostrar.</div></div>);
 
 	}
 
@@ -161,6 +198,7 @@ class userProfile extends Component {
 										</div>
 									</div>
 									<div className={ styles.UserInfoItem }>
+
 									</div>
 								</div>
 								<div className={ styles.ListTitle }>
