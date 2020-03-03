@@ -1,0 +1,1 @@
+{"options":{},"indexes":[{"v":{"$numberInt":"2"},"key":{"_id":{"$numberInt":"1"}},"name":"_id_","ns":"school_modules.inputs"}],"uuid":"20df950eb2354f768b950677302e38bf"}
