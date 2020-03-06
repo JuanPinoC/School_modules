@@ -147,7 +147,7 @@ class planCardsList extends Component {
 		const recordsIndex = planRecords.findIndex( (e) => e._id + '' === planId + '');
 
 		return ( planRecords[recordsIndex].records.length > 0 )? 
-					(<RecordsTable key={ planId + randomNumber() } title={ 'Registros' } forms={ formsRecordsArray } records={ planRecords[recordsIndex].records }/>)
+					(<RecordsTable key={ planId + randomNumber() } planId={ planId } title={ 'Registros' } forms={ formsRecordsArray } records={ planRecords[recordsIndex].records }/>)
 					:(<div className={ styles.FormsListContainer }><div className={ styles.NoRecordsMessage}>No hay registros para mostrar.</div></div>);
 
 	}

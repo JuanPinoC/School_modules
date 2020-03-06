@@ -11,6 +11,7 @@ class formRecordsList extends Component {
 		super(props);
 
 		this.state = {
+			formId: '',
 			title: 'Registros del Formulario',
 			form: {},
 			colorScale: {},
@@ -34,6 +35,7 @@ class formRecordsList extends Component {
 					getScalePromise.then( ( colorScale ) => {
 
 						this.setState({
+							formId: params.formId,
 							form: data.form,
 							colorScale: colorScale,
 							records: data.records
@@ -52,7 +54,9 @@ class formRecordsList extends Component {
 			<div className={ styles.ListContainer }>
 				{	
 					( this.state.records.length > 0 )? 
-						(<RecordsTable title={ this.state.title } form={ this.state.form } colorScale={ this.state.colorScale } records={ this.state.records } />)
+						(<RecordsTable title={ this.state.title } 
+							formId={ this.state.formId } form={ this.state.form } 
+							colorScale={ this.state.colorScale } records={ this.state.records } />)
 						:(<div>No hay registros para mostrar.</div>)
 				}
 			</div>

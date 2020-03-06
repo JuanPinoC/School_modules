@@ -5,6 +5,8 @@ import { Link } from "react-router-dom";
 
 import { randomNumber } from '../../Functions/FormEditorFunctions';
 
+import ReactHTMLTableToExcel from 'react-html-table-to-excel';
+
 const SectionHeaders = (props) => {
 
 	let inputs = props.inputs;
@@ -31,6 +33,7 @@ class recordsTable extends Component {
 		super(props);
 
 		this.state = {
+			tableId: this.props.formId + randomNumber(),
 			headerViews: [],
 			recordViews: []
 		};
@@ -142,13 +145,18 @@ class recordsTable extends Component {
 				<div className={ styles.TitleContainer }>
 					<h2>{ this.props.title }</h2>
 					<h1>{ this.props.form.name }</h1>
+					<ReactHTMLTableToExcel
+						id="test-table-xls-button"
+						className={ styles.TableExcelButton }
+						table={ this.state.tableId }
+						filename="registrosxls"
+						sheet="registros"
+						buttonText="Descargar como XLS"/>
 				</div>
 				<div className={ styles.OverflowContainer }>
-					<table>
+					<table id={ this.state.tableId }>
 						<thead>
-
 								{ this.state.headerViews }
-
 						</thead>
 						<tbody>
 							{ this.state.recordViews }

@@ -5,6 +5,7 @@ import { Link } from "react-router-dom";
 
 import { randomNumber, getColorScalesByFormsArray } from '../../Functions/FormEditorFunctions';
 
+import ReactHTMLTableToExcel from 'react-html-table-to-excel';
 
 class planRecordsTable extends Component {
 
@@ -12,6 +13,7 @@ class planRecordsTable extends Component {
 		super(props);
 
 		this.state = {
+			tableId: this.props.planId + randomNumber(),
 			colorScales: [],
 			headerViews: [],
 			recordViews: []
@@ -110,13 +112,22 @@ class planRecordsTable extends Component {
 	}
 
 	render() {
+
 		return (
 			<div className={ styles.TableContainer }>
 				<div className={ styles.TitleContainer }>
 					<h2>{ this.props.title }</h2>
+					<ReactHTMLTableToExcel
+						id="test-table-xls-button"
+						className={ styles.TableExcelButton }
+						table={ this.state.tableId }
+						filename="registrosxls"
+						sheet="registros"
+						buttonText="Descargar como XLS"/>
 				</div>
+
 				<div className={ styles.OverflowContainer }>
-					<table>
+					<table id={ this.state.tableId }>
 						<thead>
 
 								{ this.state.headerViews }
