@@ -29,6 +29,22 @@ export const getUrlParams = () => {
 };
 
 
+export const getUserType = ( resolve, reject ) => {
+
+	axios.get(
+			'userType/getUserType',
+			{ headers: { 'Authorization': 'Bearer ' + getToken() } } 
+		)
+		.then( ( res ) => {
+			resolve(res.data);
+		})
+		.catch( (err) => {
+			reject(err);
+		});
+
+};
+
+
 export const isEvaluatedUser = (evaluatedUserId, resolve, reject) => {
 
 	axios.get(
@@ -64,6 +80,21 @@ export const getUser = (id, resolve, reject) => {
 
 	axios.get(
 				'user/find?id=' + id,
+				{ headers: { 'Authorization': 'Bearer ' + getToken() } } 
+		)
+		.then( ( res ) => {
+			resolve(res.data);
+		})
+		.catch( (err) => {
+			reject(err);
+		});
+
+};
+
+export const getOwnUser = (resolve, reject) => {
+
+	axios.get(
+				'user/findOwn',
 				{ headers: { 'Authorization': 'Bearer ' + getToken() } } 
 		)
 		.then( ( res ) => {
@@ -426,6 +457,32 @@ export const getPlanRecordsByUser = (userTypeId, userId, resolve, reject) => {
 
 };
 
+export const getFormRecordsByUser = ( plan, planItemId, form, resolve, reject ) => {
+
+		const data = {
+			plan: plan,
+			planItemId: planItemId,
+			form: form
+		};
+
+		const params = {
+			method: 'post',
+			url: 'record/getFormRecordsByUser',
+			data: data,
+			headers: {
+				'Content-Type': 'application/json',
+				'Authorization': 'Bearer ' + getToken()
+			}
+		};
+
+		axios(params)
+		.then( (res) => {
+			resolve(res.data);
+		})
+		.catch( (err) => {
+			reject(err);
+		});
+}
 
 export const FormTypes = [
 			{ _id:'Soft Abilities' , name:'Habilidades blandas' },

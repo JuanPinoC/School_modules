@@ -757,6 +757,133 @@ module.exports = {
 		}).catch( err => errorHandler(res, err) );
 
 	},
+	getFormRecordsByUser: (req,res,next) => {
+
+		let formPromise = new Promise(( resolve, reject ) => {
+										FormEditorController.getForm( req.body.form, resolve, reject );
+									});
+
+		formPromise.then( (form) => {
+
+			Record.find({
+							'plan': req.body.plan,
+							'planItemId': req.body.planItemId,
+							'form': req.body.form,
+							'completed': true,
+							'evaluated': req.userData._id })
+				.populate('evaluated','_id name')
+				.sort('evaluated.name')
+				.exec()
+				.then( (records) => {
+
+					const sections = form.sections;
+
+					const recordsArray = records.map( (record) => {
+
+						let sectionsItems = {};
+						let sectionsTotals = {};
+						let sectionsTotalsArray = [];
+						let total = 0;
+
+						const itemsToShow = record.items.map( (item) => {
+
+							let inputIndex = -1;
+							let sectionIndex = sections.length;
+
+							while( sectionIndex >= 0 && inputIndex < 0 ){
+								sectionIndex--;
+								inputIndex = sections[sectionIndex].inputs.findIndex( (e) => e._id + '' === item.input + '' );
+							}
+
+							const options = sections[sectionIndex].inputs[inputIndex].options;
+							let optionIndex = -1;
+
+							switch( sections[sectionIndex].inputs[inputIndex].type ){
+								case 'Text':
+									//item.answerString
+									return { section: sections[sectionIndex]._id , input: item.input, answer: item.answerString };
+									break;
+								case 'Number':
+									sectionsItems[ sections[sectionIndex]._id ] = (typeof sectionsItems[ sections[sectionIndex]._id ] !== 'undefined' )? 
+																					[ ...sectionsItems[ sections[sectionIndex]._id ], item.answerNumber ] : [ item.answerNumber ];
+									//item.answerNumber
+									return { section: sections[sectionIndex]._id , input: item.input, answer: item.answerNumber };
+									break;
+								case 'Number Options':
+									optionIndex = options.findIndex( (e) => e._id + '' === item.answerId + '' );
+
+									sectionsItems[ sections[sectionIndex]._id ] = (typeof sectionsItems[ sections[sectionIndex]._id ] !== 'undefined' )? 
+																					[ ...sectionsItems[ sections[sectionIndex]._id ], options[optionIndex].value ] : [ options[optionIndex].value ];
+
+									//item.answerId
+									return { section: sections[sectionIndex]._id , input: item.input, answer: options[optionIndex].label };
+									break;
+								case 'Text Options':
+									optionIndex = options.findIndex( (e) => e._id + '' === item.answerId + '' );
+
+									//item.answerId
+									return { section: sections[sectionIndex]._id , input: item.input, answer: options[optionIndex].label };
+									break;
+							}
+
+						});
+
+						sections.forEach( (section) => {
+
+							switch(section.action){
+								case 'sum':
+									sectionsTotals[section._id] = sumValues(sectionsItems[section._id]);
+									sectionsTotalsArray.push( sectionsTotals[section._id] );
+									break;
+								case 'avg':
+									sectionsTotals[section._id] = avgValues(sectionsItems[section._id]);
+									sectionsTotalsArray.push( sectionsTotals[section._id] );
+									break;
+								case 'none':
+									break;
+							}
+						
+						});
+
+						switch(form.action){
+							case 'sum':
+								total = sumValues( sectionsTotalsArray );
+								break;
+							case 'avg':
+								total = avgValues( sectionsTotalsArray );
+								break;
+							case 'none':
+								total = '';
+								break;
+						}
+
+						return {
+							_id: record._id,
+							evaluator: record.evaluator,
+							evaluated: record.evaluated,
+							plan: record.plan,
+							planItemId: record.planItemId,
+							form: record.form,
+							items: record.items,
+							completed: record.completed,
+
+							itemsToShow: itemsToShow,
+							sectionsTotals: sectionsTotals,
+							total: total
+						};
+					});
+
+					res.status(200).json({
+						form: form,
+						records: recordsArray
+					});
+
+				}).catch( err => errorHandler(res, err) );
+
+
+		}).catch( err => errorHandler(res, err) );
+
+	},
 	getRecordsByEvaluator: (req,res,next) => {
 
 		Record.find({ evaluator: req.userData._id })

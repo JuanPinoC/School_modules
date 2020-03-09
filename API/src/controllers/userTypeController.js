@@ -2,6 +2,12 @@ const mongoose = require('mongoose');
 
 const UserType = require('../models/userType');
 
+const errorHandler = ( res, err ) => {
+	res.status(500).json({
+		error:err
+	});
+};
+
 module.exports = {
 
 	list: (req,res,next) => {
@@ -21,12 +27,7 @@ module.exports = {
 
 				res.status(200).json(response);
 			})
-			.catch(err => {
-				console.log(err);
-				res.status(500).json({
-					error:err
-				});
-			});
+			.catch( (err) => errorHandler(res,err) );
 	},
 	create: (req,res,next) => {
 
@@ -38,6 +39,16 @@ module.exports = {
 
 	},
 	delete: (req,res,next) => {
+
+	},
+	getUserType: (req,res,next) => {
+
+		UserType.findById( req.userData.type )
+				.exec()
+				.then( (doc) => {
+					res.status(200).json( doc.name );			
+				})
+				.catch( (err) => errorHandler(res,err) );
 
 	}
 

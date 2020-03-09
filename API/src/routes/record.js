@@ -15,6 +15,7 @@ router.post('/getFormRecords', checkAuth, accessRules, Record.getFormRecords);
 router.get('/getPlanRecords', checkAuth, accessRules, Record.getPlanRecords);
 
 router.post('/getPlanRecordsByUser', checkAuth, accessRules, Record.getPlanRecordsByUser);
+router.post('/getFormRecordsByUser', checkAuth, accessRules, Record.getFormRecordsByUser);
 
 router.get('/getRecordsByEvaluator', checkAuth, accessRules, Record.getRecordsByEvaluator);
 router.get('/getRecordsByEvaluated', checkAuth, accessRules, Record.getRecordsByEvaluated);

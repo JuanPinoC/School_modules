@@ -23,6 +23,7 @@ import UserForm from '../Components/Forms/UserForm';
 import UserList from '../Components/Lists/UserList';
 import UserEvaluationList from '../Components/Lists/UserEvaluationList';
 import UserEvaluationProfile from '../Components/UserEvaluationProfile/UserProfile';
+import UserProfile from '../Components/UserProfile/UserProfile';
 
 /* Records */
 import FillableForm from '../Components/FillableForm/FillableForm';
@@ -30,6 +31,7 @@ import PerformedEvaluationsList from '../Components/Lists/PerformedEvaluationsLi
 import PerformedEvaluationsAsEvaluatedList from '../Components/Lists/PerformedEvaluationsAsEvaluatedList';
 import EvaluationPlanCardsList from '../Components/EvaluationPlanCardsList/EvaluationPlanCardsList';
 import FormRecordsList from '../Components/Lists/FormRecordsList';
+import FormRecordsListByUser from '../Components/Lists/FormRecordsListByUser';
 
 /* Evaluation Plan */
 import EvaluationPlanList from '../Components/Lists/EvaluationPlanList';
@@ -113,7 +115,10 @@ class Layout extends Component {
 										<Route path='/formRecords'>
 											<FormRecordsList />
 										</Route>
-										
+										<Route path='/formRecordsByUser'>
+											<FormRecordsListByUser />
+										</Route>
+
 										<Route path='/performedEvaluations'>
 											<PerformedEvaluationsList />
 										</Route>
@@ -151,6 +156,9 @@ class Layout extends Component {
 										</Route>
 										<Route path='/userEvaluationProfile:id?'>
 											<UserEvaluationProfile />
+										</Route>
+										<Route path='/userProfile'>
+											<UserProfile />
 										</Route>
 
 									</Switch>

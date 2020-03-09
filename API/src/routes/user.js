@@ -11,6 +11,8 @@ router.post('/update', checkAuth, accessRules, User.update);
 router.get('/delete', checkAuth, accessRules, User.delete);
 router.post('/login',User.login);
 
+router.get('/findOwn', checkAuth, accessRules, User.findOwn);
+
 router.get('/userPlanForms', checkAuth, accessRules, User.userPlanForms);
 
 router.get('/isEvaluatedUser', checkAuth, accessRules, User.isEvaluatedUser);

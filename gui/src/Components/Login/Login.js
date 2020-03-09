@@ -3,6 +3,8 @@ import styles from './Styles.css';
 
 import axios from '../../Axios/Axios';
 
+import { Redirect } from "react-router-dom";
+
 import Input from '../Input/Input';
 import SubmitButton from '../SubmitButton/SubmitButton';
 
@@ -14,7 +16,8 @@ class loginContainer extends Component {
 		super(props);
 		this.state = {
 			email: '',
-			password: ''
+			password: '',
+			redirect: ''
 		};
 
 		this.onChangeHandler = this.onChangeHandler.bind(this);
@@ -44,6 +47,7 @@ class loginContainer extends Component {
 			
 		axios(params)
 		.then( (res) => {
+			this.setState({ redirect: '/' });
 			this.props.onSignIn( res.data );
 		})
 		.catch( (res) => {
@@ -53,6 +57,10 @@ class loginContainer extends Component {
 	}
 
 	render() {
+
+		if( this.state.redirect !== '' )
+			return ( <Redirect to={this.state.redirect} /> );
+
 		return (
 			<div className={ styles.FormContainer }>
 				<h2 className={ styles.Title }>Inicio de Sesión</h2>
