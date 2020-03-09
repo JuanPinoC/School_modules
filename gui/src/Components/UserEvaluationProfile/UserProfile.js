@@ -86,11 +86,13 @@ class userProfile extends Component {
 
 						{ this.getRecords( plan._id, plan.forms ) }
 
-						<div className={ styles.ListTitle }>
-							<h3>Formularios</h3>
-						</div>
-						<div className={ styles.FormsList }>
-							{ formViews }
+						<div className={ styles.FormsListContainer }>
+							<div className={ styles.ListTitle }>
+								<h3>Formularios</h3>
+							</div>
+							<div className={ styles.FormsList }>
+								{ formViews }
+							</div>
 						</div>
 					</div>);
 
@@ -205,7 +207,17 @@ class userProfile extends Component {
 									<h2>Planes de Evaluación</h2>
 								</div>
 								<div className={ styles.PlansList }>
-									{ this.state.planViews }
+									{
+										( this.state.planViews.length > 0 )? 
+											this.state.planViews : 
+											(
+												<div className={ styles.FormsListContainer }>
+													<div className={ styles.NoRecordsMessage}>
+														No hay planes para mostrar.
+													</div>
+												</div>
+											)
+									}
 								</div>
 							</div>
 						</div>

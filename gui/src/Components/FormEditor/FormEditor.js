@@ -41,49 +41,53 @@ class formEditor extends Component {
 	componentDidMount () {
 
 		let colorScalesPromise = new Promise( ( resolve, reject ) => { getColorScales(resolve, reject); });
-		colorScalesPromise.then( ( res ) => { this.setState({ colorScales: res }); } );
+		colorScalesPromise.then( ( colorScalesRes ) => {
+			
+			this.setState({ colorScales: colorScalesRes });
 
-		const params = getUrlParams();
+			const params = getUrlParams();
 
-		if( params.id !== null && typeof params.id !== 'undefined' ){
+			if( params.id !== null && typeof params.id !== 'undefined' ){
 
-			let formPromise = new Promise( ( resolve, reject ) => { getForm( params.id, resolve, reject); });
-			formPromise.then( ( res ) => {
+				let formPromise = new Promise( ( resolve, reject ) => { getForm( params.id, resolve, reject); });
+				formPromise.then( ( res ) => {
 
-				this.props.onSetForm({
-					name: res.name,
-					type: res.type,
-					action: res.action,
-					description: res.description,
-					sections: res.sections,
-					colorScale: res.colorScale
+					this.props.onSetForm({
+						name: res.name,
+						type: res.type,
+						action: res.action,
+						description: res.description,
+						sections: res.sections,
+						colorScale: res.colorScale
+					});
+
+					const sections = res.sections;
+
+					sections.forEach( (e) => {
+						this.addSection( e );
+					});
+
+					this.setState({
+						id: params.id,
+						loading: false
+					});
+
 				});
 
-				const sections = res.sections;
+			}else{
 
-				sections.forEach( (e) => {
-					this.addSection( e );
-				});
+				this.props.onRemoveFormEditorData();
 
-				this.setState({
-					id: params.id,
-					loading: false
-				});
+				this.setState({ loading: false });
+			}
 
-			});
-
-		}else{
-
-			this.props.onRemoveFormEditorData();
-
-			this.setState({ loading: false });
-		}
+		});
 
 	}
 
 	onChangeHandler = (fieldName, e) => {
 
-		this.props.onUpdateForm( fieldName, e.target.value);
+		this.props.onUpdateForm( fieldName, e.target.value );
 
 	}
 

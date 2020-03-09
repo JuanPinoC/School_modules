@@ -3,7 +3,7 @@ import styles from './Styles.css';
 
 import { Link } from "react-router-dom";
 
-import { randomNumber } from '../../Functions/FormEditorFunctions';
+import { dateToYearMonthDay, randomNumber } from '../../Functions/FormEditorFunctions';
 
 
 class recordsTable extends Component {
@@ -85,7 +85,10 @@ class recordsTable extends Component {
 					return (<td key={ 'td' + randomNumber() }>{ subrecordData }</td>);
 
 				}else{
-					return (<td key={ 'td' + randomNumber() }>{ record[ header.name ] }</td>);
+					return (<td key={ 'td' + randomNumber() }>
+								{ ( header.name === 'startDate' || 'endDate' ) ? 
+									dateToYearMonthDay(record[ header.name ]) : record[ header.name ] }
+							</td>);
 				}
 			});
 
