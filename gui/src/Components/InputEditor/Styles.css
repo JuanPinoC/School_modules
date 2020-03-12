@@ -43,6 +43,12 @@
 	margin: 0.5em;
 }
 
+.InputEditorItem2 {
+	width: 90%;
+	display: inline-block;
+	margin: 0.5em;
+}
+
 .OptionsList{
 	margin: 1em;
 	padding: 1em;

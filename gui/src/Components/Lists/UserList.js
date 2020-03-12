@@ -24,7 +24,9 @@ class userList extends Component {
 					],
 			subheaders: [ { name: 'type', fields: ['name'] } ],
 
-			records: []
+			records: [],
+
+			loading: true
 		};
 
 	}
@@ -32,7 +34,7 @@ class userList extends Component {
 	componentDidMount () {
 
 		let getRecordsPromise = new Promise( ( resolve, reject ) => { getUsers(resolve, reject); });
-			getRecordsPromise.then( ( res ) => { this.setState({ records: res }); } );
+			getRecordsPromise.then( ( res ) => { this.setState({ records: res, loading: false }); } );
 
 	}
 
@@ -44,6 +46,9 @@ class userList extends Component {
 	}
 
 	render() {
+
+		if( this.state.loading ) return ( <div className={ styles.ListContainer }>Cargando...</div> );
+		
 		return (
 			<div className={ styles.ListContainer }>
 				{	

@@ -121,16 +121,20 @@ class recordsTable extends Component {
 				</div>
 				<Link className={ [ styles.TableOption, styles.BigSizeOption ].join(' ') } to={ this.props.createRoute }>Crear Nuevo +</Link>
 				<div className={ styles.OverflowContainer }>
-					<table>
-						<thead>
-							<tr>
-								{ this.state.headerViews }
-							</tr>
-						</thead>
-						<tbody>
-							{ this.state.recordViews }
-						</tbody>
-					</table>
+					{
+						( this.state.recordViews.length > 0 )?
+						(<table>
+							<thead>
+								<tr>
+									{ this.state.headerViews }
+								</tr>
+							</thead>
+							<tbody>
+								{ this.state.recordViews }
+							</tbody>
+						</table>):
+						(<div>No hay registros para mostrar.</div>)
+					}
 				</div>
 			</div>
 		);

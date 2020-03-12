@@ -24,7 +24,9 @@ class formList extends Component {
 					],
 			subheaders: [ { name: 'colorScale', fields: ['name'] }  ],
 
-			records: []
+			records: [],
+
+			loading: true
 		};
 
 	}
@@ -32,7 +34,7 @@ class formList extends Component {
 	componentDidMount () {
 
 		let getRecordsPromise = new Promise( ( resolve, reject ) => { getForms(resolve, reject); });
-			getRecordsPromise.then( ( res ) => { this.setState({ records: res }); } );
+			getRecordsPromise.then( ( res ) => { this.setState({ records: res, loading: false }); } );
 
 	}
 
@@ -44,15 +46,14 @@ class formList extends Component {
 	}
 
 	render() {
+
+		if( this.state.loading ) return ( <div className={ styles.ListContainer }>Cargando...</div> );
+
 		return (
 			<div className={ styles.ListContainer }>
-				{	
-					( this.state.records.length > 0 )? 
-						(<RecordsTable	title={ this.state.title }
-										headers={ this.state.headers } subheaders={ this.state.subheaders } records={ this.state.records }
-										createRoute={ this.state.createRoute } updateRoute={ this.state.updateRoute } delete={ this.deleteFunction } />)
-						:(<div>No hay registros para mostrar.</div>)
-				}
+				<RecordsTable	title={ this.state.title }
+								headers={ this.state.headers } subheaders={ this.state.subheaders } records={ this.state.records }
+								createRoute={ this.state.createRoute } updateRoute={ this.state.updateRoute } delete={ this.deleteFunction } />
 			</div>
 		);
 	}

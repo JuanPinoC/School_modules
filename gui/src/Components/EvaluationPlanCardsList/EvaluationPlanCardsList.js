@@ -161,7 +161,7 @@ class planCardsList extends Component {
 		return ( this.state.loading )?
 					(
 						<div className={ styles.ProfileContainer }>
-							<h1>Loading</h1>
+							<h1>Cargando...</h1>
 						</div>
 					):(
 						<div className={ styles.ProfileContainer }>
@@ -172,9 +172,16 @@ class planCardsList extends Component {
 								<div className={ styles.ListTitle }>
 									<h2>Planes de Evaluación</h2>
 								</div>
-								<div className={ styles.PlansList }>
-									{ this.state.planViews }
-								</div>
+								{
+									( this.state.planViews.length > 0 )?
+									(<div className={ styles.PlansList }>
+										{ this.state.planViews }
+									</div>):
+									(<div className={ styles.PlansList }>
+										No hay planes de evaluación para mostrar.
+									</div>)
+								}
+
 							</div>
 						</div>
 					);

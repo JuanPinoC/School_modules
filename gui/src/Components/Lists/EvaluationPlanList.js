@@ -24,7 +24,8 @@ class evaluationPlanList extends Component {
 						{ name: 'endDate', label: 'Fecha de Fin' }
 					],
 			subheaders: [ { name: 'userType', fields: ['name'] } ],
-			records: []
+			records: [],
+			loading: true
 		};
 
 	}
@@ -32,7 +33,7 @@ class evaluationPlanList extends Component {
 	componentDidMount () {
 
 		let getRecordsPromise = new Promise( ( resolve, reject ) => { getEvaluationPlans(resolve, reject); });
-			getRecordsPromise.then( ( res ) => { this.setState({ records: res }); } );
+			getRecordsPromise.then( ( res ) => { this.setState({ records: res, loading: false }); } );
 
 	}
 
@@ -44,15 +45,16 @@ class evaluationPlanList extends Component {
 	}
 
 	render() {
+
+		if( this.state.loading ) return ( <div className={ styles.ListContainer }>Cargando...</div> );
+		
 		return (
 			<div className={ styles.ListContainer }>
-				{	
-					( this.state.records.length > 0 )? 
-						(<RecordsTable	title={ this.state.title }
-										headers={ this.state.headers } subheaders={ this.state.subheaders } records={ this.state.records }
-										createRoute={ this.state.createRoute } updateRoute={ this.state.updateRoute } delete={ this.deleteFunction } />)
-						:(<div>No hay registros para mostrar.</div>)
-				}
+
+				<RecordsTable	title={ this.state.title }
+								headers={ this.state.headers } subheaders={ this.state.subheaders } records={ this.state.records }
+								createRoute={ this.state.createRoute } updateRoute={ this.state.updateRoute } delete={ this.deleteFunction } />
+			
 			</div>
 		);
 	}

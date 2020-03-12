@@ -140,7 +140,7 @@ class inputEditor extends Component {
 
 				<div className={ styles.InputEditorHeaders}>
 	
-					<div className={ styles.InputEditorItem}>
+					<div className={ styles.InputEditorItem2}>
 						<Input label='Enunciado' type='text' name='label' value={ this.props.label } onChange={ this.onChangeHandler } />
 					</div>
 					<div className={ styles.InputEditorItem}>
