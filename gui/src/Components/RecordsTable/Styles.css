@@ -99,6 +99,7 @@
 	padding: 1em;
 	background-color: #1e1f26;
 	color: white;
+	border: solid white 1px;
 }
 
 .TableContainer table tr th, table tr td {

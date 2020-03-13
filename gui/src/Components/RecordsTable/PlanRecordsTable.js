@@ -84,15 +84,24 @@ class planRecordsTable extends Component {
 
 				const colorScaleIndex = colorScales.findIndex( (e) => form.colorScale + '' === e._id + '' );
 
-				const scalesIndex = colorScales[colorScaleIndex].items.findIndex( (e) => e.max >= record.formAvgs[recordItemIndex].total && record.formAvgs[recordItemIndex].total >= e.min);
+				if( recordItemIndex < 0){
 
-				view.push(<td key={ 'formTotal' + form._id + randomNumber() } 
-								style={{	backgroundColor: colorScales[colorScaleIndex].items[scalesIndex].color, 
-											textShadow: '-1px 0 black, 0 1px black, 1px 0 black, 0 -1px black',
-											color: 'white'
-										}}
-					>{ record.formAvgs[recordItemIndex].total }</td>);
-				view.push(<td key={ 'formCompleted' + form._id + randomNumber() }>{ (record.formAvgs[recordItemIndex].completed)? 'Sí' : 'No' }</td>);
+					view.push(<td key={ 'formTotal' + form._id + randomNumber() }>-</td>);
+					view.push(<td key={ 'formCompleted' + form._id + randomNumber() }>No</td>);
+
+				}else{
+
+					const scalesIndex = colorScales[colorScaleIndex].items.findIndex( (e) => e.max >= record.formAvgs[recordItemIndex].total && record.formAvgs[recordItemIndex].total >= e.min);
+
+					view.push(<td key={ 'formTotal' + form._id + randomNumber() } 
+									style={{	backgroundColor: colorScales[colorScaleIndex].items[scalesIndex].color, 
+												textShadow: '-1px 0 black, 0 1px black, 1px 0 black, 0 -1px black',
+												color: 'white'
+											}}
+						>{ record.formAvgs[recordItemIndex].total }</td>);
+					view.push(<td key={ 'formCompleted' + form._id + randomNumber() }>{ (record.formAvgs[recordItemIndex].completed)? 'Sí' : 'No' }</td>);
+
+				}
 
 			});
 

@@ -1,1 +1,1 @@
-{"options":{},"indexes":[{"v":{"$numberInt":"2"},"key":{"_id":{"$numberInt":"1"}},"name":"_id_","ns":"school_modules.records"}],"uuid":"a49411128d714fca8df4975b17549fa9"}
+{"options":{},"indexes":[{"v":{"$numberInt":"2"},"key":{"_id":{"$numberInt":"1"}},"name":"_id_","ns":"school_modules.records"}],"uuid":"2fd8f4a2292a4a6eb437f524fd3f3817"}

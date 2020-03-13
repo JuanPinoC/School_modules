@@ -57,41 +57,51 @@ class evaluationPlanForm extends Component {
 
 		let userTypesPromise = new Promise( ( resolve, reject ) => { getUserTypes(resolve, reject); });
 		userTypesPromise.then( 
-			( res ) => {
-							this.setState({ userTypes: res, userType: ( this.state.userType === '' )? res[0]._id : this.state.userType });
-			} );
+			( resUserTypes ) => {
 
-		let formsPromise = new Promise( ( resolve, reject ) => { getForms(resolve, reject); });
-		formsPromise.then( ( res ) => { this.setState({ formsData: res }); } );
+				let formsPromise = new Promise( ( resolve, reject ) => { getForms(resolve, reject); });
+				formsPromise.then( 
+					( resForms ) => {
 
-		const params = getUrlParams();
+						const params = getUrlParams();
 
-		if( params.id !== null && typeof params.id !== 'undefined' ){
+						if( params.id !== null && typeof params.id !== 'undefined' ){
 
-			let evaluationPlanPromise = new Promise( ( resolve, reject ) => { getEvaluationPlan( params.id, resolve, reject); });
-			evaluationPlanPromise.then( ( res ) => {
-				
-				this.setState({
-					id: params.id,
-					name: res.name,
-					userType: res.userType,
-					forms: res.forms,
-					startDate: dateToYearMonthDay( res.startDate ),
-					endDate: dateToYearMonthDay( res.endDate ),
-					loading: false
-				});
+							let evaluationPlanPromise = new Promise( ( resolve, reject ) => { getEvaluationPlan( params.id, resolve, reject); });
+							evaluationPlanPromise.then( ( resEvaluationPlan ) => {
+								
+								this.setState({
+									formsData: resForms,
+									userTypes: resUserTypes,
+									id: params.id,
+									name: resEvaluationPlan.name,
+									userType: resEvaluationPlan.userType,
+									forms: resEvaluationPlan.forms,
+									startDate: dateToYearMonthDay( resEvaluationPlan.startDate ),
+									endDate: dateToYearMonthDay( resEvaluationPlan.endDate ),
+									//loading: false
+								});
 
-				let forms = res.forms;
+								let forms = resEvaluationPlan.forms;
 
-				forms.forEach( ( e ) => {
-					this.addForm( e );
-				});
-				
-			} );
+								forms.forEach( ( e, index, array ) => {
+									this.addForm( e, index, array );
+								});
+								
+							} );
 
-		}else{
-			this.setState({ loading: false });
-		}
+						}else{
+							this.setState({
+											formsData: resForms,
+											userTypes: resUserTypes,
+											userType: ( this.state.userType === '' )? resUserTypes[0]._id : this.state.userType,
+											loading: false
+										});
+						}
+
+					});
+
+			});
 
 	}
 
@@ -111,7 +121,7 @@ class evaluationPlanForm extends Component {
 
 	}
 
-	addForm = ( data = null ) => {
+	addForm = ( data = null, index = null, array = null ) => {
 
 		const key = data._id || 'f' + randomNumber();
 
@@ -127,6 +137,12 @@ class evaluationPlanForm extends Component {
 
 			this.setState({ forms: [ ...this.state.forms, { ...EmptyFormItem, key: key } ]  });
 
+		}
+
+		if( typeof data._id !== 'undefined' ){
+			if( index + 1 === array.length ){
+				this.setState({ loading: false});
+			}
 		}
 
 	}

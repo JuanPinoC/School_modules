@@ -196,7 +196,8 @@ class input extends Component {
 			default:
 				return(
 					<div className={ styles.InputContainer }>
-						<input className={ styles.Input } type={ this.props.type } name={ this.props.name } value={ this.props.value }
+						<input className={ styles.Input } type={ this.props.type } name={ this.props.name } 
+								value={ ( this.props.type === 'number' )? (( this.props.value === 0 && this.props.min >= 0 )? this.props.min : this.props.value ) : this.props.value }
 								max={ this.props.max } min={ this.props.min }
 								onChange={ (e) => {
 													if( 0 <= this.props.max && this.props.max >= this.props.min ){

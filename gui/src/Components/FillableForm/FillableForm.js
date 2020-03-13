@@ -34,6 +34,15 @@ class InputView extends Component {
 
 	}
 
+	componentDidMount(){
+		const input = this.state.input;
+		
+		if( input.type === 'Number' && this.state.value === 0 ){
+			this.props.onChange( this.state.input._id, { target: { value: ( input.minValue > 0 )? input.minValue : 0 } } );
+		}
+
+	}
+
 	onChangeHandler = ( name, e ) => {
 		this.props.onChange( this.state.input._id, e );
 		this.setState({ value: e.target.value });
@@ -399,7 +408,7 @@ class FillableForm extends Component {
 					<div className={ styles.div1 }><h1>{ form.name }</h1></div>
 					<div className={ styles.div2 }><h2>Tipo: { form.type }</h2></div>
 					<div className={ styles.div5 }><h2>Evaluado: { this.state.evaluatedName }</h2></div>
-					<div className={ styles.div4 }><p>Descripción: { form.description }</p></div>
+					<div className={ styles.div4 }><p>Descripción: </p><pre>{ form.description }</pre></div>
 					<div className={ styles.div3 }>{ colorScaleView }</div>
 				</div>
 				<div className={ styles.SectionsList }>
